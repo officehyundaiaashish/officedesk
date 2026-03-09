@@ -252,18 +252,27 @@ input[type=file]{display:none;}
   aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:6px;cursor:pointer;
   transition:border-color var(--tr),background-color var(--tr);
-  position:relative;overflow:hidden;background:var(--bg);
+  position:relative;overflow:visible;background:var(--bg);
 }
 .pslot:hover{border-color:var(--accent);background:var(--accent-s);}
 .pslot.filled{border-style:solid;border-color:var(--accent);}
-.pslot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;}
-.pslot .ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity var(--tr);border-radius:8px;}
+.pslot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:calc(var(--radius) - 1px);}
+.pslot .ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity var(--tr);border-radius:calc(var(--radius) - 1px);}
 .pslot:hover .ov{opacity:1;}
 .slot-lbl{font-size:11px;font-weight:500;color:var(--text2);text-align:center;line-height:1.3;padding:0 8px;z-index:1;}
 .slot-ico{color:var(--text3);z-index:1;}
 .pslot.filled .slot-lbl,.pslot.filled .slot-ico{display:none;}
-.slot-rm{position:absolute;top:6px;right:6px;width:22px;height:22px;background:#e05252;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity var(--tr);z-index:10;}
+.slot-rm{
+  position:absolute;top:-8px;right:-8px;
+  width:22px;height:22px;background:#e05252;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity var(--tr);z-index:20;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
 .pslot.filled:hover .slot-rm{opacity:1;}
+@media(hover:none){
+  .pslot.filled .slot-rm{opacity:1;}
+}
 
 /* ── BUTTONS ───────────────────────────────────────────────────────── */
 .btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:20px;}
@@ -370,17 +379,27 @@ input[type=file]{display:none;}
   border:1.5px dashed var(--border);border-radius:var(--radius);aspect-ratio:4/3;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
   cursor:pointer;transition:border-color var(--tr),background-color var(--tr);
-  position:relative;overflow:hidden;background:var(--bg);
+  position:relative;overflow:visible;background:var(--bg); /* overflow:visible so rm button never clips */
 }
 .agm-slot:hover{border-color:var(--accent);background:var(--accent-s);}
 .agm-slot.filled{border-style:solid;border-color:var(--accent);}
-.agm-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;}
+.agm-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:calc(var(--radius) - 1px);}
 .agm-lbl{font-size:11px;font-weight:500;color:var(--text2);text-align:center;line-height:1.3;padding:0 8px;z-index:1;}
-.agm-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity var(--tr);border-radius:8px;z-index:2;}
+.agm-ov{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity var(--tr);border-radius:calc(var(--radius) - 1px);z-index:2;}
 .agm-slot:hover .agm-ov{opacity:1;}
 .agm-slot.filled .agm-lbl{display:none;}
-.agm-rm{position:absolute;top:6px;right:6px;width:22px;height:22px;background:#e05252;border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity var(--tr);z-index:10;}
+.agm-rm{
+  position:absolute;top:-8px;right:-8px; /* sit outside slot boundary — always visible */
+  width:22px;height:22px;background:#e05252;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity var(--tr);z-index:20;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
 .agm-slot.filled:hover .agm-rm{opacity:1;}
+/* On touch devices show rm button always when filled */
+@media(hover:none){
+  .agm-slot.filled .agm-rm{opacity:1;}
+}
 
 /* ── AGM HISTORY ROWS ──────────────────────────────────────────────── */
 .agm-hrow{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;position:relative;}
@@ -2777,10 +2796,13 @@ async function pwaExport() {
 
     // ── Sheet 4: PARTS PHOTOGRAPH ──────────────────────────────────────
     const ws4 = wb.addWorksheet('PARTS PHOTOGRAPH');
+    // Must set column widths AND pre-touch rows before adding images
+    // ExcelJS throws "no defined width" if rows/cols are not initialized first
     for (let c = 1; c <= 25; c++) { ws4.getColumn(c).width = 10; }
-
-    // Row 1 headers — same as original: A1:L1 "Vehicle Details", N1:Y1 "Parts Photos"
+    for (let r = 1; r <= 32; r++) { ws4.getRow(r).height = 40; }
     ws4.getRow(1).height = 16.5;
+
+    // Row 1 headers
     MC(ws4,'A1:L1');
     const vdH = ws4.getCell('A1');
     vdH.value = 'Vehicle Details';
@@ -2805,16 +2827,18 @@ async function pwaExport() {
         if (!photo) continue;
         try {
           const b64 = photo.b64.split(',')[1];
-          const ext = (photo.name.split('.').pop()||'jpeg').toLowerCase();
-          const imgId = wb.addImage({base64: b64, extension: ext === 'png' ? 'png' : 'jpeg'});
+          // Determine extension safely — ExcelJS only accepts 'jpeg' or 'png'
+          const rawExt = (photo.name || '').split('.').pop().toLowerCase();
+          const ext = rawExt === 'png' ? 'png' : 'jpeg';
+          const imgId = wb.addImage({base64: b64, extension: ext});
           const [fc, fr, tc, tr] = slots[i];
           ws.addImage(imgId, {
             twoCell: {
               from: {col: fc-1, row: fr-1, colOff: 0, rowOff: 0},
-              to:   {col: tc-1, row: tr-1, colOff: 0, rowOff: 0}
+              to:   {col: tc,   row: tr,   colOff: 0, rowOff: 0}
             }
           });
-        } catch(e) { console.warn('Photo embed error:', e); }
+        } catch(e) { console.warn('Photo embed error:', e.message); }
       }
     };
 
