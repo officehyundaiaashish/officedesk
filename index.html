@@ -1726,10 +1726,13 @@ async function agmExport(){
     const THIN=(c='FF888888')=>({style:'thin',color:{argb:c}});
     const BORDER=(c='FF888888')=>({top:THIN(c),bottom:THIN(c),left:THIN(c),right:THIN(c)});
     const DATA_ALIGN={horizontal:'center',vertical:'middle',wrapText:true};
+    // Safe merge helper — defined here so all sheets can use it
+    const MC=(ws,range)=>{try{ws.mergeCells(range);}catch(e){}};
 
     // ── Sheet 1: Battery Data ──
     const ws1=wb.addWorksheet('Battery Data');
-    ws1.columns=[{width:4},{width:32},{width:22},{width:28}];
+    // Use getColumn instead of ws.columns=[] to avoid ExcelJS undefined-width crash
+    [[1,4],[2,32],[3,22],[4,28]].forEach(([c,w])=>ws1.getColumn(c).width=w);
     const addBRow=(desc,val,bold=false)=>{
       const r=ws1.addRow([null,desc,null,val]);
       r.height=20;
@@ -1775,62 +1778,67 @@ async function agmExport(){
 
     // ── Sheet 2: PHOTOS ──
     const ws2=wb.addWorksheet('PHOTOS');
-    ws2.columns=Array(17).fill({width:14});
+    // Use getColumn instead of ws.columns=[] array
+    for(let c=1;c<=17;c++) ws2.getColumn(c).width=14;
+    // Pre-initialise all rows so photo embed never hits "no defined width"
+    for(let r=1;r<=45;r++) ws2.getRow(r).height=40;
     const addPhotoHdr=(label,mergeFrom,mergeTo,row)=>{
+      // mergeCells FIRST, then write to top-left cell
+      MC(ws2,`${mergeFrom}${row}:${mergeTo}${row}`);
       const c=ws2.getCell(`${mergeFrom}${row}`);
       c.value=label;c.font=HDR_FONT;c.fill=HDR_FILL;c.alignment=HDR_ALIGN;
-      MC(ws2,`${mergeFrom}${row}:${mergeTo}${row}`);
     };
-    const titleP=ws2.getCell('B2');titleP.value='Battery Defective Concern';titleP.font=HDR_FONT;titleP.fill=HDR_FILL;titleP.alignment=HDR_ALIGN;
     MC(ws2,'B2:M2');
+    const titleP=ws2.getCell('B2');titleP.value='Battery Defective Concern';titleP.font=HDR_FONT;titleP.fill=HDR_FILL;titleP.alignment=HDR_ALIGN;
     ws2.getRow(2).height=24;
 
-    // Row 1 photo headers
     addPhotoHdr('REGISTRATION PLATE PHOTO','B','E',4);
     addPhotoHdr('MILEAGE PHOTO','F','I',4);
     addPhotoHdr('VIN PHOTO','J','M',4);
     ws2.getRow(4).height=28;
 
-    // Row 2 photo headers
     addPhotoHdr('DEFECTIVE BATTERY DETAILS (BATCH+SERIAL+SPEC)','B','E',17);
     addPhotoHdr('DEFECTIVE BATTERY MANUFACTURER NAME','F','I',17);
     addPhotoHdr('REPLACED BATTERY DETAILS (BATCH+SERIAL+SPEC)','J','M',17);
     addPhotoHdr('REPLACED BATTERY MANUFACTURER NAME','N','Q',17);
     ws2.getRow(17).height=28;
 
-    // Row 3 photo headers
     addPhotoHdr('VOLTAGE WITHOUT LOAD','B','E',30);
     addPhotoHdr('VOLTAGE WITH LOAD','F','I',30);
     addPhotoHdr('BOTH BATTERY PHOTOS WITH REG. PLATE','J','M',30);
     ws2.getRow(30).height=28;
 
-    // Photo slot anchors: [col(0-based), row(0-based), toCol, toRow]
-    const PHOTO_SLOTS=[[1,4,4,14],[5,4,8,14],[9,4,12,14],[1,18,4,26],[5,19,8,25],[9,17,12,26],[13,19,16,25],[1,31,4,40],[5,31,8,40],[9,31,12,40]];
+    // Photo slots [fromCol(0-based), fromRow(0-based), toCol(0-based), toRow(0-based)]
+    const PHOTO_SLOTS=[[1,4,5,16],[5,4,9,16],[9,4,13,16],
+      [1,17,5,28],[5,17,9,28],[9,17,13,28],[13,17,17,28],
+      [1,30,5,42],[5,30,9,42],[9,30,13,42]];
     for(let i=0;i<10;i++){
       if(!agmPhotos[i])continue;
-      const b64Data=agmPhotos[i].b64.split(',')[1];
-      const ext=(agmPhotos[i].name.split('.').pop()||'jpeg').toLowerCase();
-      const mime=ext==='png'?'image/png':'image/jpeg';
-      const imgId=wb.addImage({base64:b64Data,extension:ext==='png'?'png':'jpeg'});
-      const [fc,fr,tc,tr]=PHOTO_SLOTS[i];
-      ws2.addImage(imgId,{tl:{col:fc,row:fr},br:{col:tc,row:tr},editAs:'twoCell'});
+      try{
+        const b64Data=agmPhotos[i].b64.split(',')[1];
+        const rawExt=(agmPhotos[i].name||'').split('.').pop().toLowerCase();
+        const ext=rawExt==='png'?'png':'jpeg';
+        const imgId=wb.addImage({base64:b64Data,extension:ext});
+        const [fc,fr,tc,tr]=PHOTO_SLOTS[i];
+        // Use twoCell API (correct for ExcelJS 4.x)
+        ws2.addImage(imgId,{twoCell:{from:{col:fc,row:fr,colOff:0,rowOff:0},to:{col:tc,row:tr,colOff:0,rowOff:0}}});
+      }catch(e){console.warn('AGM photo embed error slot '+i+':',e.message);}
     }
 
     // ── Sheet 3: INVOICE, PWA, REJECTION REPORT ──
     const ws3=wb.addWorksheet('INVOICE, PWA, REJECTION REPORT');
-    ws3.columns=Array(24).fill({width:14});
-    // Section headers
-    ws3.mergeCells('B4:H4');ws3.mergeCells('J4:P4');ws3.mergeCells('R4:X4');
+    // Use getColumn instead of ws.columns=[] array
+    for(let c=1;c<=24;c++) ws3.getColumn(c).width=14;
+    // Safe merges (no bare ws3.mergeCells)
+    MC(ws3,'B4:H4');MC(ws3,'J4:P4');MC(ws3,'R4:X4');
     const makeSecHdr=(cell,label)=>{const c=ws3.getCell(cell);c.value=label;c.font=HDR_FONT;c.fill=HDR_FILL;c.alignment=HDR_ALIGN;};
     makeSecHdr('B4','VENDOR REJECTION REPORT / BATTERY TEST REPORT');
     makeSecHdr('J4','INVOICE');makeSecHdr('R4','ESTIMATION');
     ws3.getRow(4).height=28;
-    // Estimation table
     const estHeaders=['SI No.','Part Number','Part Description','List Price','Qty','Amount (Without Tax)','Total (With Tax)'];
     const estHdrRow=ws3.getRow(5);
-    estHeaders.forEach((h,i)=>{const c=estHdrRow.getCell(18+i);c.value=h;c.font={bold:true,size:10};c.fill=HDR_FILL;c.font=HDR_FONT;c.alignment=HDR_ALIGN;c.border=BORDER();});
+    estHeaders.forEach((h,i)=>{const c=estHdrRow.getCell(18+i);c.value=h;c.font=HDR_FONT;c.fill=HDR_FILL;c.alignment=HDR_ALIGN;c.border=BORDER();});
     estHdrRow.height=28;
-    // Part row
     const pp=gn('agm-pp1'),pq=gn('agm-pq1'),pa=pp*pq,pt=pa*1.18;
     const partRow=ws3.getRow(6);
     [1,g('agm-pn1'),g('agm-pd1'),pp,pq,pa,pt].forEach((v,i)=>{const c=partRow.getCell(18+i);c.value=v;c.font={size:11};c.alignment=DATA_ALIGN;c.border=BORDER('FFCCCCCC');});
@@ -1838,7 +1846,6 @@ async function agmExport(){
     const partTotRow=ws3.getRow(8);
     partTotRow.getCell(19).value='Total Part Amount';partTotRow.getCell(23).value=pa;partTotRow.getCell(24).value=pt;
     partTotRow.getCell(19).font={bold:true,size:11};
-    // Labour headers
     const labHdrRow=ws3.getRow(11);
     ['SI No.','Labour Code','Labour Description','List Price','Qty','Amount (Without Tax)','Total (With Tax)'].forEach((h,i)=>{const c=labHdrRow.getCell(18+i);c.value=h;c.font=HDR_FONT;c.fill=HDR_FILL;c.alignment=HDR_ALIGN;c.border=BORDER();});
     labHdrRow.height=28;
@@ -1849,7 +1856,7 @@ async function agmExport(){
     const labTotRow=ws3.getRow(14);
     labTotRow.getCell(19).value='Total Labour Amount';labTotRow.getCell(23).value=la;labTotRow.getCell(24).value=lt;
     labTotRow.getCell(19).font={bold:true,size:11};
-    ws3.mergeCells('T19:V19');
+    MC(ws3,'T19:V19');
     const totalRow=ws3.getRow(19);
     totalRow.getCell(20).value='Total Amount';totalRow.getCell(23).value=pa+la;totalRow.getCell(24).value=pt+lt;
     totalRow.getCell(20).font={bold:true,size:12,color:{argb:'FF002C5F'}};
@@ -1860,8 +1867,9 @@ async function agmExport(){
     ws3.getRow(42).getCell(2).font={bold:true,size:13};
 
     // ── Sheet 4: NDMS Invoice, Sharing % ──
-    const ws4=wb.addWorksheet('NDMS Invoice, Sharing % ');
-    ws4.columns=Array(23).fill({width:14});
+    const ws4=wb.addWorksheet('NDMS Invoice, Sharing %');
+    // Use getColumn instead of ws.columns=[] array
+    for(let c=1;c<=23;c++) ws4.getColumn(c).width=14;
     const ndHdr=ws4.getRow(5);
     ['Total cost with Tax','HMIL Share %','HMIL Share (Rs)','Dealer Share (%)','Dealer Share (Rs.)','Cust. Share (%)','Cust. Share (Rs.)'].forEach((h,i)=>{
       const c=ndHdr.getCell(17+i);c.value=h;c.font=HDR_FONT;c.fill=HDR_FILL;c.alignment=HDR_ALIGN;c.border=BORDER();
@@ -1888,8 +1896,9 @@ async function agmExport(){
 
     // ── Sheet 5: Veh History ──
     const ws5=wb.addWorksheet('Veh History');
-    ws5.columns=[{width:4},{width:7},{width:12},{width:14},{width:20},{width:22},{width:12},{width:16},{width:14},{width:12}];
-    ws5.mergeCells('B2:J2');
+    // Use getColumn instead of ws.columns=[] array
+    [[1,4],[2,7],[3,12],[4,14],[5,20],[6,22],[7,12],[8,16],[9,14],[10,12]].forEach(([c,w])=>ws5.getColumn(c).width=w);
+    MC(ws5,'B2:J2');
     const vhTitle=ws5.getCell('B2');vhTitle.value='Vehicle History';vhTitle.font={...HDR_FONT,size:13};vhTitle.fill=HDR_FILL;vhTitle.alignment=HDR_ALIGN;
     ws5.getRow(2).height=28;
     const vhHdrRow=ws5.getRow(3);
@@ -1960,7 +1969,7 @@ function initPwaForm() {
   pwaHistRows  = [{date:'',kms:'',type:'Running Repair',current:false}];
 
   // Restore saved data
-  const ok = pwwRestoreData();
+  const ok = pwaRestoreData();
   if (ok) pwaSetStatus('Draft restored');
 
   // Build DOM
@@ -2225,7 +2234,7 @@ function pwaSaveData() {
   } catch(e) {}
 }
 
-function pwwRestoreData() {
+function pwaRestoreData() {
   try {
     const raw = localStorage.getItem(PWA_SAVE_KEY);
     if (!raw) return false;
