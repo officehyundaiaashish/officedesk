@@ -282,6 +282,12 @@
       animation: fadeUp 200ms ease;
     }
 
+    .view-letterheads-container.active {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -1469,7 +1475,7 @@ Battery OK</textarea></div>
       </div>
 
       <!-- LETTER HEADS -->
-      <div class="view" id="view-letterheads" style="height:100%;display:flex;flex-direction:column;">
+      <div class="view view-letterheads-container" id="view-letterheads">
         <iframe src="./letthead.html" style="width:100%;flex:1;border:none;"></iframe>
       </div>
     </main>
