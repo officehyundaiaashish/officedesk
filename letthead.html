@@ -967,24 +967,16 @@ function showStatus(m,t){statusEl.textContent=m;statusEl.className='status '+t;}
 function clearStatus(){statusEl.textContent='';statusEl.className='status';}
 
 // ─────────────────────────────────────────────────────────────────
-// THEME SYNC WITH PARENT WINDOW
+// THEME SYNC WITH PARENT WINDOW via postMessage
 // ─────────────────────────────────────────────────────────────────
-function syncTheme() {
-  try {
-    const parentTheme = window.parent.document.documentElement.getAttribute('data-theme');
-    if (parentTheme) {
-      document.documentElement.setAttribute('data-theme', parentTheme);
-    }
-  } catch(e) {
-    // Cross-origin access blocked, stay on default theme
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'theme') {
+    document.documentElement.setAttribute('data-theme', event.data.theme);
   }
-}
+});
 
-// Initial sync
-syncTheme();
-
-// Watch for theme changes in parent
-setInterval(syncTheme, 500);
+// Request initial theme from parent
+window.parent.postMessage({ type: 'requestTheme' }, '*');
 </script>
 </body>
 </html>
