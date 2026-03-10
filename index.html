@@ -1497,7 +1497,17 @@ Battery OK</textarea></div>
       buildFileInputs();
       document.querySelectorAll(".nav-item[data-view],.bnav-item[data-view]").forEach(b => b.addEventListener("click", () => switchView(b.dataset.view)));
       document.getElementById("themeBtn").addEventListener("click", toggleTheme);
-      applyTheme(localStorage.getItem("od-theme") || "light");
+      const theme = localStorage.getItem("od-theme") || "light";
+      applyTheme(theme);
+      
+      // Send initial theme to iframe when it loads
+      const iframe = document.querySelector('#view-letterheads iframe');
+      if (iframe) {
+        iframe.addEventListener('load', () => {
+          iframe.contentWindow.postMessage({ type: 'theme', theme: document.documentElement.getAttribute('data-theme') || 'light' }, '*');
+        });
+      }
+      
       // Restore saved form
       const restored = restoreFormData();
       restorePhotos();
@@ -1606,7 +1616,17 @@ Battery OK</textarea></div>
     }
     function switchView(name) { document.querySelectorAll(".view").forEach(v => v.classList.remove("active")); document.querySelectorAll(".nav-item[data-view],.bnav-item[data-view]").forEach(b => b.classList.remove("active")); const view = document.getElementById("view-" + name); if (view) view.classList.add("active"); document.querySelectorAll(`[data-view="${name}"]`).forEach(b => b.classList.add("active")); const labels = { dashboard: "Dashboard", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads" }; const bc = document.getElementById("bc"); if (bc) bc.textContent = labels[name] || name; }
     function toggleTheme() { const c = document.documentElement.getAttribute("data-theme"); applyTheme(c === "light" ? "dark" : "light"); }
-    function applyTheme(t) { document.documentElement.setAttribute("data-theme", t); localStorage.setItem("od-theme", t); document.getElementById("ico-moon").style.display = t === "dark" ? "none" : ""; document.getElementById("ico-sun").style.display = t === "dark" ? "" : "none"; }
+    function applyTheme(t) { 
+      document.documentElement.setAttribute("data-theme", t); 
+      localStorage.setItem("od-theme", t); 
+      document.getElementById("ico-moon").style.display = t === "dark" ? "none" : ""; 
+      document.getElementById("ico-sun").style.display = t === "dark" ? "" : "none"; 
+      // Send theme to iframe
+      const iframe = document.querySelector('#view-letterheads iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'theme', theme: t }, '*');
+      }
+    }
     let tt; function toast(msg, type) { const icons = { ok: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>', err: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', info: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' }; const el = document.getElementById("toast"); el.className = "show " + (type || "info"); el.innerHTML = (icons[type] || icons.info) + msg; clearTimeout(tt); tt = setTimeout(() => { el.className = ""; }, 3500); }
     function showLoader(s) { document.getElementById("loader").className = s ? "show" : ""; }
     /* ══ KEY CODE FORM ══════════════════════════════════════════════════════ */
