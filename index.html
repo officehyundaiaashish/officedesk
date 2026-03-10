@@ -912,6 +912,51 @@
       border-radius: 3px;
     }
 
+    /* BOTTOM NAV */
+    .bnav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      z-index: 200;
+      align-items: stretch;
+      transition: background var(--tr), border-color var(--tr);
+    }
+
+    .bnav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 500;
+      transition: color var(--tr);
+      padding: 8px 4px;
+    }
+
+    .bnav-item svg {
+      transition: color var(--tr);
+    }
+
+    .bnav-item.active {
+      color: var(--accent);
+    }
+
+    .bnav-item:active {
+      opacity: .7;
+    }
+
     @media(max-width:900px) {
       .fg.c3 {
         grid-template-columns: 1fr 1fr;
@@ -989,51 +1034,6 @@
       .layout {
         height: calc(100vh - var(--hh) - 60px);
       }
-    }
-
-    /* BOTTOM NAV */
-    .bnav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      z-index: 200;
-      align-items: stretch;
-      transition: background var(--tr), border-color var(--tr);
-    }
-
-    .bnav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      color: var(--text3);
-      font-family: var(--font);
-      font-size: 10px;
-      font-weight: 500;
-      transition: color var(--tr);
-      padding: 8px 4px;
-    }
-
-    .bnav-item svg {
-      transition: color var(--tr);
-    }
-
-    .bnav-item.active {
-      color: var(--accent);
-    }
-
-    .bnav-item:active {
-      opacity: .7;
     }
 
     .vrow {
@@ -1152,6 +1152,7 @@
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
           </svg>Letter Heads
+          <span class="nav-badge">DOCX</span>
         </button>
       </div>
       <div class="sb-ver">OfficeDesk v1.0 &nbsp;·&nbsp; Khanna Automart</div>
@@ -1469,7 +1470,7 @@ Battery OK</textarea></div>
 
       <!-- LETTER HEADS -->
       <div class="view" id="view-letterheads">
-        <iframe src="letterhead.html" style="width:100%;height:100%;border:none;"></iframe>
+        <iframe src="./letthead.html" style="width:100%;height:100%;border:none;"></iframe>
       </div>
     </main>
   </div>
