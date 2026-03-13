@@ -1622,23 +1622,32 @@ self.addEventListener('notificationclick', e => {
       border-color: #e05252;
       color: #fff;
     }
-    /* ── Backup / Restore Card ── */
+    /* ── Backup / Restore Cards (Side by Side) ── */
+    .backup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
     .backup-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 20px 24px;
-      margin-top: 20px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
       justify-content: space-between;
-      flex-wrap: wrap;
       gap: 16px;
       transition: background var(--tr), border-color var(--tr);
     }
-    .backup-info h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-    .backup-info p  { font-size: 12.5px; color: var(--text2); }
-    .backup-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .backup-info h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .backup-info p  { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+    .backup-btns { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
+    
+    @media(max-width: 800px) {
+      .backup-grid { grid-template-columns: 1fr; }
+    }
 
   </style>
 </head>
@@ -1858,33 +1867,48 @@ self.addEventListener('notificationclick', e => {
           </div>
         </div>
 
-        <div class="backup-card">
-          <div class="backup-info">
-            <h3>Backup &amp; Restore</h3>
-            <p>Save all form data from every tool to a single file. Restore anytime.</p>
+        <div class="backup-grid">
+          <div class="backup-card">
+            <div class="backup-info">
+              <h3>Local Backup</h3>
+              <p>Save all form data to a .json file on your device. Restore anytime, works completely offline.</p>
+            </div>
+            <div class="backup-btns">
+              <button class="btn btn-g" onclick="startBackup('local')" style="flex:1; justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Backup
+              </button>
+              <button class="btn btn-g" onclick="document.getElementById('restore-input').click()" style="flex:1; justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Restore
+              </button>
+              <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreLocal(event)">
+            </div>
           </div>
-          <div class="backup-btns">
-            <button class="btn btn-g" onclick="startBackup('local')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Local Backup
-            </button>
-            <button class="btn btn-g" onclick="document.getElementById('restore-input').click()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Local Restore
-            </button>
-            <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreLocal(event)">
 
-            <button class="btn btn-p" onclick="startBackup('cloud')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 13 12 10 15 13"/></svg>
-              Cloud Backup
-            </button>
-            <button class="btn btn-p" onclick="cloudRestore()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 14 12 17 15 14"/></svg>
-              Cloud Restore
-            </button>
+          <div class="backup-card">
+            <div class="backup-info">
+              <h3>Cloud Sync</h3>
+              <p>Securely sync data to Firebase. Only authorized dealer accounts can login and access this.</p>
+            </div>
+            <div class="backup-btns" style="flex-direction: column;">
+              <button id="googleSignInBtn" class="btn btn-g" onclick="googleSignIn()" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12c0-.8-.07-1.6-.2-2.3H12v4.6h5.8a4.8 4.8 0 01-2 3.1v2.6h3.2c1.9-1.8 3-4.4 3-6z"/><path d="M12 22c2.8 0 5.2-.9 6.9-2.5l-3.2-2.6c-1-.6-2.2-1-3.7-1-2.8 0-5.2 1.9-6 4.5l3.1 2.4c1.5 4.5 5.8 7.2 10.4 7.2z"/><path d="M6 14.5c-.2-.6-.3-1.3-.3-2.5s.1-1.9.3-2.5V6.9H2.8C2 8.5 1.5 10.2 1.5 12s.5 3.5 1.3 5.1l3.2-2.6z"/><path d="M12 5.4c1.5 0 2.9.5 4 1.5l3-3C17.2 1.9 14.8 1 12 1 7.4 1 3.2 3.7 1.6 8.2l3.2 2.6c.8-2.6 3.2-4.5 6-4.5z"/></svg>
+                <span id="googleSignInText">Sign in with Google</span>
+              </button>
+              <div style="display: flex; gap: 8px; width: 100%;">
+                <button id="cloudBackupBtn" class="btn btn-p" onclick="startBackup('cloud')" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 13 12 10 15 13"/></svg>
+                  Backup
+                </button>
+                <button id="cloudRestoreBtn" class="btn btn-p" onclick="cloudRestore()" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 14 12 17 15 14"/></svg>
+                  Restore
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
       <!-- ALCAZAR FORM -->
       <!-- ALCAZAR FORM -->
       <div class="view view-letterheads-container" id="view-alcazar">
@@ -2319,10 +2343,10 @@ self.addEventListener('notificationclick', e => {
 <script src="./ppt-template.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    // Your actual web app's Firebase configuration
+    // Your actual configuration
     const firebaseConfig = {
       apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
       authDomain: "officedesk-6c56e.firebaseapp.com",
@@ -2337,38 +2361,59 @@ self.addEventListener('notificationclick', e => {
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // The ONLY emails allowed to touch the database
     const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
 
-    async function ensureAuth() {
-      let user = auth.currentUser;
-      if (!user) {
-        toast("Authenticating with Google...", "info");
-        user = (await signInWithPopup(auth, provider)).user;
-      }
-      if (!allowedEmails.includes(user.email)) {
-        toast("Unauthorized Email ID. Access Denied.", "err");
-        await auth.signOut();
-        return null;
-      }
-      return user;
+    // Function to visually activate buttons when signed in
+    function enableCloudButtons() {
+      document.getElementById('googleSignInText').innerText = "Signed In ✓";
+      document.getElementById('googleSignInBtn').style.borderColor = 'var(--border)';
+      document.getElementById('googleSignInBtn').style.color = 'var(--text2)';
+      document.getElementById('cloudBackupBtn').disabled = false;
+      document.getElementById('cloudBackupBtn').style.opacity = '1';
+      document.getElementById('cloudBackupBtn').style.cursor = 'pointer';
+      document.getElementById('cloudRestoreBtn').disabled = false;
+      document.getElementById('cloudRestoreBtn').style.opacity = '1';
+      document.getElementById('cloudRestoreBtn').style.cursor = 'pointer';
     }
+
+    // Auto-check if user is already signed in on page refresh
+    onAuthStateChanged(auth, (user) => {
+      if (user && allowedEmails.includes(user.email)) {
+        enableCloudButtons();
+      }
+    });
+
+    window.googleSignIn = async function() {
+      showLoader(true);
+      try {
+        let user = auth.currentUser;
+        if (!user) {
+          user = (await signInWithPopup(auth, provider)).user;
+        }
+        if (!allowedEmails.includes(user.email)) {
+          toast("Unauthorized Email ID. Access Denied.", "err");
+          await auth.signOut();
+        } else {
+          toast("Signed in as " + user.email, "ok");
+          enableCloudButtons();
+        }
+      } catch (e) {
+        toast("Sign in failed. Try again.", "err");
+      }
+      showLoader(false);
+    };
 
     window.cloudBackup = async function(data) {
       showLoader(true);
       try {
-        const user = await ensureAuth();
-        if (!user) { showLoader(false); return; }
-
+        const user = auth.currentUser;
+        if (!user || !allowedEmails.includes(user.email)) return;
         await setDoc(doc(db, "backups", "master_database"), { 
-          data: data, 
-          timestamp: new Date().toISOString(),
-          lastUpdatedBy: user.email 
+          data: data, timestamp: new Date().toISOString(), lastUpdatedBy: user.email 
         });
         toast("Saved securely to Firebase Cloud", "ok");
       } catch (e) {
         toast("Database Access Denied", "err");
-        console.error(e);
       }
       showLoader(false);
     };
@@ -2376,8 +2421,8 @@ self.addEventListener('notificationclick', e => {
     window.cloudRestore = async function() {
       showLoader(true);
       try {
-        const user = await ensureAuth();
-        if (!user) { showLoader(false); return; }
+        const user = auth.currentUser;
+        if (!user || !allowedEmails.includes(user.email)) return;
 
         const docSnap = await getDoc(doc(db, "backups", "master_database"));
         if (docSnap.exists()) {
@@ -2398,7 +2443,6 @@ self.addEventListener('notificationclick', e => {
         }
       } catch (e) {
         toast("Database Access Denied", "err");
-        console.error(e);
       }
       showLoader(false);
     };
