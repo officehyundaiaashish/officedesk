@@ -1,0 +1,2507 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OfficeDesk</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMkM1RiIvPjxyZWN0IHg9IjQiIHk9IjciIHdpZHRoPSIyNCIgaGVpZ2h0PSIxNCIgcng9IjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTExIDIxaDEwTTE2IDIxdjQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=">
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMkM1RiIvPjxyZWN0IHg9IjQiIHk9IjciIHdpZHRoPSIyNCIgaGVpZ2h0PSIxNCIgcng9IjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTExIDIxaDEwTTE2IDIxdjQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=">
+  <meta name="theme-color" content="#ffffff" id="od-theme-color">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" id="od-apple-status">
+  <meta name="apple-mobile-web-app-title" content="OfficeDesk">
+  <script>
+    // Instant status bar fix — render se pehle theme apply karo
+    (function(){
+      const t = localStorage.getItem('od-theme') || 'light';
+      const tc = document.getElementById('od-theme-color');
+      const as = document.getElementById('od-apple-status');
+      if(t === 'dark'){
+        tc.content = '#111110';
+        as.content = 'black-translucent';
+        document.documentElement.setAttribute('data-theme','dark');
+      } else {
+        tc.content = '#ffffff';
+        as.content = 'default';
+      }
+    })();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <link rel="manifest" id="od-pwa-manifest">
+  <script>
+  (function () {
+
+    // ── 1. ICONS — Canvas se PNG generate (192 + 512) ──────────────────
+    function makeIcon(size) {
+      const c = document.createElement('canvas');
+      c.width = c.height = size;
+      const ctx = c.getContext('2d');
+      const r = size * 0.22;
+
+      // Navy rounded background
+      ctx.beginPath();
+      ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
+      ctx.quadraticCurveTo(size, 0, size, r);
+      ctx.lineTo(size, size - r);
+      ctx.quadraticCurveTo(size, size, size - r, size);
+      ctx.lineTo(r, size);
+      ctx.quadraticCurveTo(0, size, 0, size - r);
+      ctx.lineTo(0, r);
+      ctx.quadraticCurveTo(0, 0, r, 0);
+      ctx.closePath();
+      ctx.fillStyle = '#002C5F';
+      ctx.fill();
+
+      // White monitor icon
+      const pad = size * 0.18, w = size - pad * 2, s = w / 24;
+      ctx.save();
+      ctx.translate(pad, pad);
+      ctx.scale(s, s);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = size * 0.055 / s;
+      ctx.lineCap = ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.rect(2, 3, 20, 14);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(8, 21); ctx.lineTo(16, 21);
+      ctx.moveTo(12, 17); ctx.lineTo(12, 21);
+      ctx.stroke();
+      ctx.restore();
+      return c.toDataURL('image/png');
+    }
+
+    const icon192 = makeIcon(192);
+    const icon512 = makeIcon(512);
+
+    // Apple touch icon update
+    const atIcon = document.querySelector('link[rel="apple-touch-icon"]');
+    if (atIcon) atIcon.href = icon192;
+
+    // ── 2. MANIFEST — Blob inject ───────────────────────────────────────
+    const manifest = {
+      name: 'OfficeDesk',
+      short_name: 'OfficeDesk',
+      description: 'Dealership Utility.',
+      start_url: './index.html',
+      scope: './',
+      display: 'standalone',
+      orientation: 'portrait-primary',
+      theme_color: '#002C5F',
+      background_color: '#002C5F',
+      prefer_related_applications: false,
+      categories: ['productivity', 'business'],
+      icons: [
+        { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+      ]
+    };
+    const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    document.getElementById('od-pwa-manifest').href = URL.createObjectURL(mBlob);
+
+    // ── 3. SERVICE WORKER — Industry Standard ───────────────────────────
+    // HTML files  → Network Only (cache kabhi nahi)
+    // Assets      → Stale While Revalidate (fast + background update)
+    // Update mila → Auto page reload — user kuch na kare
+    const swCode = `
+const CACHE = 'officedesk-assets-v1';
+const STATIC_ASSETS = [
+  './ppt-template.js','./head.docx','./pwareg.xlsx','./etm.pptx','./agm.html','./agm.xlsx'
+];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => Promise.allSettled(STATIC_ASSETS.map(f => c.add(f).catch(() => {}))))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+  const isHTML = url.pathname.endsWith('.html') || url.pathname.endsWith('/') || url.pathname === '/';
+
+  if (isHTML) {
+    // HTML: Hamesha network se fresh — cache bilkul nahi
+    e.respondWith(
+      fetch(e.request, { cache: 'no-store' })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Assets: Cache se fast do, background mein update karo
+  e.respondWith(
+    caches.open(CACHE).then(cache =>
+      cache.match(e.request).then(cached => {
+        const net = fetch(e.request).then(res => {
+          if (res.ok) cache.put(e.request, res.clone());
+          return res;
+        }).catch(() => cached);
+        return cached || net;
+      })
+    )
+  );
+});
+
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (e.data && e.data.type === 'SHOW_WELCOME_NOTIF') {
+    self.registration.showNotification('OfficeDesk Install Ho Gayi!', {
+      body: 'Ab offline bhi kaam karegi. Kaam shuru karo!',
+      icon: e.data.icon || '', tag: 'od-welcome'
+    });
+  }
+});
+
+self.addEventListener('push', e => {
+  const d = e.data ? e.data.json() : {};
+  e.waitUntil(self.registration.showNotification(d.title || 'OfficeDesk', {
+    body: d.body || 'Nayi update available hai.',
+    icon: d.icon || '', vibrate: [200, 100, 200], data: { url: d.url || './' }
+  }));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      for (const c of list) { if ('focus' in c) return c.focus(); }
+      if (clients.openWindow) return clients.openWindow(e.notification.data.url || './');
+    })
+  );
+});
+`;
+
+    if ('serviceWorker' in navigator) {
+      const swBlob = new Blob([swCode], { type: 'text/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob), { scope: './' })
+        .then(reg => {
+          console.log('[OfficeDesk SW] Registered ✓');
+
+          // Har 30 sec mein check karo — koi update aaya kya
+          setInterval(() => reg.update(), 30000);
+
+          // Naya SW mila — activate karo
+          reg.addEventListener('updatefound', () => {
+            const newSW = reg.installing;
+            if (!newSW) return;
+            newSW.addEventListener('statechange', () => {
+              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                newSW.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+
+          // SW activate hone ke baad page silently reload
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) { refreshing = true; window.location.reload(); }
+          });
+        })
+        .catch(err => console.warn('[OfficeDesk SW] Error:', err));
+    }
+
+    // ── 4. NOTIFICATION PERMISSION (ask once only) ──────────────────────
+    window.addEventListener('load', () => {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default' && !localStorage.getItem('od-notif-asked')) {
+        setTimeout(() => {
+          localStorage.setItem('od-notif-asked', '1');
+          Notification.requestPermission().then(perm => {
+            if (perm === 'granted') {
+              navigator.serviceWorker.ready.then(reg => {
+                if (reg.active) reg.active.postMessage({ type: 'SHOW_WELCOME_NOTIF', icon: icon192 });
+              });
+            }
+          });
+        }, 2000);
+      }
+    });
+
+    // ── 5. A2HS — Auto install prompt (show ONCE only, never repeat) ────
+    let deferredPrompt = null;
+    const A2HS_KEY = 'od-a2hs-asked';
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      // If already asked before (any outcome), never show again
+      if (localStorage.getItem(A2HS_KEY)) return;
+
+      setTimeout(() => {
+        if (!deferredPrompt) return;
+        // Mark as asked immediately so even if user dismisses fast it won't repeat
+        localStorage.setItem(A2HS_KEY, '1');
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(c => {
+          console.log('[OfficeDesk A2HS]', c.outcome);
+          deferredPrompt = null;
+        });
+      }, 3000);
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('[OfficeDesk] App installed ✓');
+      localStorage.setItem(A2HS_KEY, '1');
+      deferredPrompt = null;
+    });
+
+  })();
+  </script>
+  <style>
+    :root {
+      --bg: #f4f4f2;
+      --surface: #ffffff;
+      --surface2: #f0f0ee;
+      --border: #e3e3df;
+      --text: #181816;
+      --text2: #6a6a67;
+      --text3: #9a9a97;
+      --accent: #002C5F;
+      --accent-h: #001F47;
+      --accent-s: #e8edf5;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 12px rgba(0, 0, 0, .04);
+      --shadow-lg: 0 4px 24px rgba(0, 0, 0, .09);
+      --font: "DM Sans", sans-serif;
+      --mono: "DM Mono", monospace;
+      --sw: 224px;
+      --hh: 56px;
+      --tr: 180ms ease;
+    }
+
+    [data-theme=dark] {
+      --bg: #111110;
+      --surface: #1c1c1a;
+      --surface2: #232321;
+      --border: #2d2d2b;
+      --text: #f0f0ee;
+      --text2: #888885;
+      --text3: #525250;
+      --accent: #4D8FD6;
+      --accent-h: #3A7BC8;
+      --accent-s: #001A3A;
+      --shadow: 0 1px 4px rgba(0, 0, 0, .3), 0 4px 16px rgba(0, 0, 0, .2);
+      --shadow-lg: 0 4px 28px rgba(0, 0, 0, .45);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 14px;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background var(--tr), color var(--tr);
+    }
+
+    .hdr {
+      height: var(--hh);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background var(--tr), border-color var(--tr);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -.3px;
+      color: var(--text);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hdr-sep {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .breadcrumb b {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .hdr-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tbtn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      transition: all var(--tr);
+    }
+
+    .tbtn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    .layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      height: calc(100vh - var(--hh));
+    }
+
+    .sidebar {
+      width: var(--sw);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 12px 0;
+      flex-shrink: 0;
+      overflow-y: auto;
+      transition: background var(--tr), border-color var(--tr);
+    }
+
+    .sb-sec {
+      padding: 0 10px;
+      margin-bottom: 2px;
+    }
+
+    .sb-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--text3);
+      padding: 0 6px;
+      margin-bottom: 4px;
+      margin-top: 10px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text2);
+      font-size: 13.5px;
+      font-weight: 400;
+      transition: all var(--tr);
+      user-select: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item svg {
+      flex-shrink: 0;
+      opacity: .7;
+    }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .nav-item:hover svg {
+      opacity: 1;
+    }
+
+    .nav-item.active {
+      background: var(--accent-s);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .nav-item.active svg {
+      opacity: 1;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 20px;
+    }
+
+    .nav-tag {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 500;
+    }
+
+    .sb-div {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 10px 8px;
+    }
+
+    .sb-ver {
+      padding: 8px 16px;
+      margin-top: auto;
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+      animation: fadeUp 200ms ease;
+    }
+
+    .view-letterheads-container.active {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px) }
+      to { opacity: 1; transform: translateY(0) }
+    }
+
+    .ph {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .ph-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -.4px;
+    }
+
+    .ph-sub {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      transition: background var(--tr), border-color var(--tr);
+    }
+
+    .card+.card {
+      margin-top: 16px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .card-title svg {
+      color: var(--accent);
+    }
+
+    .fg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+
+    .fg.c3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .s2 {
+      grid-column: span 2;
+    }
+
+    .s3 {
+      grid-column: span 3;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text2);
+    }
+
+    .field label .req {
+      color: var(--accent);
+      margin-left: 2px;
+    }
+
+    input[type=text],
+    input[type=number],
+    input[type=date],
+    input[type=tel],
+    select,
+    textarea {
+      font-family: var(--font);
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 11px;
+      outline: none;
+      transition: all var(--tr);
+      width: 100%;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px var(--accent-s);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text3);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.6;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a9a97' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+
+    .pg {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .pslot {
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      aspect-ratio: 4/3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all var(--tr);
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .pslot:hover {
+      border-color: var(--accent);
+      background: var(--accent-s);
+    }
+
+    .pslot.filled {
+      border-style: solid;
+      border-color: var(--accent);
+    }
+
+    .pslot img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .pslot .ov {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity var(--tr);
+      border-radius: 8px;
+    }
+
+    .pslot:hover .ov {
+      opacity: 1;
+    }
+
+    .slot-lbl {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text2);
+      text-align: center;
+      line-height: 1.3;
+      padding: 0 8px;
+      z-index: 1;
+    }
+
+    .slot-ico {
+      color: var(--text3);
+      z-index: 1;
+    }
+
+    .pslot.filled .slot-lbl,
+    .pslot.filled .slot-ico {
+      display: none;
+    }
+
+    .slot-rm {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 22px;
+      height: 22px;
+      background: #e05252;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity var(--tr);
+      z-index: 10;
+    }
+
+    .pslot.filled:hover .slot-rm {
+      opacity: 1;
+    }
+
+    input[type=file] {
+      display: none;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn {
+      font-family: var(--font);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: all var(--tr);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-p {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-p:hover {
+      background: var(--accent-h);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 44, 95, .25);
+    }
+
+    .btn-p:active {
+      transform: translateY(0);
+    }
+
+    .btn-g {
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+
+    .btn-g:hover {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--text3);
+    }
+
+    .btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 130px;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: var(--border);
+      transform: translateY(-50%);
+    }
+
+    .step.done:not(:last-child)::after {
+      background: var(--accent);
+    }
+
+    .step-n {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      flex-shrink: 0;
+      transition: all var(--tr);
+    }
+
+    .step.active .step-n,
+    .step.done .step-n {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .step-t {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .step.inactive .step-t {
+      color: var(--text3);
+    }
+
+    .step-s {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 1px;
+    }
+
+    .divhr {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 280ms ease;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 340px;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #toast.ok { background: var(--accent); color: #fff; }
+    #toast.err { background: #e05252; color: #fff; }
+    #toast.info { background: var(--text); color: var(--bg); }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .25);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+    }
+
+    #loader.show {
+      display: flex;
+    }
+
+    .ld-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .spin {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: sp 650ms linear infinite;
+    }
+
+    @keyframes sp { to { transform: rotate(360deg) } }
+
+    .ld-card p {
+      font-size: 13.5px;
+      color: var(--text2);
+      font-weight: 500;
+    }
+
+    .welcome {
+      background: linear-gradient(130deg, var(--accent-s) 0%, var(--surface) 55%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,44,95,0.08), transparent);
+      transform: translateX(-100%) skewX(-15deg);
+      pointer-events: none;
+      animation: shine 4s ease-in-out infinite;
+    }
+
+    [data-theme=dark] .welcome::after {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    .wt h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -.3px;
+    }
+
+    .wt p {
+      font-size: 13px;
+      color: var(--text2);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .wi {
+      width: 50px;
+      height: 50px;
+      background: var(--accent);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .sc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+    }
+
+    .sv {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.4px;
+    }
+
+    .sl {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+
+    .sd {
+      font-size: 11.5px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-top: 6px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 14px;
+    }
+
+    @keyframes shine {
+      0%   { transform: translateX(-100%) skewX(-15deg); }
+      100% { transform: translateX(250%) skewX(-15deg); }
+    }
+
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      aspect-ratio: 1 / 1;
+      transition: all var(--tr);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,44,95,0.10), transparent);
+      transform: translateX(-100%) skewX(-15deg);
+      pointer-events: none;
+    }
+
+    [data-theme=dark] .tool-card::after {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.13), transparent);
+    }
+
+    .tool-card.live::after {
+      animation: shine 3.6s ease-in-out infinite;
+    }
+
+    .tool-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+
+    .tool-card.live {
+      border-color: var(--accent);
+      background: var(--accent-s);
+    }
+
+    .tool-card.coming {
+      opacity: .65;
+      cursor: default;
+    }
+
+    .tool-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .tool-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .tool-desc {
+      font-size: 11px;
+      color: var(--text2);
+      line-height: 1.45;
+      display: none;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 20px;
+      width: fit-content;
+    }
+
+    .tag-live {
+      background: var(--accent-s);
+      color: var(--accent);
+    }
+
+    .tag-soon {
+      background: var(--surface2);
+      color: var(--text3);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: var(--accent-s);
+      color: var(--accent);
+    }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* BOTTOM NAV */
+    .bnav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      z-index: 200;
+      align-items: stretch;
+      transition: background var(--tr), border-color var(--tr);
+    }
+
+    .bnav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 500;
+      transition: color var(--tr);
+      padding: 8px 4px;
+    }
+
+    .bnav-item svg { transition: color var(--tr); }
+    .bnav-item.active { color: var(--accent); }
+    .bnav-item:active { opacity: .7; }
+
+    /* MORE BUTTON */
+    .bnav-more {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 8px 4px;
+      transition: color var(--tr);
+    }
+
+    .bnav-more:active { opacity: .7; }
+    .bnav-more.open { color: var(--accent); }
+
+    .more-arrow {
+      animation: bounceArrow 1.8s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateY(0); }
+      30%        { transform: translateY(-4px); }
+      60%        { transform: translateY(2px); }
+    }
+
+    /* DRAWER OVERLAY */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 300;
+      opacity: 0;
+      transition: opacity 280ms ease;
+    }
+
+    .drawer-overlay.open { display: block; }
+    .drawer-overlay.visible { opacity: 1; }
+
+    /* DRAWER PANEL */
+    .drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      z-index: 400;
+      transform: translateY(100%);
+      transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+    }
+
+    .drawer.open { transform: translateY(0); }
+
+    .drawer-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 12px auto 4px;
+    }
+
+    .drawer-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      padding: 6px 16px 8px;
+    }
+
+    .drawer-items {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 0 10px 6px;
+      gap: 6px;
+      overflow-y: auto;
+      max-height: 260px;
+    }
+
+    .drawer-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text2);
+      width: 100%;
+      text-align: center;
+      transition: background var(--tr), color var(--tr), border-color var(--tr);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .drawer-item::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -60%;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform: skewX(-15deg);
+      animation: drawerShine 3.2s ease-in-out infinite;
+    }
+
+    [data-theme=dark] .drawer-item::after {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+    }
+
+    @keyframes drawerShine {
+      0%   { left: -60%; }
+      50%  { left: 120%; }
+      100% { left: 120%; }
+    }
+
+    .drawer-item:active { background: var(--accent-s); border-color: var(--accent); }
+    .drawer-item.active { color: var(--accent); background: var(--accent-s); border-color: var(--accent); }
+
+    .drawer-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background var(--tr);
+    }
+
+    .drawer-item.active .drawer-item-icon { background: var(--accent-s); color: var(--accent); }
+    .drawer-item-label { font-size: 10.5px; font-weight: 500; line-height: 1.2; }
+    .drawer-item-badge { background: var(--accent); color: #fff; font-size: 8.5px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+
+    /* CLOSE ARROW AT BOTTOM OF DRAWER */
+    .drawer-close-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 0 12px;
+    }
+
+    .drawer-close-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 6px 18px;
+      border-radius: 20px;
+      transition: color var(--tr), background var(--tr);
+    }
+
+    .drawer-close-btn:active { background: var(--surface2); }
+    .close-arrow { animation: bounceDown 1.8s ease-in-out infinite; display: flex; align-items: center; justify-content: center; }
+
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      30%        { transform: translateY(4px); }
+      60%        { transform: translateY(-2px); }
+    }
+
+    @media(max-width:900px) {
+      .fg.c3 { grid-template-columns: 1fr 1fr; }
+      .pg { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media(max-width:640px) {
+      .sidebar { display: none; }
+      .bnav { display: flex; }
+      .main { padding: 16px 14px 88px; }
+      .tools-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .tool-card { padding: 12px; }
+      .fg, .fg.c3 { grid-template-columns: 1fr; }
+      .fg .s2, .fg .s3 { grid-column: 1; }
+      .stepper { display: none; }
+      .hdr-sep, .breadcrumb { display: none; }
+      .ph { flex-direction: column; gap: 8px; margin-bottom: 16px; }
+      .ph .chip { align-self: flex-start; }
+      .welcome { flex-direction: column; padding: 18px; }
+      .pg { grid-template-columns: repeat(2, 1fr); }
+      .btn-row { flex-direction: column; align-items: stretch; }
+      .btn-row .btn { justify-content: center; }
+      .card { padding: 16px; }
+      .layout { height: calc(100vh - var(--hh) - 60px); }
+    }
+
+    .vrow {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .vrow-num { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 10px; letter-spacing: .3px; }
+
+    .vrow-rm {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: none;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text3);
+      transition: all var(--tr);
+    }
+
+    .vrow-rm:hover { background: #e05252; border-color: #e05252; color: #fff; }
+
+    /* ── Backup / Restore Cards (Side by Side) ── */
+    .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+    .backup-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 20px 24px; display: flex; flex-direction: column; align-items: flex-start;
+      justify-content: space-between; gap: 16px; transition: background var(--tr), border-color var(--tr);
+    }
+    .backup-info h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .backup-info p  { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+    .backup-btns { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
+    
+    @media(max-width: 800px) { .backup-grid { grid-template-columns: 1fr; } }
+
+    /* ── Profile Badge & Modal ── */
+    .user-badge { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; cursor: pointer; transition: all var(--tr); position: relative; overflow: hidden; margin-right: 8px; }
+    .user-badge::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-15deg); animation: badgeShine 3s infinite; pointer-events: none; }
+    [data-theme=dark] .user-badge::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); }
+    @keyframes badgeShine { 0% { left: -100%; } 20%, 100% { left: 200%; } }
+    .user-badge:hover { border-color: var(--accent); background: var(--surface); }
+    .ub-av { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: bold; object-fit: cover; }
+    .ub-nm { font-size: 12px; font-weight: 600; color: var(--text); }
+    
+    .prof-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: 16px; z-index: 1000; width: 320px; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: all 0.2s ease; }
+    .prof-modal.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+
+    /* ── Custom Confirm Modal ── */
+    .confirm-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: 16px; z-index: 1100; width: 300px; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: all 0.2s ease; text-align: center; }
+    .confirm-modal.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+    .confirm-icon { width: 48px; height: 48px; border-radius: 50%; background: #fee2e2; color: #e05252; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    [data-theme=dark] .confirm-icon { background: rgba(224, 82, 82, 0.15); }
+    .confirm-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .confirm-desc { font-size: 12.5px; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
+
+  </style>
+</head>
+
+<body>
+  <header class="hdr">
+    <a class="logo" href="#" onclick="switchView('dashboard'); return false;">
+      <div class="logo-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff"
+          stroke-width="2.2">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8M12 17v4" />
+        </svg></div>
+      OfficeDesk
+    </a>
+    <div class="hdr-sep"></div>
+    <div class="breadcrumb"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg><b id="bc">Dashboard</b></div>
+    <div class="hdr-right">
+      <div class="user-badge" onclick="openProfile()">
+        <img id="ub-img" class="ub-av" style="display:none">
+        <div id="ub-txt" class="ub-av">A</div>
+        <span id="ub-name" class="ub-nm">User</span>
+      </div>
+
+      <button class="tbtn" id="themeBtn" title="Toggle theme">
+        <svg id="ico-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+        </svg>
+        <svg id="ico-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          style="display:none">
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      </button>
+    </div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sb-sec">
+        <div class="sb-lbl">Main</div>
+        <button class="nav-item active" data-view="dashboard">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>Dashboard
+        </button>
+      </div>
+      <div class="sb-div"></div>
+      <div class="sb-sec">
+        <div class="sb-lbl">Warranty Tools</div>
+        <button class="nav-item" data-view="alcazar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>Alcazar Form
+          <span class="nav-badge">PPT</span>
+        </button>
+        <button class="nav-item" data-view="keycode">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0110 0v4" />
+          </svg>Key Code Form
+          <span class="nav-badge">XLS</span>
+        </button>
+        <button class="nav-item" data-view="letterheads">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>Letter Heads
+          <span class="nav-badge">DOCX</span>
+        </button>
+        <button class="nav-item" data-view="pwareg">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="8" y1="13" x2="16" y2="13"/>
+            <line x1="8" y1="17" x2="13" y2="17"/>
+          </svg>PWA Regular
+          <span class="nav-badge">XLSX</span>
+        </button>
+        <button class="nav-item" data-view="etm">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>ETM Form
+          <span class="nav-badge">PPT</span>
+        </button>
+        <button class="nav-item" data-view="agm">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <line x1="8" y1="10" x2="16" y2="10"/>
+          </svg>AGM Form
+          <span class="nav-badge">XLSX</span>
+        </button>
+      </div>
+      <div class="sb-ver">OfficeDesk &nbsp;·&nbsp; Aashish Giri H</div>
+    </aside>
+    <main class="main">
+      <div class="view active" id="view-dashboard">
+        <div class="welcome">
+          <div class="wt">
+            <h2>OfficeDesk — Dealership Utility Suite</h2>
+            <p>Browser-based tools for the generating warranty PPTs, service reports and
+              more.</p>
+          </div>
+          <div class="wi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg></div>
+        </div>
+
+        <div class="ph">
+          <div class="ph-title">Warranty Tools</div>
+        </div>
+
+        <div class="tools-grid">
+          <div class="tool-card live" onclick="switchView('alcazar')">
+            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name">Alcazar Form</div>
+              <span class="tag tag-live" style="margin-top:5px">PPT</span>
+            </div>
+          </div>
+
+          <div class="tool-card live" onclick="switchView('keycode')">
+            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0110 0v4"/>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name">Key Code Form</div>
+              <span class="tag tag-live" style="margin-top:5px">XLS</span>
+            </div>
+          </div>
+
+          <div class="tool-card live" onclick="switchView('letterheads')">
+            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name">Letter Heads</div>
+              <span class="tag tag-live" style="margin-top:5px">DOCX</span>
+            </div>
+          </div>
+
+          <div class="tool-card live" onclick="switchView('pwareg')">
+            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name">PWA Regular</div>
+              <span class="tag tag-live" style="margin-top:5px">XLSX</span>
+            </div>
+          </div>
+
+          <div class="tool-card live" onclick="switchView('etm')">
+            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name">ETM Form</div>
+              <span class="tag tag-live" style="margin-top:5px">PPT</span>
+            </div>
+          </div>
+
+          <div class="tool-card live" onclick="switchView('agm')">
+            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <line x1="8" y1="10" x2="16" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name">AGM Form</div>
+              <span class="tag tag-live" style="margin-top:5px">XLSX</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="backup-grid">
+          <div class="backup-card">
+            <div class="backup-info">
+              <h3>Local Backup</h3>
+              <p>Save all form data to a .json file on your device. Restore anytime, works completely offline.</p>
+            </div>
+            <div class="backup-btns">
+              <button class="btn btn-g" onclick="startBackup('local')" style="flex:1; justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Backup
+              </button>
+              <button class="btn btn-g" onclick="document.getElementById('restore-input').click()" style="flex:1; justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Restore
+              </button>
+              <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreLocal(event)">
+            </div>
+          </div>
+
+          <div class="backup-card">
+            <div class="backup-info">
+              <h3>Cloud Sync</h3>
+              <p>Securely sync data to Google. Only authorized accounts can login and access this.</p>
+            </div>
+            <div class="backup-btns" style="flex-direction: column;">
+              <button id="googleSignInBtn" class="btn btn-g" onclick="window.googleSignIn()" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                <span id="googleSignInText">Sign in with Google</span>
+              </button>
+              <div style="display: flex; gap: 8px; width: 100%;">
+                <button id="cloudBackupBtn" class="btn btn-p" onclick="startBackup('cloud')" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 13 12 10 15 13"/></svg>
+                  Backup
+                </button>
+                <button id="cloudRestoreBtn" class="btn btn-p" onclick="window.cloudRestore()" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 14 12 17 15 14"/></svg>
+                  Restore
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="view view-letterheads-container" id="view-alcazar">
+        <iframe id="alcazar-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
+      </div>
+      <div class="view view-letterheads-container" id="view-keycode">
+        <iframe id="keycode-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
+      </div>
+      <div class="view view-letterheads-container" id="view-letterheads">
+        <iframe id="letterheads-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
+      </div>
+      <div class="view view-letterheads-container" id="view-pwareg">
+        <iframe id="pwareg-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
+      </div>
+      <div class="view view-letterheads-container" id="view-etm">
+        <iframe id="etm-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
+      </div>
+      <div class="view view-letterheads-container" id="view-agm">
+        <iframe id="agm-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
+      </div>
+
+    </main>
+  </div>
+
+  <div id="loader">
+    <div class="ld-card">
+      <div class="spin"></div>
+      <p>Processing...</p>
+    </div>
+  </div>
+  <div id="toast"></div>
+  
+  <div class="drawer-overlay" id="profOverlay" onclick="closeProfile()"></div>
+  <div class="prof-modal" id="profModal">
+    <div class="card-title">Profile Settings</div>
+    <div class="field" style="margin-bottom:16px">
+      <label>Nickname</label>
+      <input type="text" id="p-nameInput" placeholder="E.g. Aashish">
+    </div>
+    <div class="field" style="margin-bottom:20px;">
+      <label>Avatar (Optional)</label>
+      <div style="display:flex; gap:16px; margin-top:8px; align-items:center;">
+        <div class="pslot" onclick="document.getElementById('p-avInput').click()" style="width:64px; height:64px; border-radius:50%; flex-shrink:0;" title="Upload your own">
+          <img id="p-avPreview" style="display:none; border-radius:50%; width:100%; height:100%; object-fit:cover;">
+          <div class="slot-ico" id="p-avIcon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+        </div>
+        
+        <div style="height:40px; width:1px; background:var(--border);"></div>
+        
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=e8edf5" style="width:48px; height:48px; border-radius:50%; cursor:pointer; border:1px solid var(--border);" onclick="document.getElementById('p-avPreview').src=this.src; document.getElementById('p-avPreview').style.display='block'; document.getElementById('p-avIcon').style.display='none';" title="Male Avatar">
+        
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&backgroundColor=e8edf5" style="width:48px; height:48px; border-radius:50%; cursor:pointer; border:1px solid var(--border);" onclick="document.getElementById('p-avPreview').src=this.src; document.getElementById('p-avPreview').style.display='block'; document.getElementById('p-avIcon').style.display='none';" title="Female Avatar">
+      </div>
+      <input type="file" id="p-avInput" accept="image/*" style="display:none" onchange="previewAvatar(event)">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-p" style="flex:1; justify-content:center" onclick="saveProfile()">Save</button>
+      <button class="btn btn-g" style="flex:1; justify-content:center" onclick="closeProfile()">Cancel</button>
+    </div>
+    <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: none;" id="p-signOutDiv">
+      <button class="btn btn-g" style="width: 100%; justify-content:center; color: #e05252; border-color: #e05252;" onclick="window.showSignOutConfirm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign out of Cloud
+      </button>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" id="confirmOverlay" onclick="window.closeConfirm()"></div>
+  <div class="confirm-modal" id="confirmModal">
+    <div class="confirm-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </div>
+    <div class="confirm-title">Sign Out</div>
+    <div class="confirm-desc">Are you sure you want to sign out? Your local tools will remain safe.</div>
+    <div class="btn-row" style="margin-top: 0; display:flex; gap:10px;">
+      <button class="btn btn-g" style="flex:1; justify-content:center; color: #e05252; border-color: #e05252;" onclick="window.executeSignOut()">Sign Out</button>
+      <button class="btn btn-g" style="flex:1; justify-content:center" onclick="window.closeConfirm()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" id="restoreOverlay" onclick="window.closeRestoreConfirm()"></div>
+  <div class="confirm-modal" id="restoreModal">
+    <div class="confirm-icon" style="background:var(--accent-s); color:var(--accent);">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </div>
+    <div class="confirm-title">Overwrite Data?</div>
+    <div class="confirm-desc">This will replace your current form data with the backup. This action cannot be undone.</div>
+    <div class="btn-row" style="margin-top: 0; display:flex; gap:10px;">
+      <button class="btn btn-p" style="flex:1; justify-content:center;" onclick="window.executeRestore()">Overwrite</button>
+      <button class="btn btn-g" style="flex:1; justify-content:center" onclick="window.closeRestoreConfirm()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="navDrawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-title">All Tools</div>
+    <div class="drawer-items">
+      <button class="drawer-item" data-view="dashboard" onclick="drawerNav('dashboard')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <div class="drawer-item-label">Home</div>
+        <span class="drawer-item-badge">—</span>
+      </button>
+
+      <button class="drawer-item" data-view="alcazar" onclick="drawerNav('alcazar')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <div class="drawer-item-label">Alcazar</div>
+        <span class="drawer-item-badge">PPT</span>
+      </button>
+
+      <button class="drawer-item" data-view="keycode" onclick="drawerNav('keycode')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <div class="drawer-item-label">Key Code</div>
+        <span class="drawer-item-badge">XLS</span>
+      </button>
+
+      <button class="drawer-item" data-view="letterheads" onclick="drawerNav('letterheads')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <div class="drawer-item-label">Letter Heads</div>
+        <span class="drawer-item-badge">DOCX</span>
+      </button>
+
+      <button class="drawer-item" data-view="pwareg" onclick="drawerNav('pwareg')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>
+          </svg>
+        </div>
+        <div class="drawer-item-label">PWA Regular</div>
+        <span class="drawer-item-badge">XLSX</span>
+      </button>
+
+      <button class="drawer-item" data-view="etm" onclick="drawerNav('etm')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <div class="drawer-item-label">ETM Form</div>
+        <span class="drawer-item-badge">PPT</span>
+      </button>
+
+      <button class="drawer-item" data-view="agm" onclick="drawerNav('agm')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            <line x1="8" y1="10" x2="16" y2="10"/>
+          </svg>
+        </div>
+        <div class="drawer-item-label">AGM Form</div>
+        <span class="drawer-item-badge">XLSX</span>
+      </button>
+    </div>
+
+    <div class="drawer-close-row">
+      <button class="drawer-close-btn" onclick="closeDrawer()">
+        <div class="close-arrow">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        Close
+      </button>
+    </div>
+  </div>
+
+  <nav class="bnav" id="mainBnav">
+    <button class="bnav-item active" data-view="dashboard">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" />
+        <rect x="14" y="3" width="7" height="7" />
+        <rect x="14" y="14" width="7" height="7" />
+        <rect x="3" y="14" width="7" height="7" />
+      </svg>
+      Home
+    </button>
+    <button class="bnav-item" data-view="alcazar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+      </svg>
+      Alcazar
+    </button>
+    <button class="bnav-item" data-view="keycode">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" />
+        <path d="M7 11V7a5 5 0 0110 0v4" />
+      </svg>
+      Key Code
+    </button>
+    <button class="bnav-item" data-view="letterheads">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      Letter Heads
+    </button>
+    <button class="bnav-more" id="bnavMore" onclick="toggleDrawer()">
+      <div class="more-arrow" id="moreArrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <polyline points="18 15 12 9 6 15"/>
+        </svg>
+      </div>
+      More
+    </button>
+  </nav>
+
+  <script>
+    // IFRAME NO-CACHE LOADER
+    (function () {
+      const ts = Date.now();
+      const iframes = [
+        { id: 'alcazar-iframe',     src: './alcazar.html'  },
+        { id: 'keycode-iframe',     src: './keycode.html'  },
+        { id: 'letterheads-iframe', src: './letthead.html' },
+        { id: 'pwareg-iframe',      src: './pwareg.html'   },
+        { id: 'etm-iframe',         src: './etm.html'      },
+        { id: 'agm-iframe',         src: './agm.html'      }
+      ];
+      iframes.forEach(function (item) {
+        const el = document.getElementById(item.id);
+        if (el) el.src = item.src + '?nc=' + ts;
+      });
+    })();
+
+    // MAIN NAVIGATION & THEME LOGIC
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".nav-item[data-view],.bnav-item[data-view]").forEach(b => b.addEventListener("click", () => switchView(b.dataset.view)));
+      document.getElementById("themeBtn").addEventListener("click", toggleTheme);
+      const theme = localStorage.getItem("od-theme") || "light";
+      applyTheme(theme);
+      
+      ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
+        const iframe = document.getElementById(id);
+        if (iframe) {
+          const sendTheme = () => {
+            try {
+              if (iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'theme', theme: document.documentElement.getAttribute('data-theme') || 'light' }, '*');
+            } catch(e) {}
+          };
+          iframe.addEventListener('load', sendTheme);
+          sendTheme();
+        }
+      });
+    });
+
+    function switchView(v) {
+      document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-item,.bnav-item").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".drawer-item").forEach(el => el.classList.remove("active"));
+      
+      const view = document.getElementById("view-" + v);
+      if (view) view.classList.add("active");
+      
+      document.querySelectorAll(`.nav-item[data-view="${v}"],.bnav-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
+      document.querySelectorAll(`.drawer-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
+      
+      const labels = { dashboard: "Dashboard", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads", pwareg: "PWA Regular", etm: "ETM Form", agm: "AGM Form" }; 
+      document.title = "OfficeDesk : " + (labels[v] || "Utility Suite");
+      
+      const bc = document.getElementById("bc");
+      if(bc) bc.innerText = labels[v] || "Dashboard";
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme") || "light";
+      applyTheme(current === "light" ? "dark" : "light");
+    }
+
+    function applyTheme(t) { 
+      document.documentElement.setAttribute("data-theme", t); 
+      localStorage.setItem("od-theme", t); 
+      document.getElementById("ico-moon").style.display = t === "dark" ? "none" : ""; 
+      document.getElementById("ico-sun").style.display = t === "dark" ? "" : "none"; 
+      const tc = document.getElementById('od-theme-color');
+      const as = document.getElementById('od-apple-status');
+      if(tc) tc.content = t === 'dark' ? '#111110' : '#ffffff';
+      if(as) as.content = t === 'dark' ? 'black-translucent' : 'default';
+      ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
+        const iframe = document.getElementById(id);
+        try {
+          if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'theme', theme: t }, '*');
+        } catch(e) {}
+      });
+    }
+
+    let tt; 
+    function toast(msg, type) { 
+      const icons = { 
+        ok: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>', 
+        err: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', 
+        info: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' 
+      }; 
+      const el = document.getElementById("toast"); 
+      el.className = "show " + (type || "info"); 
+      el.innerHTML = (icons[type] || icons.info) + msg; 
+      clearTimeout(tt); 
+      tt = setTimeout(() => { el.className = ""; }, 3500); 
+    }
+
+    // SAFE PROFILE LOGIC
+    let currentProfile = { name: 'User', avatar: '' };
+    try {
+      const saved = localStorage.getItem('od-profile');
+      if (saved) currentProfile = JSON.parse(saved);
+    } catch(e) {
+      console.warn("Corrupted profile data cleared.");
+      localStorage.removeItem('od-profile');
+    }
+    
+    function renderProfile() {
+      document.getElementById('ub-name').innerText = currentProfile.name || 'User';
+      if (currentProfile.avatar) {
+        document.getElementById('ub-img').src = currentProfile.avatar;
+        document.getElementById('ub-img').style.display = 'block';
+        document.getElementById('ub-txt').style.display = 'none';
+      } else {
+        document.getElementById('ub-img').style.display = 'none';
+        document.getElementById('ub-txt').style.display = 'flex';
+        document.getElementById('ub-txt').innerText = (currentProfile.name || 'U').charAt(0).toUpperCase();
+      }
+    }
+    renderProfile();
+
+    function openProfile() {
+      document.getElementById('p-nameInput').value = currentProfile.name || '';
+      if (currentProfile.avatar) {
+        document.getElementById('p-avPreview').src = currentProfile.avatar;
+        document.getElementById('p-avPreview').style.display = 'block';
+        document.getElementById('p-avIcon').style.display = 'none';
+      } else {
+        document.getElementById('p-avPreview').style.display = 'none';
+        document.getElementById('p-avIcon').style.display = 'flex';
+      }
+      document.getElementById('profOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('profOverlay').classList.add('visible'), 10);
+      document.getElementById('profModal').classList.add('show');
+    }
+
+    function closeProfile() {
+      document.getElementById('profOverlay').classList.remove('visible');
+      document.getElementById('profModal').classList.remove('show');
+      setTimeout(() => document.getElementById('profOverlay').classList.remove('open'), 300);
+    }
+
+    function previewAvatar(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('p-avPreview').src = ev.target.result;
+        document.getElementById('p-avPreview').style.display = 'block';
+        document.getElementById('p-avIcon').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveProfile() {
+      const n = document.getElementById('p-nameInput').value.trim();
+      const a = document.getElementById('p-avPreview').src;
+      currentProfile.name = n || 'User';
+      currentProfile.avatar = document.getElementById('p-avPreview').style.display === 'block' ? a : '';
+      localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+      renderProfile();
+      closeProfile();
+      toast('Profile updated', 'ok');
+    }
+
+    window.masterRestore = function(data) {
+      if (data['user_profile']) {
+        currentProfile = data['user_profile'];
+        localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+        renderProfile();
+      }
+      const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
+      const TOOL_NAMES = { 'alcazar-iframe': 'alcazar', 'keycode-iframe': 'keycode', 'letterheads-iframe': 'letterheads', 'pwareg-iframe': 'pwareg', 'etm-iframe': 'etm', 'agm-iframe': 'agm' };
+      IFRAME_IDS.forEach(id => {
+        const iframe = document.getElementById(id);
+        const tool = TOOL_NAMES[id];
+        if (iframe && iframe.contentWindow && data[tool]) {
+          try {
+            iframe.contentWindow.postMessage({ type: 'restore-data', tool: tool, data: data[tool] }, '*');
+          } catch(e) {}
+        }
+      });
+    };
+
+    const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
+    let currentBackupTarget = 'local';
+
+    function startBackup(target) {
+      currentBackupTarget = target;
+      const collected = {};
+      let pending = IFRAME_IDS.length;
+      const timeout = setTimeout(() => routeBackup(collected), 3000);
+
+      const handler = (e) => {
+        if (e.data && e.data.type === 'backup-response') {
+          collected[e.data.tool] = e.data.data;
+          pending--;
+          if (pending <= 0) {
+            clearTimeout(timeout);
+            window.removeEventListener('message', handler);
+            routeBackup(collected);
+          }
+        }
+      };
+      window.addEventListener('message', handler);
+      IFRAME_IDS.forEach(id => {
+        const iframe = document.getElementById(id);
+        if (iframe && iframe.contentWindow) {
+          try { iframe.contentWindow.postMessage({ type: 'backup-request' }, '*'); } catch(err){ pending--; }
+        } else {
+          pending--;
+        }
+      });
+      if (pending <= 0) {
+        clearTimeout(timeout);
+        window.removeEventListener('message', handler);
+        routeBackup(collected);
+      }
+    }
+
+    function routeBackup(data) {
+      data['user_profile'] = currentProfile;
+      if (currentBackupTarget === 'cloud') {
+        if (window.cloudBackup) window.cloudBackup(data);
+        else toast('Cloud sync is loading...', 'info');
+      } else {
+        finishLocalBackup(data);
+      }
+    }
+
+    function finishLocalBackup(data) {
+      const payload = { version: 2, timestamp: new Date().toISOString(), data };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      const d = new Date();
+      const stamp = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+      a.download = `officedesk_backup_${stamp}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast('Local backup downloaded', 'ok');
+    }
+
+    let pendingRestoreData = null;
+    let pendingRestoreSource = '';
+
+    window.promptRestore = function(data, source) {
+      pendingRestoreData = data;
+      pendingRestoreSource = source;
+      document.getElementById('restoreOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('restoreOverlay').classList.add('visible'), 10);
+      document.getElementById('restoreModal').classList.add('show');
+    };
+
+    window.closeRestoreConfirm = function() {
+      document.getElementById('restoreOverlay').classList.remove('visible');
+      document.getElementById('restoreModal').classList.remove('show');
+      setTimeout(() => document.getElementById('restoreOverlay').classList.remove('open'), 300);
+      pendingRestoreData = null;
+    };
+
+    window.executeRestore = function() {
+      if (pendingRestoreData) {
+        window.masterRestore(pendingRestoreData);
+        toast('Data restored from ' + pendingRestoreSource, 'ok');
+      }
+      window.closeRestoreConfirm();
+    };
+
+    function restoreLocal(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const payload = JSON.parse(e.target.result);
+          if (!payload.data) throw new Error('Invalid');
+          window.promptRestore(payload.data, 'Local Backup');
+        } catch (err) {
+          toast('Error reading backup file', 'err');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    function showLoader(s) { 
+      document.getElementById("loader").className = s ? "show" : ""; 
+    }
+
+    // ── Drawer logic ──
+    function toggleDrawer() {
+      const overlay = document.getElementById('drawerOverlay');
+      const drawer = document.getElementById('navDrawer');
+      const moreBtn = document.getElementById('bnavMore');
+      const arrow = document.getElementById('moreArrow');
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) {
+        closeDrawer();
+      } else {
+        overlay.classList.add('open');
+        requestAnimationFrame(() => overlay.classList.add('visible'));
+        drawer.classList.add('open');
+        moreBtn.classList.add('open');
+        arrow.style.animation = 'none';
+        arrow.style.transform = 'rotate(180deg)';
+        arrow.style.transition = 'transform 300ms ease';
+      }
+    }
+
+    function closeDrawer() {
+      const overlay = document.getElementById('drawerOverlay');
+      const drawer = document.getElementById('navDrawer');
+      const moreBtn = document.getElementById('bnavMore');
+      const arrow = document.getElementById('moreArrow');
+      overlay.classList.remove('visible');
+      drawer.classList.remove('open');
+      moreBtn.classList.remove('open');
+      arrow.style.transform = 'rotate(0deg)';
+      setTimeout(() => {
+        overlay.classList.remove('open');
+        arrow.style.animation = 'bounceArrow 1.8s ease-in-out infinite';
+        arrow.style.transition = '';
+      }, 320);
+    }
+
+    function drawerNav(v) {
+      closeDrawer();
+      setTimeout(() => switchView(v), 80);
+    }
+
+    (function() {
+      let startY = 0;
+      const bnav = document.getElementById('mainBnav');
+      if(bnav) {
+        bnav.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+        bnav.addEventListener('touchend', e => {
+          const diff = startY - e.changedTouches[0].clientY;
+          if (diff > 30) toggleDrawer();
+        }, { passive: true });
+      }
+    })();
+  </script>
+
+  <script src="./ppt-template.js"></script>
+  
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
+      authDomain: "officedesk-6c56e.firebaseapp.com",
+      projectId: "officedesk-6c56e",
+      storageBucket: "officedesk-6c56e.firebasestorage.app",
+      messagingSenderId: "342843064222",
+      appId: "1:342843064222:web:b4e81090796664bf39608f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
+
+    function enableCloudButtons(email) {
+      document.getElementById('googleSignInText').innerText = email;
+      document.getElementById('googleSignInBtn').style.borderColor = 'var(--border)';
+      document.getElementById('googleSignInBtn').style.color = 'var(--text2)';
+      
+      document.getElementById('cloudBackupBtn').disabled = false;
+      document.getElementById('cloudBackupBtn').style.opacity = '1';
+      document.getElementById('cloudBackupBtn').style.cursor = 'pointer';
+      
+      document.getElementById('cloudRestoreBtn').disabled = false;
+      document.getElementById('cloudRestoreBtn').style.opacity = '1';
+      document.getElementById('cloudRestoreBtn').style.cursor = 'pointer';
+
+      const signOutDiv = document.getElementById('p-signOutDiv');
+      if (signOutDiv) signOutDiv.style.display = 'block';
+    }
+
+    function disableCloudButtons() {
+      document.getElementById('googleSignInText').innerText = "Sign in with Google";
+      document.getElementById('googleSignInBtn').style.borderColor = '';
+      document.getElementById('googleSignInBtn').style.color = '';
+      
+      document.getElementById('cloudBackupBtn').disabled = true;
+      document.getElementById('cloudBackupBtn').style.opacity = '0.4';
+      document.getElementById('cloudBackupBtn').style.cursor = 'not-allowed';
+      
+      document.getElementById('cloudRestoreBtn').disabled = true;
+      document.getElementById('cloudRestoreBtn').style.opacity = '0.4';
+      document.getElementById('cloudRestoreBtn').style.cursor = 'not-allowed';
+
+      const signOutDiv = document.getElementById('p-signOutDiv');
+      if (signOutDiv) signOutDiv.style.display = 'none';
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && allowedEmails.includes(user.email)) {
+        enableCloudButtons(user.email);
+      } else {
+        disableCloudButtons();
+      }
+    });
+
+    window.showSignOutConfirm = function() {
+      if (typeof closeProfile === "function") closeProfile(); 
+      document.getElementById('confirmOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('confirmOverlay').classList.add('visible'), 10);
+      document.getElementById('confirmModal').classList.add('show');
+    };
+
+    window.closeConfirm = function() {
+      document.getElementById('confirmOverlay').classList.remove('visible');
+      document.getElementById('confirmModal').classList.remove('show');
+      setTimeout(() => document.getElementById('confirmOverlay').classList.remove('open'), 300);
+    };
+
+    window.executeSignOut = async function() {
+      window.closeConfirm();
+      showLoader(true);
+      try {
+        await signOut(auth);
+        toast("Signed out successfully", "info");
+        disableCloudButtons();
+        
+        currentProfile = { name: 'User', avatar: '' };
+        localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+        if (typeof renderProfile === 'function') renderProfile();
+        
+      } catch (e) {
+        toast("Error signing out", "err");
+      }
+      showLoader(false);
+    };
+
+    window.googleSignIn = async function() {
+      showLoader(true);
+      try {
+        let user = auth.currentUser;
+        if (!user) {
+          user = (await signInWithPopup(auth, provider)).user;
+        }
+        
+        if (!allowedEmails.includes(user.email)) {
+          toast("Unauthorized Email ID. Access Denied.", "err");
+          await signOut(auth);
+        } else {
+          enableCloudButtons(user.email);
+          
+          toast("Checking cloud profile...", "info");
+          const docSnap = await getDoc(doc(db, "backups", "master_database"));
+          
+          if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
+            currentProfile = docSnap.data().data.user_profile;
+            localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+            if (typeof renderProfile === 'function') renderProfile();
+            toast("Signed in & Profile Restored!", "ok");
+          } else {
+            toast("Welcome! Please setup your profile.", "ok");
+            setTimeout(() => {
+              if (typeof openProfile === 'function') openProfile();
+            }, 800);
+          }
+        }
+      } catch (e) {
+        toast("Sign in failed. Try again.", "err");
+      }
+      showLoader(false);
+    };
+
+    window.cloudBackup = async function(data) {
+      showLoader(true);
+      try {
+        const user = auth.currentUser;
+        if (!user || !allowedEmails.includes(user.email)) return;
+        await setDoc(doc(db, "backups", "master_database"), { 
+          data: data, timestamp: new Date().toISOString(), lastUpdatedBy: user.email 
+        });
+        toast("Saved securely to Firebase Cloud", "ok");
+      } catch (e) {
+        toast("Database Access Denied", "err");
+      }
+      showLoader(false);
+    };
+
+    window.cloudRestore = async function() {
+      showLoader(true);
+      try {
+        const user = auth.currentUser;
+        if (!user || !allowedEmails.includes(user.email)) return;
+
+        const docSnap = await getDoc(doc(db, "backups", "master_database"));
+        if (docSnap.exists()) {
+          const cloudData = docSnap.data().data;
+          if (window.promptRestore) {
+            window.promptRestore(cloudData, 'Cloud');
+          }
+        } else {
+          toast("No cloud backup found yet", "info");
+        }
+      } catch (e) {
+        toast("Database Access Denied", "err");
+      }
+      showLoader(false);
+    };
+  </script>
+</body>
+</html>
