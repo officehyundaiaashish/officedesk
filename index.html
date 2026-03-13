@@ -1013,6 +1013,24 @@ self.addEventListener('notificationclick', e => {
       align-items: center;
       justify-content: space-between;
       gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,44,95,0.08), transparent);
+      transform: translateX(-100%) skewX(-15deg);
+      pointer-events: none;
+      animation: shine 4s ease-in-out infinite;
+    }
+
+    [data-theme=dark] .welcome::after {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
     }
 
     .wt h2 {
