@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
@@ -35,11 +34,6 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-  <!-- ════════════════════════════════════════════════════════════════
-       PWA BLOCK START
-       Hatana ho to yahan se "PWA BLOCK END" tak sab delete kar do
-       Includes: Manifest · Icons · Service Worker · Notifications · A2HS
-  ════════════════════════════════════════════════════════════════ -->
   <link rel="manifest" id="od-pwa-manifest">
   <script>
   (function () {
@@ -272,8 +266,6 @@ self.addEventListener('notificationclick', e => {
 
   })();
   </script>
-  <!-- PWA BLOCK END ══════════════════════════════════════════════════ -->
-
   <style>
     :root {
       --bg: #f4f4f2;
@@ -545,15 +537,8 @@ self.addEventListener('notificationclick', e => {
     }
 
     @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(6px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
+      from { opacity: 0; transform: translateY(6px) }
+      to { opacity: 1; transform: translateY(0) }
     }
 
     .ph {
@@ -941,20 +926,9 @@ self.addEventListener('notificationclick', e => {
       opacity: 1;
     }
 
-    #toast.ok {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    #toast.err {
-      background: #e05252;
-      color: #fff;
-    }
-
-    #toast.info {
-      background: var(--text);
-      color: var(--bg);
-    }
+    #toast.ok { background: var(--accent); color: #fff; }
+    #toast.err { background: #e05252; color: #fff; }
+    #toast.info { background: var(--text); color: var(--bg); }
 
     #loader {
       position: fixed;
@@ -991,11 +965,7 @@ self.addEventListener('notificationclick', e => {
       animation: sp 650ms linear infinite;
     }
 
-    @keyframes sp {
-      to {
-        transform: rotate(360deg)
-      }
-    }
+    @keyframes sp { to { transform: rotate(360deg) } }
 
     .ld-card p {
       font-size: 13.5px;
@@ -1208,19 +1178,9 @@ self.addEventListener('notificationclick', e => {
       color: var(--accent);
     }
 
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 3px;
-    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
     /* BOTTOM NAV */
     .bnav {
@@ -1255,17 +1215,9 @@ self.addEventListener('notificationclick', e => {
       padding: 8px 4px;
     }
 
-    .bnav-item svg {
-      transition: color var(--tr);
-    }
-
-    .bnav-item.active {
-      color: var(--accent);
-    }
-
-    .bnav-item:active {
-      opacity: .7;
-    }
+    .bnav-item svg { transition: color var(--tr); }
+    .bnav-item.active { color: var(--accent); }
+    .bnav-item:active { opacity: .7; }
 
     /* MORE BUTTON */
     .bnav-more {
@@ -1298,8 +1250,8 @@ self.addEventListener('notificationclick', e => {
 
     @keyframes bounceArrow {
       0%, 100% { transform: translateY(0); }
-      30%       { transform: translateY(-4px); }
-      60%       { transform: translateY(2px); }
+      30%        { transform: translateY(-4px); }
+      60%        { transform: translateY(2px); }
     }
 
     /* DRAWER OVERLAY */
@@ -1313,13 +1265,8 @@ self.addEventListener('notificationclick', e => {
       transition: opacity 280ms ease;
     }
 
-    .drawer-overlay.open {
-      display: block;
-    }
-
-    .drawer-overlay.visible {
-      opacity: 1;
-    }
+    .drawer-overlay.open { display: block; }
+    .drawer-overlay.visible { opacity: 1; }
 
     /* DRAWER PANEL */
     .drawer {
@@ -1336,9 +1283,7 @@ self.addEventListener('notificationclick', e => {
       box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
     }
 
-    .drawer.open {
-      transform: translateY(0);
-    }
+    .drawer.open { transform: translateY(0); }
 
     .drawer-handle {
       width: 36px;
@@ -1388,7 +1333,6 @@ self.addEventListener('notificationclick', e => {
       overflow: hidden;
     }
 
-    /* Gradient shine effect */
     .drawer-item::after {
       content: '';
       position: absolute;
@@ -1410,16 +1354,8 @@ self.addEventListener('notificationclick', e => {
       100% { left: 120%; }
     }
 
-    .drawer-item:active {
-      background: var(--accent-s);
-      border-color: var(--accent);
-    }
-
-    .drawer-item.active {
-      color: var(--accent);
-      background: var(--accent-s);
-      border-color: var(--accent);
-    }
+    .drawer-item:active { background: var(--accent-s); border-color: var(--accent); }
+    .drawer-item.active { color: var(--accent); background: var(--accent-s); border-color: var(--accent); }
 
     .drawer-item-icon {
       width: 32px;
@@ -1433,25 +1369,9 @@ self.addEventListener('notificationclick', e => {
       transition: background var(--tr);
     }
 
-    .drawer-item.active .drawer-item-icon {
-      background: var(--accent-s);
-      color: var(--accent);
-    }
-
-    .drawer-item-label {
-      font-size: 10.5px;
-      font-weight: 500;
-      line-height: 1.2;
-    }
-
-    .drawer-item-badge {
-      background: var(--accent);
-      color: #fff;
-      font-size: 8.5px;
-      font-weight: 600;
-      padding: 1px 6px;
-      border-radius: 20px;
-    }
+    .drawer-item.active .drawer-item-icon { background: var(--accent-s); color: var(--accent); }
+    .drawer-item-label { font-size: 10.5px; font-weight: 500; line-height: 1.2; }
+    .drawer-item-badge { background: var(--accent); color: #fff; font-size: 8.5px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
 
     /* CLOSE ARROW AT BOTTOM OF DRAWER */
     .drawer-close-row {
@@ -1478,109 +1398,38 @@ self.addEventListener('notificationclick', e => {
       transition: color var(--tr), background var(--tr);
     }
 
-    .drawer-close-btn:active {
-      background: var(--surface2);
-    }
-
-    .close-arrow {
-      animation: bounceDown 1.8s ease-in-out infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .drawer-close-btn:active { background: var(--surface2); }
+    .close-arrow { animation: bounceDown 1.8s ease-in-out infinite; display: flex; align-items: center; justify-content: center; }
 
     @keyframes bounceDown {
       0%, 100% { transform: translateY(0); }
-      30%       { transform: translateY(4px); }
-      60%       { transform: translateY(-2px); }
+      30%        { transform: translateY(4px); }
+      60%        { transform: translateY(-2px); }
     }
 
     @media(max-width:900px) {
-      .fg.c3 {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .pg {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .fg.c3 { grid-template-columns: 1fr 1fr; }
+      .pg { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media(max-width:640px) {
-      .sidebar {
-        display: none;
-      }
-
-      .bnav {
-        display: flex;
-      }
-
-      .main {
-        padding: 16px 14px 88px;
-      }
-
-      .tools-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-      }
-
-      .tool-card {
-        padding: 12px;
-      }
-
-      .fg,
-      .fg.c3 {
-        grid-template-columns: 1fr;
-      }
-
-      .fg .s2,
-      .fg .s3 {
-        grid-column: 1;
-      }
-
-      .stepper {
-        display: none;
-      }
-
-      .hdr-sep,
-      .breadcrumb {
-        display: none;
-      }
-
-      .ph {
-        flex-direction: column;
-        gap: 8px;
-        margin-bottom: 16px;
-      }
-
-      .ph .chip {
-        align-self: flex-start;
-      }
-
-      .welcome {
-        flex-direction: column;
-        padding: 18px;
-      }
-
-      .pg {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .btn-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .btn-row .btn {
-        justify-content: center;
-      }
-
-      .card {
-        padding: 16px;
-      }
-
-      .layout {
-        height: calc(100vh - var(--hh) - 60px);
-      }
+      .sidebar { display: none; }
+      .bnav { display: flex; }
+      .main { padding: 16px 14px 88px; }
+      .tools-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .tool-card { padding: 12px; }
+      .fg, .fg.c3 { grid-template-columns: 1fr; }
+      .fg .s2, .fg .s3 { grid-column: 1; }
+      .stepper { display: none; }
+      .hdr-sep, .breadcrumb { display: none; }
+      .ph { flex-direction: column; gap: 8px; margin-bottom: 16px; }
+      .ph .chip { align-self: flex-start; }
+      .welcome { flex-direction: column; padding: 18px; }
+      .pg { grid-template-columns: repeat(2, 1fr); }
+      .btn-row { flex-direction: column; align-items: stretch; }
+      .btn-row .btn { justify-content: center; }
+      .card { padding: 16px; }
+      .layout { height: calc(100vh - var(--hh) - 60px); }
     }
 
     .vrow {
@@ -1592,13 +1441,7 @@ self.addEventListener('notificationclick', e => {
       position: relative;
     }
 
-    .vrow-num {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 10px;
-      letter-spacing: .3px;
-    }
+    .vrow-num { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 10px; letter-spacing: .3px; }
 
     .vrow-rm {
       position: absolute;
@@ -1617,37 +1460,20 @@ self.addEventListener('notificationclick', e => {
       transition: all var(--tr);
     }
 
-    .vrow-rm:hover {
-      background: #e05252;
-      border-color: #e05252;
-      color: #fff;
-    }
+    .vrow-rm:hover { background: #e05252; border-color: #e05252; color: #fff; }
+
     /* ── Backup / Restore Cards (Side by Side) ── */
-    .backup-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-top: 20px;
-    }
+    .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
     .backup-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      transition: background var(--tr), border-color var(--tr);
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 20px 24px; display: flex; flex-direction: column; align-items: flex-start;
+      justify-content: space-between; gap: 16px; transition: background var(--tr), border-color var(--tr);
     }
     .backup-info h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
     .backup-info p  { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
     .backup-btns { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
     
-    @media(max-width: 800px) {
-      .backup-grid { grid-template-columns: 1fr; }
-    }
+    @media(max-width: 800px) { .backup-grid { grid-template-columns: 1fr; } }
 
     /* ── Profile Badge & Modal ── */
     .user-badge { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; cursor: pointer; transition: all var(--tr); position: relative; overflow: hidden; margin-right: 8px; }
@@ -1786,7 +1612,6 @@ self.addEventListener('notificationclick', e => {
       <div class="sb-ver">OfficeDesk &nbsp;·&nbsp; Aashish Giri H</div>
     </aside>
     <main class="main">
-      <!-- DASHBOARD -->
       <div class="view active" id="view-dashboard">
         <div class="welcome">
           <div class="wt">
@@ -1918,7 +1743,7 @@ self.addEventListener('notificationclick', e => {
               <p>Securely sync data to Google. Only authorized accounts can login and access this.</p>
             </div>
             <div class="backup-btns" style="flex-direction: column;">
-              <button id="googleSignInBtn" class="btn btn-g" onclick="googleSignIn()" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
+              <button id="googleSignInBtn" class="btn btn-g" onclick="window.googleSignIn()" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12c0-.8-.07-1.6-.2-2.3H12v4.6h5.8a4.8 4.8 0 01-2 3.1v2.6h3.2c1.9-1.8 3-4.4 3-6z"/><path d="M12 22c2.8 0 5.2-.9 6.9-2.5l-3.2-2.6c-1-.6-2.2-1-3.7-1-2.8 0-5.2 1.9-6 4.5l3.1 2.4c1.5 4.5 5.8 7.2 10.4 7.2z"/><path d="M6 14.5c-.2-.6-.3-1.3-.3-2.5s.1-1.9.3-2.5V6.9H2.8C2 8.5 1.5 10.2 1.5 12s.5 3.5 1.3 5.1l3.2-2.6z"/><path d="M12 5.4c1.5 0 2.9.5 4 1.5l3-3C17.2 1.9 14.8 1 12 1 7.4 1 3.2 3.7 1.6 8.2l3.2 2.6c.8-2.6 3.2-4.5 6-4.5z"/></svg>
                 <span id="googleSignInText">Sign in with Google</span>
               </button>
@@ -1927,7 +1752,7 @@ self.addEventListener('notificationclick', e => {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 13 12 10 15 13"/></svg>
                   Backup
                 </button>
-                <button id="cloudRestoreBtn" class="btn btn-p" onclick="cloudRestore()" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
+                <button id="cloudRestoreBtn" class="btn btn-p" onclick="window.cloudRestore()" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 14 12 17 15 14"/></svg>
                   Restore
                 </button>
@@ -1935,63 +1760,38 @@ self.addEventListener('notificationclick', e => {
             </div>
           </div>
         </div>
-      <!-- ALCAZAR FORM -->
-      <!-- ALCAZAR FORM -->
+      </div>
+      
       <div class="view view-letterheads-container" id="view-alcazar">
         <iframe id="alcazar-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
       </div>
-      <!-- KEY CODE FORM -->
       <div class="view view-letterheads-container" id="view-keycode">
         <iframe id="keycode-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
       </div>
       <div class="view view-letterheads-container" id="view-letterheads">
         <iframe id="letterheads-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
       </div>
-      <!-- PWA REGULAR FORM -->
       <div class="view view-letterheads-container" id="view-pwareg">
         <iframe id="pwareg-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
       </div>
-      <!-- ETM FORM -->
       <div class="view view-letterheads-container" id="view-etm">
         <iframe id="etm-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
       </div>
-      <!-- AGM FORM -->
       <div class="view view-letterheads-container" id="view-agm">
         <iframe id="agm-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
       </div>
 
-      <script>
-        // ── NO-CACHE IFRAME LOADER ──────────────────────────────────────────
-        // Har baar fresh timestamp se file load hogi — cache bilkul bypass hoga
-        // Developer kuch bhi update kare, user ko turant naya version milega
-        (function () {
-          const ts = Date.now(); // Unique timestamp — har page load pe alag
-          const iframes = [
-            { id: 'alcazar-iframe',     src: './alcazar.html'  },
-            { id: 'keycode-iframe',     src: './keycode.html'  },
-            { id: 'letterheads-iframe', src: './letthead.html' },
-            { id: 'pwareg-iframe',      src: './pwareg.html'   },
-            { id: 'etm-iframe',         src: './etm.html'      },
-            { id: 'agm-iframe',         src: './agm.html'      }
-          ];
-          iframes.forEach(function (item) {
-            const el = document.getElementById(item.id);
-            if (el) el.src = item.src + '?nc=' + ts;
-          });
-        })();
-        // ── END NO-CACHE IFRAME LOADER ──────────────────────────────────────
-      </script>
     </main>
   </div>
+
   <div id="loader">
     <div class="ld-card">
       <div class="spin"></div>
-      <p>Generating PPT in browser…</p>
+      <p>Processing...</p>
     </div>
   </div>
   <div id="toast"></div>
-  <div id="finputs"></div>
-  <div class="drawer-overlay" id="profOverlay" onclick="closeProfile()"></div>
+  
   <div class="drawer-overlay" id="profOverlay" onclick="closeProfile()"></div>
   <div class="prof-modal" id="profModal">
     <div class="card-title">Profile Settings</div>
@@ -2031,249 +1831,11 @@ self.addEventListener('notificationclick', e => {
       <button class="btn btn-g" style="flex:1; justify-content:center" onclick="window.closeConfirm()">Cancel</button>
     </div>
   </div>
-  <script>
-    // Navigation and view switching
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".nav-item[data-view],.bnav-item[data-view]").forEach(b => b.addEventListener("click", () => switchView(b.dataset.view)));
-      document.getElementById("themeBtn").addEventListener("click", toggleTheme);
-      const theme = localStorage.getItem("od-theme") || "light";
-      applyTheme(theme);
-      
-      // Pre-sync theme to all iframes immediately
-      ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
-        const iframe = document.getElementById(id);
-        if (iframe) {
-          const sendTheme = () => {
-            if (iframe.contentWindow) {
-              iframe.contentWindow.postMessage({ type: 'theme', theme: document.documentElement.getAttribute('data-theme') || 'light' }, '*');
-            }
-          };
-          iframe.addEventListener('load', sendTheme);
-          sendTheme();
-        }
-      });
-    });
 
-    function switchView(v) {
-      document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
-      document.querySelectorAll(".nav-item,.bnav-item").forEach(el => el.classList.remove("active"));
-      document.querySelectorAll(".drawer-item").forEach(el => el.classList.remove("active"));
-      const view = document.getElementById("view-" + v);
-      if (view) view.classList.add("active");
-      document.querySelectorAll(`.nav-item[data-view="${v}"],.bnav-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
-      document.querySelectorAll(`.drawer-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
-      const labels = { dashboard: "Dashboard", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads", pwareg: "PWA Regular", etm: "ETM Form", agm: "AGM Form" }; 
-      document.title = "OfficeDesk : " + (labels[v] || "Utility Suite");
-    }
-
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute("data-theme") || "light";
-      applyTheme(current === "light" ? "dark" : "light");
-    }
-
-    function applyTheme(t) { 
-      document.documentElement.setAttribute("data-theme", t); 
-      localStorage.setItem("od-theme", t); 
-      document.getElementById("ico-moon").style.display = t === "dark" ? "none" : ""; 
-      document.getElementById("ico-sun").style.display = t === "dark" ? "" : "none";
-      // ── Status bar / theme-color update ──
-      const tc = document.getElementById('od-theme-color');
-      const as = document.getElementById('od-apple-status');
-      if(tc) tc.content = t === 'dark' ? '#111110' : '#ffffff';
-      if(as) as.content = t === 'dark' ? 'black-translucent' : 'default';
-      ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
-        const iframe = document.getElementById(id);
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage({ type: 'theme', theme: t }, '*');
-        }
-      });
-    }
-
-    let tt; 
-    function toast(msg, type) { 
-      const icons = { 
-        ok: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>', 
-        err: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', 
-        info: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' 
-      }; 
-      const el = document.getElementById("toast"); 
-      el.className = "show " + (type || "info"); 
-      el.innerHTML = (icons[type] || icons.info) + msg; 
-      clearTimeout(tt); 
-      tt = setTimeout(() => { el.className = ""; }, 3500); 
-    }
-
-    // ── Backup / Restore All ──// ── Backup / Restore Logic (Local & Cloud) ──
-    // ── Profile Logic ──
-    let currentProfile = JSON.parse(localStorage.getItem('od-profile')) || { name: 'Aashish', avatar: '' };
-    
-    function renderProfile() {
-      document.getElementById('ub-name').innerText = currentProfile.name || 'User';
-      if (currentProfile.avatar) {
-        document.getElementById('ub-img').src = currentProfile.avatar;
-        document.getElementById('ub-img').style.display = 'block';
-        document.getElementById('ub-txt').style.display = 'none';
-      } else {
-        document.getElementById('ub-img').style.display = 'none';
-        document.getElementById('ub-txt').style.display = 'flex';
-        document.getElementById('ub-txt').innerText = (currentProfile.name || 'A').charAt(0).toUpperCase();
-      }
-    }
-    renderProfile();
-
-    function openProfile() {
-      document.getElementById('p-nameInput').value = currentProfile.name || '';
-      if (currentProfile.avatar) {
-        document.getElementById('p-avPreview').src = currentProfile.avatar;
-        document.getElementById('p-avPreview').style.display = 'block';
-        document.getElementById('p-avIcon').style.display = 'none';
-      } else {
-        document.getElementById('p-avPreview').style.display = 'none';
-        document.getElementById('p-avIcon').style.display = 'flex';
-      }
-      document.getElementById('profOverlay').classList.add('open');
-      setTimeout(() => document.getElementById('profOverlay').classList.add('visible'), 10);
-      document.getElementById('profModal').classList.add('show');
-    }
-
-    function closeProfile() {
-      document.getElementById('profOverlay').classList.remove('visible');
-      document.getElementById('profModal').classList.remove('show');
-      setTimeout(() => document.getElementById('profOverlay').classList.remove('open'), 300);
-    }
-
-    function previewAvatar(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        document.getElementById('p-avPreview').src = ev.target.result;
-        document.getElementById('p-avPreview').style.display = 'block';
-        document.getElementById('p-avIcon').style.display = 'none';
-      };
-      reader.readAsDataURL(file); // Saves as base64 so it can be backed up offline!
-    }
-
-    function saveProfile() {
-      const n = document.getElementById('p-nameInput').value.trim();
-      const a = document.getElementById('p-avPreview').src;
-      currentProfile.name = n || 'User';
-      currentProfile.avatar = document.getElementById('p-avPreview').style.display === 'block' ? a : '';
-      localStorage.setItem('od-profile', JSON.stringify(currentProfile));
-      renderProfile();
-      closeProfile();
-      toast('Profile updated', 'ok');
-    }
-
-    // ── Global Master Restore (Restores IFrames AND Profile) ──
-    window.masterRestore = function(data) {
-      if (data['user_profile']) {
-        currentProfile = data['user_profile'];
-        localStorage.setItem('od-profile', JSON.stringify(currentProfile));
-        renderProfile();
-      }
-      const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
-      const TOOL_NAMES = { 'alcazar-iframe': 'alcazar', 'keycode-iframe': 'keycode', 'letterheads-iframe': 'letterheads', 'pwareg-iframe': 'pwareg', 'etm-iframe': 'etm', 'agm-iframe': 'agm' };
-      IFRAME_IDS.forEach(id => {
-        const iframe = document.getElementById(id);
-        const tool = TOOL_NAMES[id];
-        if (iframe && iframe.contentWindow && data[tool]) {
-          iframe.contentWindow.postMessage({ type: 'restore-data', tool: tool, data: data[tool] }, '*');
-        }
-      });
-    };
-
-    // ── Backup / Restore Logic (Local & Cloud) ──
-    const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
-    let currentBackupTarget = 'local';
-
-    function startBackup(target) {
-      currentBackupTarget = target;
-      const collected = {};
-      let pending = IFRAME_IDS.length;
-      const timeout = setTimeout(() => routeBackup(collected), 3000);
-
-      const handler = (e) => {
-        if (e.data && e.data.type === 'backup-response') {
-          collected[e.data.tool] = e.data.data;
-          pending--;
-          if (pending <= 0) {
-            clearTimeout(timeout);
-            window.removeEventListener('message', handler);
-            routeBackup(collected);
-          }
-        }
-      };
-      window.addEventListener('message', handler);
-      IFRAME_IDS.forEach(id => {
-        const iframe = document.getElementById(id);
-        if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'backup-request' }, '*');
-        else pending--;
-      });
-      if (pending <= 0) {
-        clearTimeout(timeout);
-        window.removeEventListener('message', handler);
-        routeBackup(collected);
-      }
-    }
-
-    function routeBackup(data) {
-      // Magically injects profile data into the final backup file!
-      data['user_profile'] = currentProfile;
-
-      if (currentBackupTarget === 'cloud') {
-        if (window.cloudBackup) window.cloudBackup(data);
-        else toast('Cloud sync is loading...', 'info');
-      } else {
-        finishLocalBackup(data);
-      }
-    }
-
-    function finishLocalBackup(data) {
-      const payload = { version: 2, timestamp: new Date().toISOString(), data };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url;
-      const d = new Date();
-      const stamp = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
-      a.download = `officedesk_backup_${stamp}.json`;
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-      toast('Local backup downloaded', 'ok');
-    }
-
-    function restoreLocal(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const payload = JSON.parse(e.target.result);
-          if (!payload.data) throw new Error('Invalid');
-          window.masterRestore(payload.data);
-          toast('Data & Profile restored locally', 'ok');
-        } catch (err) {
-          toast('Error reading backup file', 'err');
-        }
-        event.target.value = '';
-      };
-      reader.readAsText(file);
-    }
-    // ── End Backup / Restore ──
-
-    function showLoader(s) { 
-      document.getElementById("loader").className = s ? "show" : ""; 
-    }
-  </script>
-  <!-- DRAWER OVERLAY -->
-  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-
-  <!-- DRAWER PANEL -->
   <div class="drawer" id="navDrawer">
     <div class="drawer-handle"></div>
     <div class="drawer-title">All Tools</div>
     <div class="drawer-items">
-
       <button class="drawer-item" data-view="dashboard" onclick="drawerNav('dashboard')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2355,10 +1917,8 @@ self.addEventListener('notificationclick', e => {
         <div class="drawer-item-label">AGM Form</div>
         <span class="drawer-item-badge">XLSX</span>
       </button>
-
     </div>
 
-    <!-- CLOSE ARROW -->
     <div class="drawer-close-row">
       <button class="drawer-close-btn" onclick="closeDrawer()">
         <div class="close-arrow">
@@ -2415,6 +1975,266 @@ self.addEventListener('notificationclick', e => {
   </nav>
 
   <script>
+    // IFRAME NO-CACHE LOADER
+    (function () {
+      const ts = Date.now();
+      const iframes = [
+        { id: 'alcazar-iframe',     src: './alcazar.html'  },
+        { id: 'keycode-iframe',     src: './keycode.html'  },
+        { id: 'letterheads-iframe', src: './letthead.html' },
+        { id: 'pwareg-iframe',      src: './pwareg.html'   },
+        { id: 'etm-iframe',         src: './etm.html'      },
+        { id: 'agm-iframe',         src: './agm.html'      }
+      ];
+      iframes.forEach(function (item) {
+        const el = document.getElementById(item.id);
+        if (el) el.src = item.src + '?nc=' + ts;
+      });
+    })();
+
+    // MAIN NAVIGATION & THEME LOGIC
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".nav-item[data-view],.bnav-item[data-view]").forEach(b => b.addEventListener("click", () => switchView(b.dataset.view)));
+      document.getElementById("themeBtn").addEventListener("click", toggleTheme);
+      const theme = localStorage.getItem("od-theme") || "light";
+      applyTheme(theme);
+      
+      ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
+        const iframe = document.getElementById(id);
+        if (iframe) {
+          const sendTheme = () => {
+            try {
+              if (iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'theme', theme: document.documentElement.getAttribute('data-theme') || 'light' }, '*');
+            } catch(e) {}
+          };
+          iframe.addEventListener('load', sendTheme);
+          sendTheme();
+        }
+      });
+    });
+
+    function switchView(v) {
+      document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-item,.bnav-item").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".drawer-item").forEach(el => el.classList.remove("active"));
+      
+      const view = document.getElementById("view-" + v);
+      if (view) view.classList.add("active");
+      
+      document.querySelectorAll(`.nav-item[data-view="${v}"],.bnav-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
+      document.querySelectorAll(`.drawer-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
+      
+      const labels = { dashboard: "Dashboard", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads", pwareg: "PWA Regular", etm: "ETM Form", agm: "AGM Form" }; 
+      document.title = "OfficeDesk : " + (labels[v] || "Utility Suite");
+      
+      const bc = document.getElementById("bc");
+      if(bc) bc.innerText = labels[v] || "Dashboard";
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme") || "light";
+      applyTheme(current === "light" ? "dark" : "light");
+    }
+
+    function applyTheme(t) { 
+      document.documentElement.setAttribute("data-theme", t); 
+      localStorage.setItem("od-theme", t); 
+      document.getElementById("ico-moon").style.display = t === "dark" ? "none" : ""; 
+      document.getElementById("ico-sun").style.display = t === "dark" ? "" : "none"; 
+      const tc = document.getElementById('od-theme-color');
+      const as = document.getElementById('od-apple-status');
+      if(tc) tc.content = t === 'dark' ? '#111110' : '#ffffff';
+      if(as) as.content = t === 'dark' ? 'black-translucent' : 'default';
+      ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
+        const iframe = document.getElementById(id);
+        try {
+          if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'theme', theme: t }, '*');
+        } catch(e) {}
+      });
+    }
+
+    let tt; 
+    function toast(msg, type) { 
+      const icons = { 
+        ok: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>', 
+        err: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', 
+        info: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' 
+      }; 
+      const el = document.getElementById("toast"); 
+      el.className = "show " + (type || "info"); 
+      el.innerHTML = (icons[type] || icons.info) + msg; 
+      clearTimeout(tt); 
+      tt = setTimeout(() => { el.className = ""; }, 3500); 
+    }
+
+    // SAFE PROFILE LOGIC
+    let currentProfile = { name: 'User', avatar: '' };
+    try {
+      const saved = localStorage.getItem('od-profile');
+      if (saved) currentProfile = JSON.parse(saved);
+    } catch(e) {
+      console.warn("Corrupted profile data cleared.");
+      localStorage.removeItem('od-profile');
+    }
+    
+    function renderProfile() {
+      document.getElementById('ub-name').innerText = currentProfile.name || 'User';
+      if (currentProfile.avatar) {
+        document.getElementById('ub-img').src = currentProfile.avatar;
+        document.getElementById('ub-img').style.display = 'block';
+        document.getElementById('ub-txt').style.display = 'none';
+      } else {
+        document.getElementById('ub-img').style.display = 'none';
+        document.getElementById('ub-txt').style.display = 'flex';
+        document.getElementById('ub-txt').innerText = (currentProfile.name || 'U').charAt(0).toUpperCase();
+      }
+    }
+    renderProfile();
+
+    function openProfile() {
+      document.getElementById('p-nameInput').value = currentProfile.name || '';
+      if (currentProfile.avatar) {
+        document.getElementById('p-avPreview').src = currentProfile.avatar;
+        document.getElementById('p-avPreview').style.display = 'block';
+        document.getElementById('p-avIcon').style.display = 'none';
+      } else {
+        document.getElementById('p-avPreview').style.display = 'none';
+        document.getElementById('p-avIcon').style.display = 'flex';
+      }
+      document.getElementById('profOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('profOverlay').classList.add('visible'), 10);
+      document.getElementById('profModal').classList.add('show');
+    }
+
+    function closeProfile() {
+      document.getElementById('profOverlay').classList.remove('visible');
+      document.getElementById('profModal').classList.remove('show');
+      setTimeout(() => document.getElementById('profOverlay').classList.remove('open'), 300);
+    }
+
+    function previewAvatar(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('p-avPreview').src = ev.target.result;
+        document.getElementById('p-avPreview').style.display = 'block';
+        document.getElementById('p-avIcon').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveProfile() {
+      const n = document.getElementById('p-nameInput').value.trim();
+      const a = document.getElementById('p-avPreview').src;
+      currentProfile.name = n || 'User';
+      currentProfile.avatar = document.getElementById('p-avPreview').style.display === 'block' ? a : '';
+      localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+      renderProfile();
+      closeProfile();
+      toast('Profile updated', 'ok');
+    }
+
+    window.masterRestore = function(data) {
+      if (data['user_profile']) {
+        currentProfile = data['user_profile'];
+        localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+        renderProfile();
+      }
+      const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
+      const TOOL_NAMES = { 'alcazar-iframe': 'alcazar', 'keycode-iframe': 'keycode', 'letterheads-iframe': 'letterheads', 'pwareg-iframe': 'pwareg', 'etm-iframe': 'etm', 'agm-iframe': 'agm' };
+      IFRAME_IDS.forEach(id => {
+        const iframe = document.getElementById(id);
+        const tool = TOOL_NAMES[id];
+        if (iframe && iframe.contentWindow && data[tool]) {
+          try {
+            iframe.contentWindow.postMessage({ type: 'restore-data', tool: tool, data: data[tool] }, '*');
+          } catch(e) {}
+        }
+      });
+    };
+
+    const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
+    let currentBackupTarget = 'local';
+
+    function startBackup(target) {
+      currentBackupTarget = target;
+      const collected = {};
+      let pending = IFRAME_IDS.length;
+      const timeout = setTimeout(() => routeBackup(collected), 3000);
+
+      const handler = (e) => {
+        if (e.data && e.data.type === 'backup-response') {
+          collected[e.data.tool] = e.data.data;
+          pending--;
+          if (pending <= 0) {
+            clearTimeout(timeout);
+            window.removeEventListener('message', handler);
+            routeBackup(collected);
+          }
+        }
+      };
+      window.addEventListener('message', handler);
+      IFRAME_IDS.forEach(id => {
+        const iframe = document.getElementById(id);
+        if (iframe && iframe.contentWindow) {
+          try { iframe.contentWindow.postMessage({ type: 'backup-request' }, '*'); } catch(err){ pending--; }
+        } else {
+          pending--;
+        }
+      });
+      if (pending <= 0) {
+        clearTimeout(timeout);
+        window.removeEventListener('message', handler);
+        routeBackup(collected);
+      }
+    }
+
+    function routeBackup(data) {
+      data['user_profile'] = currentProfile;
+      if (currentBackupTarget === 'cloud') {
+        if (window.cloudBackup) window.cloudBackup(data);
+        else toast('Cloud sync is loading...', 'info');
+      } else {
+        finishLocalBackup(data);
+      }
+    }
+
+    function finishLocalBackup(data) {
+      const payload = { version: 2, timestamp: new Date().toISOString(), data };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      const d = new Date();
+      const stamp = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+      a.download = `officedesk_backup_${stamp}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast('Local backup downloaded', 'ok');
+    }
+
+    function restoreLocal(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const payload = JSON.parse(e.target.result);
+          if (!payload.data) throw new Error('Invalid');
+          window.masterRestore(payload.data);
+          toast('Data & Profile restored locally', 'ok');
+        } catch (err) {
+          toast('Error reading backup file', 'err');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    function showLoader(s) { 
+      document.getElementById("loader").className = s ? "show" : ""; 
+    }
+
     // ── Drawer logic ──
     function toggleDrawer() {
       const overlay = document.getElementById('drawerOverlay');
@@ -2456,19 +2276,21 @@ self.addEventListener('notificationclick', e => {
       setTimeout(() => switchView(v), 80);
     }
 
-    // Touch swipe up on bnav to open drawer
     (function() {
       let startY = 0;
       const bnav = document.getElementById('mainBnav');
-      bnav.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-      bnav.addEventListener('touchend', e => {
-        const diff = startY - e.changedTouches[0].clientY;
-        if (diff > 30) toggleDrawer();
-      }, { passive: true });
+      if(bnav) {
+        bnav.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+        bnav.addEventListener('touchend', e => {
+          const diff = startY - e.changedTouches[0].clientY;
+          if (diff > 30) toggleDrawer();
+        }, { passive: true });
+      }
     })();
   </script>
 
-<script src="./ppt-template.js"></script>
+  <script src="./ppt-template.js"></script>
+  
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -2491,12 +2313,10 @@ self.addEventListener('notificationclick', e => {
     const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
 
     function enableCloudButtons(email) {
-      // Show Email in button
       document.getElementById('googleSignInText').innerText = email;
       document.getElementById('googleSignInBtn').style.borderColor = 'var(--border)';
       document.getElementById('googleSignInBtn').style.color = 'var(--text2)';
       
-      // Enable backup/restore buttons
       document.getElementById('cloudBackupBtn').disabled = false;
       document.getElementById('cloudBackupBtn').style.opacity = '1';
       document.getElementById('cloudBackupBtn').style.cursor = 'pointer';
@@ -2505,18 +2325,15 @@ self.addEventListener('notificationclick', e => {
       document.getElementById('cloudRestoreBtn').style.opacity = '1';
       document.getElementById('cloudRestoreBtn').style.cursor = 'pointer';
 
-      // Show Sign out button inside profile modal
       const signOutDiv = document.getElementById('p-signOutDiv');
       if (signOutDiv) signOutDiv.style.display = 'block';
     }
 
     function disableCloudButtons() {
-      // Reset button text
       document.getElementById('googleSignInText').innerText = "Sign in with Google";
       document.getElementById('googleSignInBtn').style.borderColor = '';
       document.getElementById('googleSignInBtn').style.color = '';
       
-      // Disable backup/restore buttons
       document.getElementById('cloudBackupBtn').disabled = true;
       document.getElementById('cloudBackupBtn').style.opacity = '0.4';
       document.getElementById('cloudBackupBtn').style.cursor = 'not-allowed';
@@ -2525,7 +2342,6 @@ self.addEventListener('notificationclick', e => {
       document.getElementById('cloudRestoreBtn').style.opacity = '0.4';
       document.getElementById('cloudRestoreBtn').style.cursor = 'not-allowed';
 
-      // Hide Sign out button inside profile modal
       const signOutDiv = document.getElementById('p-signOutDiv');
       if (signOutDiv) signOutDiv.style.display = 'none';
     }
@@ -2538,9 +2354,8 @@ self.addEventListener('notificationclick', e => {
       }
     });
 
-    // --- NAYA: Beautiful Confirm Dialog Functions ---
     window.showSignOutConfirm = function() {
-      if (typeof closeProfile === "function") closeProfile(); // Hide profile box
+      if (typeof closeProfile === "function") closeProfile(); 
       document.getElementById('confirmOverlay').classList.add('open');
       setTimeout(() => document.getElementById('confirmOverlay').classList.add('visible'), 10);
       document.getElementById('confirmModal').classList.add('show');
@@ -2560,7 +2375,6 @@ self.addEventListener('notificationclick', e => {
         toast("Signed out successfully", "info");
         disableCloudButtons();
         
-        // 🔴 Sign out hone par Avatar aur naam reset kar do 
         currentProfile = { name: 'User', avatar: '' };
         localStorage.setItem('od-profile', JSON.stringify(currentProfile));
         if (typeof renderProfile === 'function') renderProfile();
@@ -2571,7 +2385,6 @@ self.addEventListener('notificationclick', e => {
       showLoader(false);
     };
 
-    // --- NAYA: Smart Google Sign-In with Auto-Restore Profile ---
     window.googleSignIn = async function() {
       showLoader(true);
       try {
@@ -2586,18 +2399,15 @@ self.addEventListener('notificationclick', e => {
         } else {
           enableCloudButtons(user.email);
           
-          // Google login hote hi Check karega ki kya Backup me Profile save hai?
           toast("Checking cloud profile...", "info");
           const docSnap = await getDoc(doc(db, "backups", "master_database"));
           
           if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
-            // 🟢 Agar purani detail mil gayi, toh turant restore kar do
             currentProfile = docSnap.data().data.user_profile;
             localStorage.setItem('od-profile', JSON.stringify(currentProfile));
             if (typeof renderProfile === 'function') renderProfile();
             toast("Signed in & Profile Restored!", "ok");
           } else {
-            // 🟡 Agar naya user hai (ya profile khali hai), toh Profile Box khol do
             toast("Welcome! Please setup your profile.", "ok");
             setTimeout(() => {
               if (typeof openProfile === 'function') openProfile();
@@ -2634,7 +2444,6 @@ self.addEventListener('notificationclick', e => {
         const docSnap = await getDoc(doc(db, "backups", "master_database"));
         if (docSnap.exists()) {
           const cloudData = docSnap.data().data;
-          // Use masterRestore so it also restores Profile Avatar & Nickname!
           if (window.masterRestore) {
             window.masterRestore(cloudData);
           }
@@ -2649,5 +2458,4 @@ self.addEventListener('notificationclick', e => {
     };
   </script>
 </body>
-
 </html>
