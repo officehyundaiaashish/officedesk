@@ -969,11 +969,11 @@
       }
       _initCS('f-model', HYUNDAI_MODELS.map(m => ({val:m})));
       // Override default val — no pre-select for model
-      const modelHid = document.getElementById('f-model');
-      const modelVal = document.getElementById('csv_f-model');
-      if (modelHid) modelHid.value = '';
-      if (modelVal) { modelVal.textContent = 'Select Model…'; modelVal.style.color = 'var(--text3)'; }
-
+            const modelHid = document.getElementById('f-model');
+            const modelVal = document.getElementById('csv_f-model');
+            if (modelHid) modelHid.value = 'Hyundai Alcazar';
+            if (modelVal) { modelVal.textContent = 'Hyundai Alcazar'; modelVal.style.color = ''; }
+      
       _initCS('f-freq', [{val:'CONTINOUSLY'},{val:'INTERMITTENT'},{val:'ONCE'}]);
       _initCal('f-proddate');
       buildGrid();
