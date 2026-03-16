@@ -1187,25 +1187,25 @@
         const item = document.createElement('div');
         item.className = 'hist-item'; item.tabIndex = 0;
         item.innerHTML = `<div class="hi-info">
-          <div class="hi-name">${_alcEsc(vin || model || 'Unknown')}</div>
-          <div class="hi-meta">${_alcEsc(model)}${dcode ? ' · ' + _alcEsc(dcode) : ''}</div>
-        </div>
-        <button class="hi-del" data-idx="${idx}" title="Delete" tabindex="0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
-        const delBtn = item.querySelector('.hi-del');
-        const delAct = async e => {
-          e.stopPropagation();
-          if (!(await alcConfirm('Delete this entry?', 'Delete'))) return;
-          ALC_HISTORY.splice(idx, 1);
-          try { localStorage.setItem(ALC_HIST_KEY, JSON.stringify(ALC_HISTORY)); } catch(e) {}
-          alcRenderHistory(document.getElementById('alc-histSearch')?.value || '');
-        };
-        delBtn.addEventListener('click', delAct);
-        delBtn.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();delAct(e);} });
-        const loadAct = () => alcLoadFromHistory(entry);
-        item.addEventListener('click', e => { if(!e.target.closest('.hi-del')) loadAct(); });
-        item.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();loadAct();} });
-        list.appendChild(item);
-      });
+                  <div class="hi-name">${_alcEsc(vin || model || 'Unknown')}</div>
+                  <div class="hi-meta">${_alcEsc(model)}${dcode ? ' · ' + _alcEsc(dcode) : ''}</div>
+                </div>
+                <button class="hi-del" data-idx="${idx}" title="Delete" tabindex="0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+                const delBtn = item.querySelector('.hi-del');
+                const delAct = async (e) => { // Changed to async function
+                  e.stopPropagation();
+                  if (!(await alcConfirm('Delete this entry?', 'Delete'))) return;
+                  ALC_HISTORY.splice(idx, 1);
+                  try { localStorage.setItem(ALC_HIST_KEY, JSON.stringify(ALC_HISTORY)); } catch(e) {}
+                  alcRenderHistory(document.getElementById('alc-histSearch')?.value || '');
+                };
+                delBtn.addEventListener('click', delAct);
+                delBtn.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();delAct(e);} });
+                const loadAct = () => alcLoadFromHistory(entry);
+                item.addEventListener('click', e => { if(!e.target.closest('.hi-del')) loadAct(); });
+                item.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();loadAct();} });
+                list.appendChild(item);
+              });
       if (!shown) list.innerHTML = '<div class="hist-empty">No matching entries found.</div>';
     }
 
