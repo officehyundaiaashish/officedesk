@@ -1098,14 +1098,14 @@
     }
 
     function updateSteps() {
-      const c = [v("f-model") && v("f-vin"), v("f-dcode") || v("f-dname"), v("f-obs"), photoData.some(p => p !== null)];
-      c.forEach((done, i) => {
-        const st = document.getElementById("st" + (i + 1)), sn = document.getElementById("sn" + (i + 1));
-        st.className = "step " + (done ? "done" : i === 0 ? "active" : "inactive");
-        sn.innerHTML = done ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : (i + 1);
-      });
-    }
-
+          const c = [v("f-model") && v("f-vin"), v("f-dcode") || v("f-dname"), v("f-obs"), photoData.some(p => p !== null) || true]; // Photo upload is not mandatory
+          c.forEach((done, i) => {
+            const st = document.getElementById("st" + (i + 1)), sn = document.getElementById("sn" + (i + 1));
+            st.className = "step " + (done ? "done" : i === 0 ? "active" : "inactive");
+            sn.innerHTML = done ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : (i + 1);
+          });
+        }
+    
     function v(id) {
       const el = document.getElementById(id);
       return el ? el.value.trim() : "";
