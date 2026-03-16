@@ -742,11 +742,14 @@
         const ok = document.getElementById('alcModalOk');
         const cancel = document.getElementById('alcModalCancel');
         const cleanup = () => { overlay.classList.remove('show'); ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel); };
-        const onOk = () => { cleanup(); resolve(true); };
-        const onCancel = () => { cleanup(); resolve(false); };
-        ok.addEventListener('click', onOk); cancel.addEventListener('click', onCancel);
-        overlay.classList.add('show'); cancel.focus();
-      });
+                const onOk = () => { cleanup(); resolve(true); };
+                const onCancel = () => { cleanup(); resolve(false); };
+                ok.addEventListener('click', onOk);
+                cancel.addEventListener('click', onCancel);
+                overlay.classList.add('show');
+                // Focus the cancel button to make it immediately interactive
+                cancel.focus();
+              });
     }
     // ── End Modal ──
 
