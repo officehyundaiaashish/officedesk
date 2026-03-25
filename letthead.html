@@ -1398,6 +1398,22 @@
     const getGroups = () => currentMode === 'tyre' ? TYRE_FIELDS : BATTERY_FIELDS;
     const allFields = () => getGroups().flatMap(g => g.fields);
     const dateFields = () => allFields().filter(f => f.type === 'date');
+    const collectData = () => {
+      const entry = { mode: currentMode, format: currentFormat };
+      allFields().forEach(f => {
+        if (f.type === 'date') {
+          const st = CAL[f.id];
+          let val = (st && st.date) ? (f.fmt === 'slash' ? fmtSlash(st.date) : fmtDash(st.date)) : '';
+          if (!val) { const di = document.getElementById('di_' + f.id); if (di && di.value.trim()) val = di.value.trim(); }
+          if (val) entry[f.id] = val;
+        } else {
+          const el = document.getElementById(f.id);
+          const val = el?.value?.trim() || '';
+          if (val && val !== '') entry[f.id] = val;
+        }
+      });
+      return entry;
+    };
 
     // Keyboard Interaction Helper
     const handleKeyClick = (el, action) => {
@@ -1474,9 +1490,7 @@
     }
 
     function lhSaveEntry() {
-      if (typeof saveHistory === 'function' && typeof collectData === 'function') {
-        try { const d = collectData(); saveHistory(d); const s = document.getElementById('status'); if (s) { s.textContent = 'Entry saved'; s.className = 'status success'; setTimeout(() => { s.textContent = ''; s.className = 'status'; }, 2500); } } catch (e) { }
-      }
+      try { const d = collectData(); saveHistory(d); const s = document.getElementById('status'); if (s) { s.textContent = 'Entry saved'; s.className = 'status success'; setTimeout(() => { s.textContent = ''; s.className = 'status'; }, 2500); } } catch (e) { }
     }
 
     // ─── SMART PROGRESS ───
@@ -1824,27 +1838,12 @@
     btnInject.addEventListener('click', async () => {
       if (!templateBuffers[currentFormat]) { showStatus('Template not loaded yet.', 'error'); return; }
 
-      const data = {};
-      const histEntry = { mode: currentMode };
-
+      const data = collectData();
+      const histEntry = { ...data }; // Copy for history
+      
+      // Add docxtemplater specific flags
       data.isTyre = (currentMode === 'tyre');
       data.isBattery = (currentMode === 'battery');
-
-      allFields().forEach(f => {
-        if (f.type === 'date') {
-          const st = CAL[f.id];
-          let val = (st && st.date) ? (f.fmt === 'slash' ? fmtSlash(st.date) : fmtDash(st.date)) : '';
-          // Fallback: read manually typed value
-          if (!val) { const di = document.getElementById('di_' + f.id); if (di && di.value.trim()) val = di.value.trim(); }
-          data[f.id] = val;
-          if (val) histEntry[f.id] = val;
-        } else {
-          const el = document.getElementById(f.id);
-          const val = el?.value?.trim() || '';
-          data[f.id] = val;
-          if (val && val !== '') histEntry[f.id] = val;
-        }
-      });
 
       if (Object.keys(histEntry).length <= 2) { showStatus('Fill in at least one field.', 'error'); return; }
 
@@ -1930,16 +1929,17 @@
       HISTORY.forEach((entry, originalIdx) => {
         const primaryName = entry.regNo || entry.custName || 'Unknown Registration';
         const subMeta = entry.custName || entry.date || '';
+        const fmtLabel = entry.format ? `(${entry.format})` : '';
 
         if (searchLower) {
-          const searchString = `${primaryName} ${subMeta} ${entry.mode}`.toLowerCase();
+          const searchString = `${primaryName} ${subMeta} ${entry.mode} ${entry.format || ''}`.toLowerCase();
           if (!searchString.includes(searchLower)) return;
         }
 
         const item = document.createElement('div'); item.className = 'hist-item'; item.setAttribute('tabindex', '0');
         item.innerHTML = `<div class="hi-info">
       <div class="hi-name">${escHtml(primaryName)}</div>
-      <div class="hi-meta"><span class="hi-mode ${entry.mode}">${entry.mode}</span>${escHtml(subMeta)}</div>
+      <div class="hi-meta"><span class="hi-mode ${entry.mode}">${entry.mode}</span> <span style="text-transform:lowercase;opacity:0.6;font-size:11px;">${fmtLabel}</span> ${escHtml(subMeta)}</div>
     </div><button type="button" class="hi-del" data-idx="${originalIdx}" tabindex="0">${icons.close}</button>`;
 
         const delBtn = item.querySelector('.hi-del');
@@ -1963,7 +1963,8 @@
       }
     }
 
-    function fillFromHistory(entry) {
+    async function fillFromHistory(entry) {
+      if (entry.format) await setFormat(entry.format);
       setMode(entry.mode || 'tyre');
 
       setTimeout(() => {
