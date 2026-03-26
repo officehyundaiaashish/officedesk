@@ -1443,11 +1443,7 @@
       } else {
         if (vEl) { vEl.style.borderColor=''; vEl.style.boxShadow=''; }
       }
-      if (!photoData.some(p => p !== null)) {
-        missing.push('At least 1 Photo');
-        hasErr = true;
-        document.getElementById('pgrid')?.scrollIntoView({behavior:'smooth', block:'center'});
-      }
+      // Photo upload is NOT mandatory now
       if (hasErr) {
         if (valTxt) valTxt.textContent = 'Please fill required fields: ' + missing.join(', ');
         if (valMsg) { valMsg.style.display='flex'; valMsg.scrollIntoView({behavior:'smooth',block:'nearest'}); }
