@@ -976,6 +976,11 @@
       
       _initCS('f-freq', [{val:'CONTINOUSLY'},{val:'INTERMITTENT'},{val:'ONCE'}]);
       _initCal('f-proddate');
+      // Set default NA for Production Date on load
+      const diProd = document.getElementById('di_f-proddate');
+      if (diProd) diProd.value = 'NA';
+      const dvProd = document.getElementById('dv_f-proddate');
+      if (dvProd) { dvProd.textContent = 'NA'; dvProd.classList.add('empty'); }
       buildGrid();
       buildFileInputs();
       const restored = restoreFormData();
@@ -1357,12 +1362,12 @@
       if (csv) { csv.textContent = 'Select Model…'; csv.style.color = 'var(--text3)'; }
       const modelHid = document.getElementById('f-model');
       if (modelHid) modelHid.value = '';
-      // Reset date
+      // Reset date - Production Date default NA
       if (_CAL['f-proddate']) Object.assign(_CAL['f-proddate'], {date:null,view:'days',year:new Date().getFullYear(),month:new Date().getMonth()});
       const di = document.getElementById('di_f-proddate');
-      if (di) di.value = '';
+      if (di) di.value = 'NA';
       const dv = document.getElementById('dv_f-proddate');
-      if (dv) { dv.textContent = 'Pick a date'; dv.classList.add('empty'); }
+      if (dv) { dv.textContent = 'NA'; dv.classList.add('empty'); }
       const prodHid = document.getElementById('f-proddate');
       if (prodHid) prodHid.value = 'NA';
       // Reset freq dropdown
