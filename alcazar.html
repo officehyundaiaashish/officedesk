@@ -1098,7 +1098,7 @@
     }
 
     function updateSteps() {
-          const c = [v("f-model") && v("f-vin"), v("f-dcode") || v("f-dname"), v("f-obs"), photoData.some(p => p !== null) || true]; // Photo upload is not mandatory
+          const c = [v("f-model") && v("f-vin"), v("f-dcode") || v("f-dname"), v("f-obs"), true]; // Photo is optional now
           c.forEach((done, i) => {
             const st = document.getElementById("st" + (i + 1)), sn = document.getElementById("sn" + (i + 1));
             st.className = "step " + (done ? "done" : i === 0 ? "active" : "inactive");
