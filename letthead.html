@@ -1560,8 +1560,31 @@
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', () => { showJumpers(); }, { passive: true });
       setTimeout(showJumpers, 300);
-      topBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-      botBtn.addEventListener('click', () => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }));
+      function fastScrollTo(targetY) {
+        const startY = window.scrollY || document.documentElement.scrollTop;
+        const distance = targetY - startY;
+        if (Math.abs(distance) < 2) {
+          window.scrollTo(0, targetY);
+          return;
+        }
+        const duration = 100;
+        let startTime = null;
+        function animate(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const progress = timestamp - startTime;
+          const t = Math.min(progress / duration, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          window.scrollTo(0, startY + distance * ease);
+          if (progress < duration) {
+            requestAnimationFrame(animate);
+          } else {
+            window.scrollTo(0, targetY);
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      topBtn.addEventListener('click', () => fastScrollTo(0));
+      botBtn.addEventListener('click', () => fastScrollTo(document.documentElement.scrollHeight));
       [topBtn, botBtn].forEach(b => b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } }));
     })();
 
