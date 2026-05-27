@@ -1221,10 +1221,33 @@ window.addEventListener('scroll',()=>{
   }
   window.addEventListener('scroll',()=>{showJumpers();scheduleHide();},{passive:true});
   window.addEventListener('load',showJumpers);
-  pjTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
-  pjBot.addEventListener('click',()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'}));
-  handleKeyClick(pjTop,()=>window.scrollTo({top:0,behavior:'smooth'}));
-  handleKeyClick(pjBot,()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'}));
+  function fastScrollTo(targetY) {
+    const startY = window.scrollY || document.documentElement.scrollTop;
+    const distance = targetY - startY;
+    if (Math.abs(distance) < 2) {
+      window.scrollTo(0, targetY);
+      return;
+    }
+    const duration = 100;
+    let startTime = null;
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      const t = Math.min(progress / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      window.scrollTo(0, startY + distance * ease);
+      if (progress < duration) {
+        requestAnimationFrame(animate);
+      } else {
+        window.scrollTo(0, targetY);
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  pjTop.addEventListener('click', () => fastScrollTo(0));
+  pjBot.addEventListener('click', () => fastScrollTo(document.documentElement.scrollHeight));
+  handleKeyClick(pjTop, () => fastScrollTo(0));
+  handleKeyClick(pjBot, () => fastScrollTo(document.documentElement.scrollHeight));
 })();
 
 // ─────── THEME + BACKUP ───────
