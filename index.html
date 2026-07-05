@@ -2694,6 +2694,13 @@ self.addEventListener('notificationclick', e => {
         localStorage.setItem('od-profile', JSON.stringify(currentProfile));
         renderProfile();
       }
+      if (data['drafts']) {
+        localStorage.setItem('od_drafts_v1', JSON.stringify(data['drafts']));
+        const draftsIframe = document.getElementById('drafts-iframe');
+        if (draftsIframe && draftsIframe.contentWindow) {
+          try { draftsIframe.contentWindow.location.reload(); } catch (e) {}
+        }
+      }
       const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
       const TOOL_NAMES = { 'alcazar-iframe': 'alcazar', 'keycode-iframe': 'keycode', 'letterheads-iframe': 'letterheads', 'pwareg-iframe': 'pwareg', 'etm-iframe': 'etm', 'agm-iframe': 'agm' };
       IFRAME_IDS.forEach(id => {
@@ -2745,6 +2752,11 @@ self.addEventListener('notificationclick', e => {
 
     function routeBackup(data) {
       data['user_profile'] = currentProfile;
+      try {
+        data['drafts'] = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
+      } catch (e) {
+        data['drafts'] = [];
+      }
       if (currentBackupTarget === 'cloud') {
         if (window.cloudBackup) window.cloudBackup(data);
         else toast('Cloud sync is loading...', 'info');
