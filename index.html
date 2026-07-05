@@ -2380,7 +2380,7 @@ self.addEventListener('notificationclick', e => {
             <polyline points="7 3 7 8 15 8" />
           </svg>
         </div>
-        <div class="drawer-item-label">Saved Entries</div>
+        <div class="drawer-item-label">Drafts</div>
         <span class="drawer-item-badge">Local</span>
       </button>
 
@@ -2392,7 +2392,7 @@ self.addEventListener('notificationclick', e => {
             <polyline points="7 3 7 8 15 8" />
           </svg>
         </div>
-        <div class="drawer-item-label">Saved Entries</div>
+        <div class="drawer-item-label">Drafts</div>
         <span class="drawer-item-badge">Local</span>
       </button>
 
@@ -2578,7 +2578,7 @@ self.addEventListener('notificationclick', e => {
       document.querySelectorAll(`.nav-item[data-view="${v}"],.bnav-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
       document.querySelectorAll(`.drawer-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
 
-      const labels = { dashboard: "Dashboard", drafts: "Saved Entries", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads", pwareg: "PWA Regular", etm: "ETM Form", agm: "AGM Form" };
+      const labels = { dashboard: "Dashboard", drafts: "Drafts", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads", pwareg: "PWA Regular", etm: "ETM Form", agm: "AGM Form" };
       document.title = "OfficeDesk : " + (labels[v] || "Utility Suite");
 
       const bc = document.getElementById("bc");
