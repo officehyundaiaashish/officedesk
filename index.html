@@ -1938,17 +1938,7 @@ self.addEventListener('notificationclick', e => {
         </svg>
         Save Draft
       </button>
-
-      <button class="btn btn-g" id="viewDraftsBtn"
-        style="display:none; padding: 6px 12px; font-size: 12px; height: 34px; border: 1px solid var(--border);"
-        onclick="switchView('dashboard')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-        View Drafts
-      </button>
-
+ 
       <button class="tbtn" id="themeBtn" title="Toggle theme">
         <svg id="ico-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2">
@@ -2584,20 +2574,12 @@ self.addEventListener('notificationclick', e => {
       const bc = document.getElementById("bc");
       if (bc) bc.innerText = labels[v] || "Dashboard";
 
-      const saveDraftBtn = document.getElementById('saveDraftBtn');
-      const viewDraftsBtn = document.getElementById('viewDraftsBtn');
+       const saveDraftBtn = document.getElementById('saveDraftBtn');
       if (saveDraftBtn) {
         if (v === 'dashboard' || v === 'drafts') {
           saveDraftBtn.style.display = 'none';
         } else {
           saveDraftBtn.style.display = 'inline-flex';
-        }
-      }
-      if (viewDraftsBtn) {
-        if (v === 'dashboard' || v === 'drafts') {
-          viewDraftsBtn.style.display = 'none';
-        } else {
-          viewDraftsBtn.style.display = 'inline-flex';
         }
       }
     }
