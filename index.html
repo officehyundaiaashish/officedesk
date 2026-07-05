@@ -1464,6 +1464,27 @@ self.addEventListener('notificationclick', e => {
 
     .vrow-rm:hover { background: #e05252; border-color: #e05252; color: #fff; }
 
+    .hist-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      cursor: pointer;
+      transition: all var(--tr);
+    }
+    .hist-item:hover {
+      border-color: var(--accent);
+      background: var(--surface2);
+    }
+    .hi-info { flex: 1; min-width: 0; }
+    .hi-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hi-meta { font-size: 12px; color: var(--text2); margin-top: 3px; }
+    .hi-del { background: none; border: none; color: var(--border); cursor: pointer; transition: color var(--tr); display: flex; align-items: center; padding: 4px; border-radius: 4px; outline: none; }
+    .hi-del:hover { color: #e05252; }
+
     /* ── Backup / Restore Cards (Side by Side) ── */
     .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
     .backup-card {
@@ -1522,6 +1543,11 @@ self.addEventListener('notificationclick', e => {
         <div id="ub-txt" class="ub-av">A</div>
         <span id="ub-name" class="ub-nm">User</span>
       </div>
+
+      <button class="btn btn-p" id="saveDraftBtn" style="display:none; padding: 6px 12px; font-size: 12px; height: 34px;" onclick="saveCurrentFormDraft()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Draft
+      </button>
 
       <button class="tbtn" id="themeBtn" title="Toggle theme">
         <svg id="ico-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1717,6 +1743,15 @@ self.addEventListener('notificationclick', e => {
               <div class="tool-name">AGM Form</div>
               <span class="tag tag-live" style="margin-top:5px">XLSX</span>
             </div>
+          </div>
+        </div>
+
+        <div class="ph" style="margin-top:24px;">
+          <div class="ph-title">Saved Entries (Draft Batch)</div>
+        </div>
+        <div class="card" style="margin-bottom: 20px;">
+          <div id="drafts-list" style="display:flex; flex-direction:column; gap:8px;">
+            <div style="text-align:center;font-size:12.5px;color:var(--text2);padding:10px;">No saved drafts yet.</div>
           </div>
         </div>
 
@@ -2022,6 +2057,7 @@ self.addEventListener('notificationclick', e => {
       document.getElementById("themeBtn").addEventListener("click", toggleTheme);
       const theme = localStorage.getItem("od-theme") || "light";
       applyTheme(theme);
+      renderDraftsList();
 
       ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
         const iframe = document.getElementById(id);
@@ -2053,6 +2089,15 @@ self.addEventListener('notificationclick', e => {
 
       const bc = document.getElementById("bc");
       if(bc) bc.innerText = labels[v] || "Dashboard";
+
+      const saveDraftBtn = document.getElementById('saveDraftBtn');
+      if (saveDraftBtn) {
+        if (v === 'dashboard') {
+          saveDraftBtn.style.display = 'none';
+        } else {
+          saveDraftBtn.style.display = 'inline-flex';
+        }
+      }
     }
 
     function toggleTheme() {
@@ -2338,6 +2383,239 @@ self.addEventListener('notificationclick', e => {
         }, { passive: true });
       }
     })();
+
+    function saveCurrentFormDraft() {
+      const activeNav = document.querySelector('.nav-item.active');
+      if (!activeNav) return;
+      const tool = activeNav.dataset.view;
+      if (tool === 'dashboard') return;
+      
+      const iframe = document.getElementById(tool + '-iframe');
+      if (!iframe) return;
+      const iframeWin = iframe.contentWindow;
+      const iframeDoc = iframe.contentDocument || iframeWin.document;
+      if (!iframeDoc) return;
+      
+      const formData = {};
+      iframeDoc.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.id && el.type !== 'file' && el.type !== 'button' && el.type !== 'submit') {
+          formData[el.id] = el.value;
+        }
+      });
+      
+      let photos = null;
+      if (tool === 'alcazar') {
+        if (Array.isArray(iframeWin.photoData)) {
+          photos = JSON.parse(JSON.stringify(iframeWin.photoData));
+        }
+      } else if (tool === 'etm') {
+        if (iframeWin.PHOTOS) {
+          photos = JSON.parse(JSON.stringify(iframeWin.PHOTOS));
+        }
+      }
+      
+      let vin = '';
+      if (formData['f-vin']) vin = formData['f-vin'].trim();
+      else if (formData['VIN']) vin = formData['VIN'].trim();
+      else {
+        for (const key in formData) {
+          if (key.toLowerCase() === 'vin' || key.toLowerCase().endsWith('vin')) {
+            vin = formData[key].trim();
+            break;
+          }
+        }
+      }
+      if (!vin && tool === 'keycode' && Array.isArray(iframeWin.kcRows)) {
+        const rowWithVin = iframeWin.kcRows.find(r => r.vin && r.vin.trim());
+        if (rowWithVin) vin = rowWithVin.vin.trim();
+      }
+      if (!vin) {
+        if (formData['f-model']) vin = formData['f-model'].trim();
+        else if (formData['MODEL']) vin = formData['MODEL'].trim();
+      }
+      if (!vin) {
+        vin = 'Draft-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+      
+      const draft = {
+        id: tool + '_' + vin,
+        tool: tool,
+        vin: vin,
+        formData: formData,
+        photos: photos,
+        kcRows: tool === 'keycode' ? JSON.parse(JSON.stringify(iframeWin.kcRows || [])) : null,
+        timestamp: new Date().toLocaleString()
+      };
+      
+      let drafts = [];
+      try {
+        drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
+      } catch(e) {}
+      
+      drafts = drafts.filter(d => d.id !== draft.id);
+      drafts.unshift(draft);
+      localStorage.setItem('od_drafts_v1', JSON.stringify(drafts));
+      renderDraftsList();
+      toast('Draft saved successfully', 'ok');
+    }
+
+    function loadDraft(id) {
+      let drafts = [];
+      try {
+        drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
+      } catch(e) {}
+      
+      const draft = drafts.find(d => d.id === id);
+      if (!draft) return;
+      
+      switchView(draft.tool);
+      
+      const iframe = document.getElementById(draft.tool + '-iframe');
+      if (!iframe) return;
+      
+      const populate = () => {
+        const iframeWin = iframe.contentWindow;
+        const iframeDoc = iframe.contentDocument || iframeWin.document;
+        if (!iframeDoc) return;
+        
+        Object.entries(draft.formData).forEach(([fieldId, val]) => {
+          const el = iframeDoc.getElementById(fieldId);
+          if (el) {
+            el.value = val;
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+        
+        if (draft.tool === 'alcazar' && draft.photos) {
+          if (Array.isArray(iframeWin.photoData)) {
+            draft.photos.forEach((p, idx) => {
+              iframeWin.photoData[idx] = p;
+              if (typeof iframeWin.updateSlot === 'function') {
+                iframeWin.updateSlot(idx);
+              }
+            });
+          }
+        } else if (draft.tool === 'etm' && draft.photos) {
+          if (iframeWin.PHOTOS) {
+            Object.assign(iframeWin.PHOTOS, draft.photos);
+            Object.keys(draft.photos).forEach(slotId => {
+              const photo = draft.photos[slotId];
+              const img = iframeDoc.getElementById('pi_' + slotId);
+              if (img && photo && photo.dataUrl) img.src = photo.dataUrl;
+              const slot = iframeDoc.getElementById('ps_' + slotId);
+              if (slot) {
+                if (photo && photo.dataUrl) slot.classList.add('filled');
+                else slot.classList.remove('filled');
+              }
+            });
+          }
+        }
+        
+        if (draft.tool === 'keycode' && draft.kcRows) {
+          iframeWin.kcRows = JSON.parse(JSON.stringify(draft.kcRows));
+          if (typeof iframeWin.kcRenderRows === 'function') {
+            iframeWin.kcRenderRows();
+          }
+        }
+        
+        if (typeof iframeWin.updateSteps === 'function') iframeWin.updateSteps();
+        if (typeof iframeWin.etmUpdateSteps === 'function') iframeWin.etmUpdateSteps();
+        if (typeof iframeWin.kcUpdateSteps === 'function') iframeWin.kcUpdateSteps();
+        
+        if (draft.tool === 'alcazar') {
+          const modelVal = draft.formData['f-model'];
+          const csvModel = iframeDoc.getElementById('csv_f-model');
+          if (csvModel) {
+            if (modelVal) {
+              csvModel.textContent = modelVal;
+              csvModel.style.color = '';
+            } else {
+              csvModel.textContent = 'Select Model…';
+              csvModel.style.color = 'var(--text3)';
+            }
+          }
+          const freqVal = draft.formData['f-freq'];
+          const csvFreq = iframeDoc.getElementById('csv_f-freq');
+          if (csvFreq) {
+            csvFreq.textContent = freqVal === 'CONTINOUSLY' ? 'CONTINUOUSLY' : (freqVal || 'CONTINUOUSLY');
+          }
+        }
+        
+        toast('Draft loaded successfully', 'ok');
+      };
+      
+      if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === 'complete') {
+        populate();
+      } else {
+        iframe.addEventListener('load', populate, { once: true });
+      }
+    }
+
+    function renderDraftsList() {
+      const container = document.getElementById('drafts-list');
+      if (!container) return;
+      
+      let drafts = [];
+      try {
+        drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
+      } catch(e) {}
+      
+      if (drafts.length === 0) {
+        container.innerHTML = '<div style="text-align:center;font-size:12.5px;color:var(--text2);padding:10px;">No saved drafts yet.</div>';
+        return;
+      }
+      
+      const labels = {
+        alcazar: "Alcazar Form",
+        keycode: "Key Code Form",
+        letterheads: "Letter Heads",
+        pwareg: "PWA Regular",
+        etm: "ETM Form",
+        agm: "AGM Form"
+      };
+      
+      container.innerHTML = '';
+      drafts.forEach(draft => {
+        const item = document.createElement('div');
+        item.className = 'hist-item';
+        
+        const info = document.createElement('div');
+        info.className = 'hi-info';
+        info.innerHTML = `
+          <div class="hi-name">${draft.vin}</div>
+          <div class="hi-meta">${labels[draft.tool] || draft.tool} · Saved: ${draft.timestamp}</div>
+        `;
+        
+        const delBtn = document.createElement('button');
+        delBtn.className = 'hi-del';
+        delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteDraft(draft.id);
+        };
+        
+        item.appendChild(info);
+        item.appendChild(delBtn);
+        
+        item.onclick = () => {
+          loadDraft(draft.id);
+        };
+        
+        container.appendChild(item);
+      });
+    }
+
+    function deleteDraft(id) {
+      let drafts = [];
+      try {
+        drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
+      } catch(e) {}
+      drafts = drafts.filter(d => d.id !== id);
+      localStorage.setItem('od_drafts_v1', JSON.stringify(drafts));
+      renderDraftsList();
+      toast('Draft deleted', 'info');
+    }
   </script>
 
   <script src="./ppt-template.js"></script>
