@@ -210,6 +210,58 @@
             }
         });
 
+        // IndexedDB Helper Functions for Drafts
+        const DB_NAME = 'OfficeDeskDB';
+        const STORE_NAME = 'drafts';
+
+        function getDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                    }
+                };
+                request.onsuccess = (e) => resolve(e.target.result);
+                request.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        function getAllDrafts() {
+            return getDB().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.getAll();
+                request.onsuccess = () => {
+                    const drafts = request.result || [];
+                    drafts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    resolve(drafts);
+                };
+                request.onerror = () => reject(request.error);
+            }));
+        }
+
+        function deleteDraftFromDB(id) {
+            return getDB().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.delete(id);
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            }));
+        }
+
+        function clearAllDraftsFromDB() {
+            return getDB().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.clear();
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            }));
+        }
+
         const labels = {
             alcazar: "Alcazar Form",
             keycode: "Key Code Form",
@@ -222,66 +274,63 @@
         function renderDrafts() {
             const list = document.getElementById('drafts-list');
             const clearRow = document.getElementById('clear-btn-row');
-            let drafts = [];
-            try {
-                drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-            } catch (e) { }
+            getAllDrafts().then(drafts => {
+                if (drafts.length === 0) {
+                    list.innerHTML = '<div class="empty-state">No saved drafts yet.</div>';
+                    clearRow.style.display = 'none';
+                    return;
+                }
 
-            if (drafts.length === 0) {
+                clearRow.style.display = 'flex';
+                list.innerHTML = '';
+                drafts.forEach(draft => {
+                    const item = document.createElement('div');
+                    item.className = 'hist-item';
+
+                    const info = document.createElement('div');
+                    info.className = 'hi-info';
+                    info.innerHTML = `
+              <div class="hi-name">${draft.vin || 'Unnamed Draft'}</div>
+              <div class="hi-meta">${labels[draft.tool] || draft.tool} · Saved: ${draft.timestamp}</div>
+            `;
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'hi-del';
+                    delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+                    delBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteDraft(draft.id);
+                    };
+
+                    item.appendChild(info);
+                    item.appendChild(delBtn);
+
+                    item.onclick = () => {
+                        window.parent.postMessage({ type: 'load-draft-from-file', id: draft.id }, '*');
+                    };
+
+                    list.appendChild(item);
+                });
+            }).catch(() => {
                 list.innerHTML = '<div class="empty-state">No saved drafts yet.</div>';
                 clearRow.style.display = 'none';
-                return;
-            }
-
-            clearRow.style.display = 'flex';
-            list.innerHTML = '';
-            drafts.forEach(draft => {
-                const item = document.createElement('div');
-                item.className = 'hist-item';
-
-                const info = document.createElement('div');
-                info.className = 'hi-info';
-                info.innerHTML = `
-          <div class="hi-name">${draft.vin || 'Unnamed Draft'}</div>
-          <div class="hi-meta">${labels[draft.tool] || draft.tool} · Saved: ${draft.timestamp}</div>
-        `;
-
-                const delBtn = document.createElement('button');
-                delBtn.className = 'hi-del';
-                delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-                delBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    deleteDraft(draft.id);
-                };
-
-                item.appendChild(info);
-                item.appendChild(delBtn);
-
-                item.onclick = () => {
-                    window.parent.postMessage({ type: 'load-draft-from-file', id: draft.id }, '*');
-                };
-
-                list.appendChild(item);
             });
         }
 
         function deleteDraft(id) {
             if (!confirm("Are you sure you want to delete this draft?")) return;
-            let drafts = [];
-            try {
-                drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-            } catch (e) { }
-            drafts = drafts.filter(d => d.id !== id);
-            localStorage.setItem('od_drafts_v1', JSON.stringify(drafts));
-            renderDrafts();
-            window.parent.postMessage({ type: 'draft-deleted' }, '*');
+            deleteDraftFromDB(id).then(() => {
+                renderDrafts();
+                window.parent.postMessage({ type: 'draft-deleted' }, '*');
+            });
         }
 
         function clearAllDrafts() {
             if (!confirm("Are you sure you want to clear all saved drafts? This cannot be undone.")) return;
-            localStorage.removeItem('od_drafts_v1');
-            renderDrafts();
-            window.parent.postMessage({ type: 'draft-deleted' }, '*');
+            clearAllDraftsFromDB().then(() => {
+                renderDrafts();
+                window.parent.postMessage({ type: 'draft-deleted' }, '*');
+            });
         }
 
         renderDrafts();
