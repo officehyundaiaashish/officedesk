@@ -2695,11 +2695,15 @@ self.addEventListener('notificationclick', e => {
         renderProfile();
       }
       if (data['drafts']) {
-        localStorage.setItem('od_drafts_v1', JSON.stringify(data['drafts']));
-        const draftsIframe = document.getElementById('drafts-iframe');
-        if (draftsIframe && draftsIframe.contentWindow) {
-          try { draftsIframe.contentWindow.location.reload(); } catch (e) { }
-        }
+        clearAllDraftsFromDB().then(() => {
+          const promises = data['drafts'].map(d => saveDraftToDB(d));
+          return Promise.all(promises);
+        }).then(() => {
+          const draftsIframe = document.getElementById('drafts-iframe');
+          if (draftsIframe && draftsIframe.contentWindow) {
+            try { draftsIframe.contentWindow.location.reload(); } catch (e) { }
+          }
+        }).catch(e => console.error("Error restoring drafts:", e));
       }
       const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
       const TOOL_NAMES = { 'alcazar-iframe': 'alcazar', 'keycode-iframe': 'keycode', 'letterheads-iframe': 'letterheads', 'pwareg-iframe': 'pwareg', 'etm-iframe': 'etm', 'agm-iframe': 'agm' };
@@ -2752,17 +2756,23 @@ self.addEventListener('notificationclick', e => {
 
     function routeBackup(data) {
       data['user_profile'] = currentProfile;
-      try {
-        data['drafts'] = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-      } catch (e) {
+      getAllDrafts().then(drafts => {
+        data['drafts'] = drafts;
+        if (currentBackupTarget === 'cloud') {
+          if (window.cloudBackup) window.cloudBackup(data);
+          else toast('Cloud sync is loading...', 'info');
+        } else {
+          finishLocalBackup(data);
+        }
+      }).catch(() => {
         data['drafts'] = [];
-      }
-      if (currentBackupTarget === 'cloud') {
-        if (window.cloudBackup) window.cloudBackup(data);
-        else toast('Cloud sync is loading...', 'info');
-      } else {
-        finishLocalBackup(data);
-      }
+        if (currentBackupTarget === 'cloud') {
+          if (window.cloudBackup) window.cloudBackup(data);
+          else toast('Cloud sync is loading...', 'info');
+        } else {
+          finishLocalBackup(data);
+        }
+      });
     }
 
     function finishLocalBackup(data) {
@@ -2880,6 +2890,68 @@ self.addEventListener('notificationclick', e => {
       }
     })();
 
+    // IndexedDB Helper Functions for Drafts
+    const DB_NAME = 'OfficeDeskDB';
+    const STORE_NAME = 'drafts';
+
+    function getDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+          }
+        };
+        request.onsuccess = (e) => resolve(e.target.result);
+        request.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    function getAllDrafts() {
+      return getDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.getAll();
+        request.onsuccess = () => {
+          const drafts = request.result || [];
+          drafts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          resolve(drafts);
+        };
+        request.onerror = () => reject(request.error);
+      }));
+    }
+
+    function saveDraftToDB(draft) {
+      return getDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.put(draft);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      }));
+    }
+
+    function deleteDraftFromDB(id) {
+      return getDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      }));
+    }
+
+    function clearAllDraftsFromDB() {
+      return getDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      }));
+    }
+
     window.addEventListener('message', (e) => {
       if (e.data && e.data.type === 'load-draft-from-file') {
         loadDraft(e.data.id);
@@ -2952,286 +3024,278 @@ self.addEventListener('notificationclick', e => {
         timestamp: new Date().toLocaleString()
       };
 
-      let drafts = [];
-      try {
-        drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-      } catch (e) { }
-
-      drafts = drafts.filter(d => d.id !== draft.id);
-      drafts.unshift(draft);
-      localStorage.setItem('od_drafts_v1', JSON.stringify(drafts));
-
-      const draftsIframe = document.getElementById('drafts-iframe');
-      if (draftsIframe && draftsIframe.contentWindow) {
-        try { draftsIframe.contentWindow.location.reload(); } catch (e) { }
-      }
-
-      toast('Draft saved successfully', 'ok');
+      saveDraftToDB(draft).then(() => {
+        const draftsIframe = document.getElementById('drafts-iframe');
+        if (draftsIframe && draftsIframe.contentWindow) {
+          try { draftsIframe.contentWindow.location.reload(); } catch (e) { }
+        }
+        toast('Draft saved successfully', 'ok');
+      }).catch(e => {
+        console.error("Save draft failed:", e);
+        toast('Failed to save draft', 'error');
+      });
     }
 
     function loadDraft(id) {
-      let drafts = [];
-      try {
-        drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-      } catch (e) { }
+      getAllDrafts().then(drafts => {
+        const draft = drafts.find(d => d.id === id);
+        if (!draft) return;
 
-      const draft = drafts.find(d => d.id === id);
-      if (!draft) return;
+        switchView(draft.tool);
 
-      switchView(draft.tool);
+        const iframe = document.getElementById(draft.tool + '-iframe');
+        if (!iframe) return;
 
-      const iframe = document.getElementById(draft.tool + '-iframe');
-      if (!iframe) return;
+        const populate = () => {
+          const iframeWin = iframe.contentWindow;
+          const iframeDoc = iframe.contentDocument || iframeWin.document;
+          if (!iframeDoc) return;
 
-      const populate = () => {
-        const iframeWin = iframe.contentWindow;
-        const iframeDoc = iframe.contentDocument || iframeWin.document;
-        if (!iframeDoc) return;
+          Object.entries(draft.formData).forEach(([fieldId, val]) => {
+            const el = iframeDoc.getElementById(fieldId);
+            if (el) {
+              el.value = val;
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          });
 
-        Object.entries(draft.formData).forEach(([fieldId, val]) => {
-          const el = iframeDoc.getElementById(fieldId);
-          if (el) {
-            el.value = val;
-            el.dispatchEvent(new Event('input', { bubbles: true }));
-            el.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        });
-
-        if (draft.tool === 'alcazar' && draft.photos) {
-          if (Array.isArray(iframeWin.photoData)) {
-            draft.photos.forEach((p, idx) => {
-              iframeWin.photoData[idx] = p;
-              if (typeof iframeWin.updateSlot === 'function') {
-                iframeWin.updateSlot(idx);
-              }
-            });
-          }
-        } else if ((draft.tool === 'etm' || draft.tool === 'pwareg' || draft.tool === 'agm') && draft.photos) {
-          if (iframeWin.PHOTOS) {
-            Object.assign(iframeWin.PHOTOS, draft.photos);
-            Object.keys(draft.photos).forEach(slotId => {
-              const photo = draft.photos[slotId];
-              const img = iframeDoc.getElementById('pi_' + slotId);
-              if (img && photo && photo.dataUrl) img.src = photo.dataUrl;
-              const slot = iframeDoc.getElementById('ps_' + slotId);
-              if (slot) {
-                if (photo && photo.dataUrl) slot.classList.add('filled');
-                else slot.classList.remove('filled');
-              }
-            });
-          }
-        }
-
-        if (draft.tool === 'keycode' && draft.kcRows) {
-          iframeWin.kcRows = JSON.parse(JSON.stringify(draft.kcRows));
-          if (typeof iframeWin.kcRenderRows === 'function') {
-            iframeWin.kcRenderRows();
-          }
-        }
-
-        if (typeof iframeWin.updateSteps === 'function') iframeWin.updateSteps();
-        if (typeof iframeWin.etmUpdateSteps === 'function') iframeWin.etmUpdateSteps();
-        if (typeof iframeWin.kcUpdateSteps === 'function') iframeWin.kcUpdateSteps();
-        if (typeof iframeWin.updateStepper === 'function') iframeWin.updateStepper();
-
-        if (draft.tool === 'alcazar') {
-          const modelVal = draft.formData['f-model'];
-          const csvModel = iframeDoc.getElementById('csv_f-model');
-          if (csvModel) {
-            if (modelVal) {
-              csvModel.textContent = modelVal;
-              csvModel.style.color = '';
-            } else {
-              csvModel.textContent = 'Select Model…';
-              csvModel.style.color = 'var(--text3)';
+          if (draft.tool === 'alcazar' && draft.photos) {
+            if (Array.isArray(iframeWin.photoData)) {
+              draft.photos.forEach((p, idx) => {
+                iframeWin.photoData[idx] = p;
+                if (typeof iframeWin.updateSlot === 'function') {
+                  iframeWin.updateSlot(idx);
+                }
+              });
+            }
+          } else if ((draft.tool === 'etm' || draft.tool === 'pwareg' || draft.tool === 'agm') && draft.photos) {
+            if (iframeWin.PHOTOS) {
+              Object.assign(iframeWin.PHOTOS, draft.photos);
+              Object.keys(draft.photos).forEach(slotId => {
+                const photo = draft.photos[slotId];
+                const img = iframeDoc.getElementById('pi_' + slotId);
+                if (img && photo && photo.dataUrl) img.src = photo.dataUrl;
+                const slot = iframeDoc.getElementById('ps_' + slotId);
+                if (slot) {
+                  if (photo && photo.dataUrl) slot.classList.add('filled');
+                  else slot.classList.remove('filled');
+                }
+              });
             }
           }
-          const freqVal = draft.formData['f-freq'];
-          const csvFreq = iframeDoc.getElementById('csv_f-freq');
-          if (csvFreq) {
-            csvFreq.textContent = freqVal === 'CONTINOUSLY' ? 'CONTINUOUSLY' : (freqVal || 'CONTINUOUSLY');
-          }
-        }
 
-        toast('Draft loaded successfully', 'ok');
-      };
+          if (draft.tool === 'keycode' && draft.kcRows) {
+            iframeWin.kcRows = JSON.parse(JSON.stringify(draft.kcRows));
+            if (typeof iframeWin.kcRenderRows === 'function') {
+              iframeWin.kcRenderRows();
+            }
+          }
+
+          if (typeof iframeWin.updateSteps === 'function') iframeWin.updateSteps();
+          if (typeof iframeWin.etmUpdateSteps === 'function') iframeWin.etmUpdateSteps();
+          if (typeof iframeWin.kcUpdateSteps === 'function') iframeWin.kcUpdateSteps();
+          if (typeof iframeWin.updateStepper === 'function') iframeWin.updateStepper();
+
+          if (draft.tool === 'alcazar') {
+            const modelVal = draft.formData['f-model'];
+            const csvModel = iframeDoc.getElementById('csv_f-model');
+            if (csvModel) {
+              if (modelVal) {
+                csvModel.textContent = modelVal;
+                csvModel.style.color = '';
+              } else {
+                csvModel.textContent = 'Select Model…';
+                csvModel.style.color = 'var(--text3)';
+              }
+            }
+            const freqVal = draft.formData['f-freq'];
+            const csvFreq = iframeDoc.getElementById('csv_f-freq');
+            if (csvFreq) {
+              csvFreq.textContent = freqVal === 'CONTINOUSLY' ? 'CONTINUOUSLY' : (freqVal || 'CONTINUOUSLY');
+            }
+          }
+
+          toast('Draft loaded successfully', 'ok');
+        };
 
       if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === 'complete') {
         populate();
       } else {
         iframe.addEventListener('load', populate, { once: true });
       }
-    }
+    });
+  }
   </script>
 
   <script src="./ppt-template.js"></script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+      import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
-      authDomain: "officedesk-6c56e.firebaseapp.com",
-      projectId: "officedesk-6c56e",
-      storageBucket: "officedesk-6c56e.firebasestorage.app",
-      messagingSenderId: "342843064222",
-      appId: "1:342843064222:web:b4e81090796664bf39608f"
-    };
+      const firebaseConfig = {
+        apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
+        authDomain: "officedesk-6c56e.firebaseapp.com",
+        projectId: "officedesk-6c56e",
+        storageBucket: "officedesk-6c56e.firebasestorage.app",
+        messagingSenderId: "342843064222",
+        appId: "1:342843064222:web:b4e81090796664bf39608f"
+      };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const provider = new GoogleAuthProvider();
 
-    const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
+      const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
 
-    function enableCloudButtons(email) {
-      document.getElementById('googleSignInText').innerText = email;
-      document.getElementById('googleSignInBtn').style.borderColor = 'var(--border)';
-      document.getElementById('googleSignInBtn').style.color = 'var(--text2)';
+      function enableCloudButtons(email) {
+        document.getElementById('googleSignInText').innerText = email;
+        document.getElementById('googleSignInBtn').style.borderColor = 'var(--border)';
+        document.getElementById('googleSignInBtn').style.color = 'var(--text2)';
 
-      document.getElementById('cloudBackupBtn').disabled = false;
-      document.getElementById('cloudBackupBtn').style.opacity = '1';
-      document.getElementById('cloudBackupBtn').style.cursor = 'pointer';
+        document.getElementById('cloudBackupBtn').disabled = false;
+        document.getElementById('cloudBackupBtn').style.opacity = '1';
+        document.getElementById('cloudBackupBtn').style.cursor = 'pointer';
 
-      document.getElementById('cloudRestoreBtn').disabled = false;
-      document.getElementById('cloudRestoreBtn').style.opacity = '1';
-      document.getElementById('cloudRestoreBtn').style.cursor = 'pointer';
+        document.getElementById('cloudRestoreBtn').disabled = false;
+        document.getElementById('cloudRestoreBtn').style.opacity = '1';
+        document.getElementById('cloudRestoreBtn').style.cursor = 'pointer';
 
-      const signOutDiv = document.getElementById('p-signOutDiv');
-      if (signOutDiv) signOutDiv.style.display = 'block';
-    }
-
-    function disableCloudButtons() {
-      document.getElementById('googleSignInText').innerText = "Sign in with Google";
-      document.getElementById('googleSignInBtn').style.borderColor = '';
-      document.getElementById('googleSignInBtn').style.color = '';
-
-      document.getElementById('cloudBackupBtn').disabled = true;
-      document.getElementById('cloudBackupBtn').style.opacity = '0.4';
-      document.getElementById('cloudBackupBtn').style.cursor = 'not-allowed';
-
-      document.getElementById('cloudRestoreBtn').disabled = true;
-      document.getElementById('cloudRestoreBtn').style.opacity = '0.4';
-      document.getElementById('cloudRestoreBtn').style.cursor = 'not-allowed';
-
-      const signOutDiv = document.getElementById('p-signOutDiv');
-      if (signOutDiv) signOutDiv.style.display = 'none';
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (user && allowedEmails.includes(user.email)) {
-        enableCloudButtons(user.email);
-      } else {
-        disableCloudButtons();
+        const signOutDiv = document.getElementById('p-signOutDiv');
+        if (signOutDiv) signOutDiv.style.display = 'block';
       }
-    });
 
-    window.showSignOutConfirm = function () {
-      if (typeof closeProfile === "function") closeProfile();
-      document.getElementById('confirmOverlay').classList.add('open');
-      setTimeout(() => document.getElementById('confirmOverlay').classList.add('visible'), 10);
-      document.getElementById('confirmModal').classList.add('show');
-    };
+      function disableCloudButtons() {
+        document.getElementById('googleSignInText').innerText = "Sign in with Google";
+        document.getElementById('googleSignInBtn').style.borderColor = '';
+        document.getElementById('googleSignInBtn').style.color = '';
 
-    window.closeConfirm = function () {
-      document.getElementById('confirmOverlay').classList.remove('visible');
-      document.getElementById('confirmModal').classList.remove('show');
-      setTimeout(() => document.getElementById('confirmOverlay').classList.remove('open'), 300);
-    };
+        document.getElementById('cloudBackupBtn').disabled = true;
+        document.getElementById('cloudBackupBtn').style.opacity = '0.4';
+        document.getElementById('cloudBackupBtn').style.cursor = 'not-allowed';
 
-    window.executeSignOut = async function () {
-      window.closeConfirm();
-      showLoader(true);
-      try {
-        await signOut(auth);
-        toast("Signed out successfully", "info");
-        disableCloudButtons();
+        document.getElementById('cloudRestoreBtn').disabled = true;
+        document.getElementById('cloudRestoreBtn').style.opacity = '0.4';
+        document.getElementById('cloudRestoreBtn').style.cursor = 'not-allowed';
 
-        currentProfile = { name: 'User', avatar: '' };
-        localStorage.setItem('od-profile', JSON.stringify(currentProfile));
-        if (typeof renderProfile === 'function') renderProfile();
-
-      } catch (e) {
-        toast("Error signing out", "err");
+        const signOutDiv = document.getElementById('p-signOutDiv');
+        if (signOutDiv) signOutDiv.style.display = 'none';
       }
-      showLoader(false);
-    };
 
-    window.googleSignIn = async function () {
-      showLoader(true);
-      try {
-        let user = auth.currentUser;
-        if (!user) {
-          user = (await signInWithPopup(auth, provider)).user;
-        }
-
-        if (!allowedEmails.includes(user.email)) {
-          toast("Unauthorized Email ID. Access Denied.", "err");
-          await signOut(auth);
-        } else {
+      onAuthStateChanged(auth, (user) => {
+        if (user && allowedEmails.includes(user.email)) {
           enableCloudButtons(user.email);
-
-          toast("Checking cloud profile...", "info");
-          const docSnap = await getDoc(doc(db, "backups", "master_database"));
-
-          if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
-            currentProfile = docSnap.data().data.user_profile;
-            localStorage.setItem('od-profile', JSON.stringify(currentProfile));
-            if (typeof renderProfile === 'function') renderProfile();
-            toast("Signed in & Profile Restored!", "ok");
-          } else {
-            toast("Welcome! Please setup your profile.", "ok");
-            setTimeout(() => {
-              if (typeof openProfile === 'function') openProfile();
-            }, 800);
-          }
-        }
-      } catch (e) {
-        toast("Sign in failed. Try again.", "err");
-      }
-      showLoader(false);
-    };
-
-    window.cloudBackup = async function (data) {
-      showLoader(true);
-      try {
-        const user = auth.currentUser;
-        if (!user || !allowedEmails.includes(user.email)) return;
-        await setDoc(doc(db, "backups", "master_database"), {
-          data: data, timestamp: new Date().toISOString(), lastUpdatedBy: user.email
-        });
-        toast("Saved securely to Firebase Cloud", "ok");
-      } catch (e) {
-        toast("Database Access Denied", "err");
-      }
-      showLoader(false);
-    };
-
-    window.cloudRestore = async function () {
-      showLoader(true);
-      try {
-        const user = auth.currentUser;
-        if (!user || !allowedEmails.includes(user.email)) { showLoader(false); return; }
-
-        const docSnap = await getDoc(doc(db, "backups", "master_database"));
-        showLoader(false);
-
-        if (docSnap.exists()) {
-          const cloudData = docSnap.data().data;
-          if (window.promptRestore) {
-            setTimeout(() => window.promptRestore(cloudData, 'Cloud'), 10);
-          }
         } else {
-          toast("No cloud backup found yet", "info");
+          disableCloudButtons();
         }
-      } catch (e) {
+      });
+
+      window.showSignOutConfirm = function () {
+        if (typeof closeProfile === "function") closeProfile();
+        document.getElementById('confirmOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('confirmOverlay').classList.add('visible'), 10);
+        document.getElementById('confirmModal').classList.add('show');
+      };
+
+      window.closeConfirm = function () {
+        document.getElementById('confirmOverlay').classList.remove('visible');
+        document.getElementById('confirmModal').classList.remove('show');
+        setTimeout(() => document.getElementById('confirmOverlay').classList.remove('open'), 300);
+      };
+
+      window.executeSignOut = async function () {
+        window.closeConfirm();
+        showLoader(true);
+        try {
+          await signOut(auth);
+          toast("Signed out successfully", "info");
+          disableCloudButtons();
+
+          currentProfile = { name: 'User', avatar: '' };
+          localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+          if (typeof renderProfile === 'function') renderProfile();
+
+        } catch (e) {
+          toast("Error signing out", "err");
+        }
         showLoader(false);
-        toast("Database Access Denied", "err");
-      }
-    };
+      };
+
+      window.googleSignIn = async function () {
+        showLoader(true);
+        try {
+          let user = auth.currentUser;
+          if (!user) {
+            user = (await signInWithPopup(auth, provider)).user;
+          }
+
+          if (!allowedEmails.includes(user.email)) {
+            toast("Unauthorized Email ID. Access Denied.", "err");
+            await signOut(auth);
+          } else {
+            enableCloudButtons(user.email);
+
+            toast("Checking cloud profile...", "info");
+            const docSnap = await getDoc(doc(db, "backups", "master_database"));
+
+            if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
+              currentProfile = docSnap.data().data.user_profile;
+              localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+              if (typeof renderProfile === 'function') renderProfile();
+              toast("Signed in & Profile Restored!", "ok");
+            } else {
+              toast("Welcome! Please setup your profile.", "ok");
+              setTimeout(() => {
+                if (typeof openProfile === 'function') openProfile();
+              }, 800);
+            }
+          }
+        } catch (e) {
+          toast("Sign in failed. Try again.", "err");
+        }
+        showLoader(false);
+      };
+
+      window.cloudBackup = async function (data) {
+        showLoader(true);
+        try {
+          const user = auth.currentUser;
+          if (!user || !allowedEmails.includes(user.email)) return;
+          await setDoc(doc(db, "backups", "master_database"), {
+            data: data, timestamp: new Date().toISOString(), lastUpdatedBy: user.email
+          });
+          toast("Saved securely to Firebase Cloud", "ok");
+        } catch (e) {
+          toast("Database Access Denied", "err");
+        }
+        showLoader(false);
+      };
+
+      window.cloudRestore = async function () {
+        showLoader(true);
+        try {
+          const user = auth.currentUser;
+          if (!user || !allowedEmails.includes(user.email)) { showLoader(false); return; }
+
+          const docSnap = await getDoc(doc(db, "backups", "master_database"));
+          showLoader(false);
+
+          if (docSnap.exists()) {
+            const cloudData = docSnap.data().data;
+            if (window.promptRestore) {
+              setTimeout(() => window.promptRestore(cloudData, 'Cloud'), 10);
+            }
+          } else {
+            toast("No cloud backup found yet", "info");
+          }
+        } catch (e) {
+          showLoader(false);
+          toast("Database Access Denied", "err");
+        }
+      };
   </script>
 </body>
 
