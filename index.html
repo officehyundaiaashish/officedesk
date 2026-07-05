@@ -2698,7 +2698,7 @@ self.addEventListener('notificationclick', e => {
         localStorage.setItem('od_drafts_v1', JSON.stringify(data['drafts']));
         const draftsIframe = document.getElementById('drafts-iframe');
         if (draftsIframe && draftsIframe.contentWindow) {
-          try { draftsIframe.contentWindow.location.reload(); } catch (e) {}
+          try { draftsIframe.contentWindow.location.reload(); } catch (e) { }
         }
       }
       const IFRAME_IDS = ['alcazar-iframe', 'keycode-iframe', 'letterheads-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'];
@@ -2913,7 +2913,7 @@ self.addEventListener('notificationclick', e => {
         if (Array.isArray(iframeWin.photoData)) {
           photos = JSON.parse(JSON.stringify(iframeWin.photoData));
         }
-      } else if (tool === 'etm') {
+      } else if (tool === 'etm' || tool === 'pwareg' || tool === 'agm') {
         if (iframeWin.PHOTOS) {
           photos = JSON.parse(JSON.stringify(iframeWin.PHOTOS));
         }
@@ -3006,7 +3006,7 @@ self.addEventListener('notificationclick', e => {
               }
             });
           }
-        } else if (draft.tool === 'etm' && draft.photos) {
+        } else if ((draft.tool === 'etm' || draft.tool === 'pwareg' || draft.tool === 'agm') && draft.photos) {
           if (iframeWin.PHOTOS) {
             Object.assign(iframeWin.PHOTOS, draft.photos);
             Object.keys(draft.photos).forEach(slotId => {
@@ -3032,6 +3032,7 @@ self.addEventListener('notificationclick', e => {
         if (typeof iframeWin.updateSteps === 'function') iframeWin.updateSteps();
         if (typeof iframeWin.etmUpdateSteps === 'function') iframeWin.etmUpdateSteps();
         if (typeof iframeWin.kcUpdateSteps === 'function') iframeWin.kcUpdateSteps();
+        if (typeof iframeWin.updateStepper === 'function') iframeWin.updateStepper();
 
         if (draft.tool === 'alcazar') {
           const modelVal = draft.formData['f-model'];
