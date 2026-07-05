@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Entries</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+        :root {
+            --bg: #f4f4f2;
+            --surface: #ffffff;
+            --surface2: #f0f0ee;
+            --border: #e3e3df;
+            --text: #181816;
+            --text2: #6a6a67;
+            --text3: #9a9a97;
+            --accent: #002C5F;
+            --accent-h: #001F47;
+            --accent-s: #e8edf5;
+            --radius: 10px;
+            --radius-lg: 16px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 12px rgba(0, 0, 0, .04);
+            --font: 'Inter', sans-serif;
+            --tr: 180ms ease;
+        }
+
+        [data-theme=dark] {
+            --bg: #111110;
+            --surface: #1c1c1a;
+            --surface2: #232321;
+            --border: #2d2d2b;
+            --text: #f0f0ee;
+            --text2: #888885;
+            --text3: #525250;
+            --accent: #4D8FD6;
+            --accent-h: #3A7BC8;
+            --accent-s: #001A3A;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            transition: background var(--tr), color var(--tr);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ph {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .ph-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -.4px;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .drafts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .hist-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            cursor: pointer;
+            transition: all var(--tr);
+        }
+
+        .hist-item:hover {
+            border-color: var(--accent);
+            background: var(--surface2);
+        }
+
+        .hi-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hi-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hi-meta {
+            font-size: 12px;
+            color: var(--text2);
+            margin-top: 3px;
+        }
+
+        .hi-del {
+            background: none;
+            border: none;
+            color: var(--border);
+            cursor: pointer;
+            transition: color var(--tr);
+            display: flex;
+            align-items: center;
+            padding: 4px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .hi-del:hover {
+            color: #e05252;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text3);
+            font-size: 14px;
+        }
+
+        .btn-row {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            font-family: var(--font);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 9px 18px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            transition: all var(--tr);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .btn-danger {
+            background: #e05252;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #c93b3b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ph">
+        <div class="ph-title">Saved Entries (Draft Batch)</div>
+    </div>
+    <div class="container">
+        <div class="drafts-list" id="drafts-list"></div>
+        <div class="btn-row" id="clear-btn-row" style="display: none;">
+            <button class="btn btn-danger" onclick="clearAllDrafts()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Clear All Drafts
+            </button>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'theme') {
+                document.documentElement.setAttribute('data-theme', e.data.theme);
+            }
+        });
+
+        const labels = {
+            alcazar: "Alcazar Form",
+            keycode: "Key Code Form",
+            letterheads: "Letter Heads",
+            pwareg: "PWA Regular",
+            etm: "ETM Form",
+            agm: "AGM Form"
+        };
+
+        function renderDrafts() {
+            const list = document.getElementById('drafts-list');
+            const clearRow = document.getElementById('clear-btn-row');
+            let drafts = [];
+            try {
+                drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
+            } catch (e) { }
+
+            if (drafts.length === 0) {
+                list.innerHTML = '<div class="empty-state">No saved drafts yet.</div>';
+                clearRow.style.display = 'none';
+                return;
+            }
+
+            clearRow.style.display = 'flex';
+            list.innerHTML = '';
+            drafts.forEach(draft => {
+                const item = document.createElement('div');
+                item.className = 'hist-item';
+
+                const info = document.createElement('div');
+                info.className = 'hi-info';
+                info.innerHTML = `
+          <div class="hi-name">${draft.vin || 'Unnamed Draft'}</div>
+          <div class="hi-meta">${labels[draft.tool] || draft.tool} · Saved: ${draft.timestamp}</div>
+        `;
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'hi-del';
+                delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteDraft(draft.id);
+                };
+
+                item.appendChild(info);
+                item.appendChild(delBtn);
+
+                item.onclick = () => {
+                    window.parent.postMessage({ type: 'load-draft-from-file', id: draft.id }, '*');
+                };
+
+                list.appendChild(item);
+            });
+        }
+
+        function deleteDraft(id) {
+            if (!confirm("Are you sure you want to delete this draft?")) return;
+            let drafts = [];
+            try {
+                drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
+            } catch (e) { }
+            drafts = drafts.filter(d => d.id !== id);
+            localStorage.setItem('od_drafts_v1', JSON.stringify(drafts));
+            renderDrafts();
+            window.parent.postMessage({ type: 'draft-deleted' }, '*');
+        }
+
+        function clearAllDrafts() {
+            if (!confirm("Are you sure you want to clear all saved drafts? This cannot be undone.")) return;
+            localStorage.removeItem('od_drafts_v1');
+            renderDrafts();
+            window.parent.postMessage({ type: 'draft-deleted' }, '*');
+        }
+
+        renderDrafts();
+    </script>
+</body>
+
+</html>
