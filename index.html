@@ -1938,7 +1938,7 @@ self.addEventListener('notificationclick', e => {
         </svg>
         Save Draft
       </button>
- 
+
       <button class="tbtn" id="themeBtn" title="Toggle theme">
         <svg id="ico-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2">
@@ -2574,7 +2574,7 @@ self.addEventListener('notificationclick', e => {
       const bc = document.getElementById("bc");
       if (bc) bc.innerText = labels[v] || "Dashboard";
 
-       const saveDraftBtn = document.getElementById('saveDraftBtn');
+      const saveDraftBtn = document.getElementById('saveDraftBtn');
       if (saveDraftBtn) {
         if (v === 'dashboard' || v === 'drafts') {
           saveDraftBtn.style.display = 'none';
