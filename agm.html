@@ -292,7 +292,9 @@ const hyundaiModels=[
 
 let templateBuffer=null,currentMode='form';
 const CAL={},PHOTOS={};
+window.PHOTOS = PHOTOS;
 let HISTORY=[];
+
 try{HISTORY=JSON.parse(localStorage.getItem('agm_hist')||'[]');}catch(e){}
 
 const pad=n=>String(n).padStart(2,'0');
