@@ -5,8 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OfficeDesk</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
     rel="stylesheet">
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwMkM1RiIvPjxyZWN0IHg9IjQiIHk9IjciIHdpZHRoPSIyNCIgaGVpZ2h0PSIxNCIgcng9IjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHBhdGggZD0iTTExIDIxaDEwTTE2IDIxdjQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=">
@@ -18,14 +17,14 @@
   <meta name="apple-mobile-web-app-title" content="OfficeDesk">
   <script>
     // Instant status bar fix — render se pehle theme apply karo
-    (function(){
+    (function () {
       const t = localStorage.getItem('od-theme') || 'light';
       const tc = document.getElementById('od-theme-color');
       const as = document.getElementById('od-apple-status');
-      if(t === 'dark'){
+      if (t === 'dark') {
         tc.content = '#111110';
         as.content = 'black-translucent';
-        document.documentElement.setAttribute('data-theme','dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
       } else {
         tc.content = '#ffffff';
         as.content = 'default';
@@ -36,81 +35,81 @@
 
   <link rel="manifest" id="od-pwa-manifest">
   <script>
-  (function () {
+    (function () {
 
-    // ── 1. ICONS — Canvas se PNG generate (192 + 512) ──────────────────
-    function makeIcon(size) {
-      const c = document.createElement('canvas');
-      c.width = c.height = size;
-      const ctx = c.getContext('2d');
-      const r = size * 0.22;
+      // ── 1. ICONS — Canvas se PNG generate (192 + 512) ──────────────────
+      function makeIcon(size) {
+        const c = document.createElement('canvas');
+        c.width = c.height = size;
+        const ctx = c.getContext('2d');
+        const r = size * 0.22;
 
-      // Navy rounded background
-      ctx.beginPath();
-      ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
-      ctx.quadraticCurveTo(size, 0, size, r);
-      ctx.lineTo(size, size - r);
-      ctx.quadraticCurveTo(size, size, size - r, size);
-      ctx.lineTo(r, size);
-      ctx.quadraticCurveTo(0, size, 0, size - r);
-      ctx.lineTo(0, r);
-      ctx.quadraticCurveTo(0, 0, r, 0);
-      ctx.closePath();
-      ctx.fillStyle = '#002C5F';
-      ctx.fill();
+        // Navy rounded background
+        ctx.beginPath();
+        ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
+        ctx.quadraticCurveTo(size, 0, size, r);
+        ctx.lineTo(size, size - r);
+        ctx.quadraticCurveTo(size, size, size - r, size);
+        ctx.lineTo(r, size);
+        ctx.quadraticCurveTo(0, size, 0, size - r);
+        ctx.lineTo(0, r);
+        ctx.quadraticCurveTo(0, 0, r, 0);
+        ctx.closePath();
+        ctx.fillStyle = '#002C5F';
+        ctx.fill();
 
-      // White monitor icon
-      const pad = size * 0.18, w = size - pad * 2, s = w / 24;
-      ctx.save();
-      ctx.translate(pad, pad);
-      ctx.scale(s, s);
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = size * 0.055 / s;
-      ctx.lineCap = ctx.lineJoin = 'round';
-      ctx.beginPath();
-      ctx.rect(2, 3, 20, 14);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(8, 21); ctx.lineTo(16, 21);
-      ctx.moveTo(12, 17); ctx.lineTo(12, 21);
-      ctx.stroke();
-      ctx.restore();
-      return c.toDataURL('image/png');
-    }
+        // White monitor icon
+        const pad = size * 0.18, w = size - pad * 2, s = w / 24;
+        ctx.save();
+        ctx.translate(pad, pad);
+        ctx.scale(s, s);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = size * 0.055 / s;
+        ctx.lineCap = ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.rect(2, 3, 20, 14);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(8, 21); ctx.lineTo(16, 21);
+        ctx.moveTo(12, 17); ctx.lineTo(12, 21);
+        ctx.stroke();
+        ctx.restore();
+        return c.toDataURL('image/png');
+      }
 
-    const icon192 = makeIcon(192);
-    const icon512 = makeIcon(512);
+      const icon192 = makeIcon(192);
+      const icon512 = makeIcon(512);
 
-    // Apple touch icon update
-    const atIcon = document.querySelector('link[rel="apple-touch-icon"]');
-    if (atIcon) atIcon.href = icon192;
+      // Apple touch icon update
+      const atIcon = document.querySelector('link[rel="apple-touch-icon"]');
+      if (atIcon) atIcon.href = icon192;
 
-    // ── 2. MANIFEST — Blob inject ───────────────────────────────────────
-    const manifest = {
-      name: 'OfficeDesk',
-      short_name: 'OfficeDesk',
-      description: 'Dealership Utility.',
-      start_url: './index.html',
-      scope: './',
-      display: 'standalone',
-      orientation: 'portrait-primary',
-      theme_color: '#002C5F',
-      background_color: '#002C5F',
-      prefer_related_applications: false,
-      categories: ['productivity', 'business'],
-      icons: [
-        { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-        { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-      ]
-    };
-    const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-    document.getElementById('od-pwa-manifest').href = URL.createObjectURL(mBlob);
+      // ── 2. MANIFEST — Blob inject ───────────────────────────────────────
+      const manifest = {
+        name: 'OfficeDesk',
+        short_name: 'OfficeDesk',
+        description: 'Dealership Utility.',
+        start_url: './index.html',
+        scope: './',
+        display: 'standalone',
+        orientation: 'portrait-primary',
+        theme_color: '#002C5F',
+        background_color: '#002C5F',
+        prefer_related_applications: false,
+        categories: ['productivity', 'business'],
+        icons: [
+          { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+        ]
+      };
+      const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+      document.getElementById('od-pwa-manifest').href = URL.createObjectURL(mBlob);
 
-    // ── 3. SERVICE WORKER — Industry Standard ───────────────────────────
-    // HTML files  → Network Only (cache kabhi nahi)
-    // Assets      → Stale While Revalidate (fast + background update)
-    // Update mila → Auto page reload — user kuch na kare
-    const swCode = `
+      // ── 3. SERVICE WORKER — Industry Standard ───────────────────────────
+      // HTML files  → Network Only (cache kabhi nahi)
+      // Assets      → Stale While Revalidate (fast + background update)
+      // Update mila → Auto page reload — user kuch na kare
+      const swCode = `
 const CACHE = 'officedesk-assets-v1';
 const STATIC_ASSETS = [
   './ppt-template.js','./head.docx','./pwareg.xlsx','./etm.pptx','./agm.html','./agm.xlsx'
@@ -189,82 +188,82 @@ self.addEventListener('notificationclick', e => {
 });
 `;
 
-    if ('serviceWorker' in navigator) {
-      const swBlob = new Blob([swCode], { type: 'text/javascript' });
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob), { scope: './' })
-        .then(reg => {
-          console.log('[OfficeDesk SW] Registered ✓');
+      if ('serviceWorker' in navigator) {
+        const swBlob = new Blob([swCode], { type: 'text/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob), { scope: './' })
+          .then(reg => {
+            console.log('[OfficeDesk SW] Registered ✓');
 
-          // Har 30 sec mein check karo — koi update aaya kya
-          setInterval(() => reg.update(), 30000);
+            // Har 30 sec mein check karo — koi update aaya kya
+            setInterval(() => reg.update(), 30000);
 
-          // Naya SW mila — activate karo
-          reg.addEventListener('updatefound', () => {
-            const newSW = reg.installing;
-            if (!newSW) return;
-            newSW.addEventListener('statechange', () => {
-              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-                newSW.postMessage({ type: 'SKIP_WAITING' });
+            // Naya SW mila — activate karo
+            reg.addEventListener('updatefound', () => {
+              const newSW = reg.installing;
+              if (!newSW) return;
+              newSW.addEventListener('statechange', () => {
+                if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                  newSW.postMessage({ type: 'SKIP_WAITING' });
+                }
+              });
+            });
+
+            // SW activate hone ke baad page silently reload
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              if (!refreshing) { refreshing = true; window.location.reload(); }
+            });
+          })
+          .catch(err => console.warn('[OfficeDesk SW] Error:', err));
+      }
+
+      // ── 4. NOTIFICATION PERMISSION (ask once only) ──────────────────────
+      window.addEventListener('load', () => {
+        if (!('Notification' in window)) return;
+        if (Notification.permission === 'default' && !localStorage.getItem('od-notif-asked')) {
+          setTimeout(() => {
+            localStorage.setItem('od-notif-asked', '1');
+            Notification.requestPermission().then(perm => {
+              if (perm === 'granted') {
+                navigator.serviceWorker.ready.then(reg => {
+                  if (reg.active) reg.active.postMessage({ type: 'SHOW_WELCOME_NOTIF', icon: icon192 });
+                });
               }
             });
-          });
+          }, 2000);
+        }
+      });
 
-          // SW activate hone ke baad page silently reload
-          let refreshing = false;
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) { refreshing = true; window.location.reload(); }
-          });
-        })
-        .catch(err => console.warn('[OfficeDesk SW] Error:', err));
-    }
+      // ── 5. A2HS — Auto install prompt (show ONCE only, never repeat) ────
+      let deferredPrompt = null;
+      const A2HS_KEY = 'od-a2hs-asked';
 
-    // ── 4. NOTIFICATION PERMISSION (ask once only) ──────────────────────
-    window.addEventListener('load', () => {
-      if (!('Notification' in window)) return;
-      if (Notification.permission === 'default' && !localStorage.getItem('od-notif-asked')) {
+      window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // If already asked before (any outcome), never show again
+        if (localStorage.getItem(A2HS_KEY)) return;
+
         setTimeout(() => {
-          localStorage.setItem('od-notif-asked', '1');
-          Notification.requestPermission().then(perm => {
-            if (perm === 'granted') {
-              navigator.serviceWorker.ready.then(reg => {
-                if (reg.active) reg.active.postMessage({ type: 'SHOW_WELCOME_NOTIF', icon: icon192 });
-              });
-            }
+          if (!deferredPrompt) return;
+          // Mark as asked immediately so even if user dismisses fast it won't repeat
+          localStorage.setItem(A2HS_KEY, '1');
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(c => {
+            console.log('[OfficeDesk A2HS]', c.outcome);
+            deferredPrompt = null;
           });
-        }, 2000);
-      }
-    });
+        }, 3000);
+      });
 
-    // ── 5. A2HS — Auto install prompt (show ONCE only, never repeat) ────
-    let deferredPrompt = null;
-    const A2HS_KEY = 'od-a2hs-asked';
-
-    window.addEventListener('beforeinstallprompt', e => {
-      e.preventDefault();
-      deferredPrompt = e;
-
-      // If already asked before (any outcome), never show again
-      if (localStorage.getItem(A2HS_KEY)) return;
-
-      setTimeout(() => {
-        if (!deferredPrompt) return;
-        // Mark as asked immediately so even if user dismisses fast it won't repeat
+      window.addEventListener('appinstalled', () => {
+        console.log('[OfficeDesk] App installed ✓');
         localStorage.setItem(A2HS_KEY, '1');
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(c => {
-          console.log('[OfficeDesk A2HS]', c.outcome);
-          deferredPrompt = null;
-        });
-      }, 3000);
-    });
+        deferredPrompt = null;
+      });
 
-    window.addEventListener('appinstalled', () => {
-      console.log('[OfficeDesk] App installed ✓');
-      localStorage.setItem(A2HS_KEY, '1');
-      deferredPrompt = null;
-    });
-
-  })();
+    })();
   </script>
   <style>
     :root {
@@ -538,8 +537,15 @@ self.addEventListener('notificationclick', e => {
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translate3d(0, 8px, 0); }
-      to { opacity: 1; transform: translate3d(0, 0, 0); }
+      from {
+        opacity: 0;
+        transform: translate3d(0, 8px, 0);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
     }
 
     .ph {
@@ -928,9 +934,20 @@ self.addEventListener('notificationclick', e => {
       opacity: 1;
     }
 
-    #toast.ok { background: var(--accent); color: #fff; }
-    #toast.err { background: #e05252; color: #fff; }
-    #toast.info { background: var(--text); color: var(--bg); }
+    #toast.ok {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    #toast.err {
+      background: #e05252;
+      color: #fff;
+    }
+
+    #toast.info {
+      background: var(--text);
+      color: var(--bg);
+    }
 
     #loader {
       position: fixed;
@@ -967,7 +984,11 @@ self.addEventListener('notificationclick', e => {
       animation: sp 650ms linear infinite;
     }
 
-    @keyframes sp { to { transform: rotate(360deg) } }
+    @keyframes sp {
+      to {
+        transform: rotate(360deg)
+      }
+    }
 
     .ld-card p {
       font-size: 13.5px;
@@ -992,17 +1013,18 @@ self.addEventListener('notificationclick', e => {
     .welcome::after {
       content: '';
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 40%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0,44,95,0.08), transparent);
+      background: linear-gradient(90deg, transparent, rgba(0, 44, 95, 0.08), transparent);
       transform: translateX(-100%) skewX(-15deg);
       pointer-events: none;
       animation: shine 4s ease-in-out infinite;
     }
 
     [data-theme=dark] .welcome::after {
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     }
 
     .wt h2 {
@@ -1070,8 +1092,13 @@ self.addEventListener('notificationclick', e => {
     }
 
     @keyframes shine {
-      0%   { transform: translateX(-100%) skewX(-15deg); }
-      100% { transform: translateX(250%) skewX(-15deg); }
+      0% {
+        transform: translateX(-100%) skewX(-15deg);
+      }
+
+      100% {
+        transform: translateX(250%) skewX(-15deg);
+      }
     }
 
     .tool-card {
@@ -1092,16 +1119,17 @@ self.addEventListener('notificationclick', e => {
     .tool-card::after {
       content: '';
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 40%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0,44,95,0.10), transparent);
+      background: linear-gradient(90deg, transparent, rgba(0, 44, 95, 0.10), transparent);
       transform: translateX(-100%) skewX(-15deg);
       pointer-events: none;
     }
 
     [data-theme=dark] .tool-card::after {
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.13), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.13), transparent);
     }
 
     .tool-card.live::after {
@@ -1180,9 +1208,19 @@ self.addEventListener('notificationclick', e => {
       color: var(--accent);
     }
 
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
 
     /* BOTTOM NAV */
     .bnav {
@@ -1217,9 +1255,17 @@ self.addEventListener('notificationclick', e => {
       padding: 8px 4px;
     }
 
-    .bnav-item svg { transition: color var(--tr); }
-    .bnav-item.active { color: var(--accent); }
-    .bnav-item:active { opacity: .7; }
+    .bnav-item svg {
+      transition: color var(--tr);
+    }
+
+    .bnav-item.active {
+      color: var(--accent);
+    }
+
+    .bnav-item:active {
+      opacity: .7;
+    }
 
     /* MORE BUTTON */
     .bnav-more {
@@ -1240,8 +1286,13 @@ self.addEventListener('notificationclick', e => {
       transition: color var(--tr);
     }
 
-    .bnav-more:active { opacity: .7; }
-    .bnav-more.open { color: var(--accent); }
+    .bnav-more:active {
+      opacity: .7;
+    }
+
+    .bnav-more.open {
+      color: var(--accent);
+    }
 
     .more-arrow {
       animation: bounceArrow 1.8s ease-in-out infinite;
@@ -1251,9 +1302,19 @@ self.addEventListener('notificationclick', e => {
     }
 
     @keyframes bounceArrow {
-      0%, 100% { transform: translateY(0); }
-      30%        { transform: translateY(-4px); }
-      60%        { transform: translateY(2px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(-4px);
+      }
+
+      60% {
+        transform: translateY(2px);
+      }
     }
 
     /* DRAWER OVERLAY */
@@ -1261,14 +1322,19 @@ self.addEventListener('notificationclick', e => {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.35);
+      background: rgba(0, 0, 0, 0.35);
       z-index: 300;
       opacity: 0;
       transition: opacity 280ms ease;
     }
 
-    .drawer-overlay.open { display: block; }
-    .drawer-overlay.visible { opacity: 1; }
+    .drawer-overlay.open {
+      display: block;
+    }
+
+    .drawer-overlay.visible {
+      opacity: 1;
+    }
 
     /* DRAWER PANEL */
     .drawer {
@@ -1282,10 +1348,12 @@ self.addEventListener('notificationclick', e => {
       transform: translateY(100%);
       transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
       padding-bottom: env(safe-area-inset-bottom, 0px);
-      box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+      box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.18);
     }
 
-    .drawer.open { transform: translateY(0); }
+    .drawer.open {
+      transform: translateY(0);
+    }
 
     .drawer-handle {
       width: 36px;
@@ -1338,26 +1406,43 @@ self.addEventListener('notificationclick', e => {
     .drawer-item::after {
       content: '';
       position: absolute;
-      top: 0; left: -60%;
+      top: 0;
+      left: -60%;
       width: 40%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
       transform: skewX(-15deg);
       animation: drawerShine 3.2s ease-in-out infinite;
     }
 
     [data-theme=dark] .drawer-item::after {
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
     }
 
     @keyframes drawerShine {
-      0%   { left: -60%; }
-      50%  { left: 120%; }
-      100% { left: 120%; }
+      0% {
+        left: -60%;
+      }
+
+      50% {
+        left: 120%;
+      }
+
+      100% {
+        left: 120%;
+      }
     }
 
-    .drawer-item:active { background: var(--accent-s); border-color: var(--accent); }
-    .drawer-item.active { color: var(--accent); background: var(--accent-s); border-color: var(--accent); }
+    .drawer-item:active {
+      background: var(--accent-s);
+      border-color: var(--accent);
+    }
+
+    .drawer-item.active {
+      color: var(--accent);
+      background: var(--accent-s);
+      border-color: var(--accent);
+    }
 
     .drawer-item-icon {
       width: 32px;
@@ -1371,9 +1456,25 @@ self.addEventListener('notificationclick', e => {
       transition: background var(--tr);
     }
 
-    .drawer-item.active .drawer-item-icon { background: var(--accent-s); color: var(--accent); }
-    .drawer-item-label { font-size: 10.5px; font-weight: 500; line-height: 1.2; }
-    .drawer-item-badge { background: var(--accent); color: #fff; font-size: 8.5px; font-weight: 600; padding: 1px 6px; border-radius: 20px; }
+    .drawer-item.active .drawer-item-icon {
+      background: var(--accent-s);
+      color: var(--accent);
+    }
+
+    .drawer-item-label {
+      font-size: 10.5px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .drawer-item-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 8.5px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 20px;
+    }
 
     /* CLOSE ARROW AT BOTTOM OF DRAWER */
     .drawer-close-row {
@@ -1400,38 +1501,119 @@ self.addEventListener('notificationclick', e => {
       transition: color var(--tr), background var(--tr);
     }
 
-    .drawer-close-btn:active { background: var(--surface2); }
-    .close-arrow { animation: bounceDown 1.8s ease-in-out infinite; display: flex; align-items: center; justify-content: center; }
+    .drawer-close-btn:active {
+      background: var(--surface2);
+    }
+
+    .close-arrow {
+      animation: bounceDown 1.8s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     @keyframes bounceDown {
-      0%, 100% { transform: translateY(0); }
-      30%        { transform: translateY(4px); }
-      60%        { transform: translateY(-2px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(4px);
+      }
+
+      60% {
+        transform: translateY(-2px);
+      }
     }
 
     @media(max-width:900px) {
-      .fg.c3 { grid-template-columns: 1fr 1fr; }
-      .pg { grid-template-columns: repeat(2, 1fr); }
+      .fg.c3 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .pg {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media(max-width:640px) {
-      .sidebar { display: none; }
-      .bnav { display: flex; }
-      .main { padding: 16px 14px 88px; }
-      .tools-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-      .tool-card { padding: 12px; }
-      .fg, .fg.c3 { grid-template-columns: 1fr; }
-      .fg .s2, .fg .s3 { grid-column: 1; }
-      .stepper { display: none; }
-      .hdr-sep, .breadcrumb { display: none; }
-      .ph { flex-direction: column; gap: 8px; margin-bottom: 16px; }
-      .ph .chip { align-self: flex-start; }
-      .welcome { flex-direction: column; padding: 18px; }
-      .pg { grid-template-columns: repeat(2, 1fr); }
-      .btn-row { flex-direction: column; align-items: stretch; }
-      .btn-row .btn { justify-content: center; }
-      .card { padding: 16px; }
-      .layout { height: calc(100vh - var(--hh) - 60px); }
+      .sidebar {
+        display: none;
+      }
+
+      .bnav {
+        display: flex;
+      }
+
+      .main {
+        padding: 16px 14px 88px;
+      }
+
+      .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .tool-card {
+        padding: 12px;
+      }
+
+      .fg,
+      .fg.c3 {
+        grid-template-columns: 1fr;
+      }
+
+      .fg .s2,
+      .fg .s3 {
+        grid-column: 1;
+      }
+
+      .stepper {
+        display: none;
+      }
+
+      .hdr-sep,
+      .breadcrumb {
+        display: none;
+      }
+
+      .ph {
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .ph .chip {
+        align-self: flex-start;
+      }
+
+      .welcome {
+        flex-direction: column;
+        padding: 18px;
+      }
+
+      .pg {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .btn-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-row .btn {
+        justify-content: center;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .layout {
+        height: calc(100vh - var(--hh) - 60px);
+      }
     }
 
     .vrow {
@@ -1443,7 +1625,13 @@ self.addEventListener('notificationclick', e => {
       position: relative;
     }
 
-    .vrow-num { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 10px; letter-spacing: .3px; }
+    .vrow-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 10px;
+      letter-spacing: .3px;
+    }
 
     .vrow-rm {
       position: absolute;
@@ -1462,7 +1650,11 @@ self.addEventListener('notificationclick', e => {
       transition: all var(--tr);
     }
 
-    .vrow-rm:hover { background: #e05252; border-color: #e05252; color: #fff; }
+    .vrow-rm:hover {
+      background: #e05252;
+      border-color: #e05252;
+      color: #fff;
+    }
 
     .hist-item {
       display: flex;
@@ -1475,49 +1667,242 @@ self.addEventListener('notificationclick', e => {
       cursor: pointer;
       transition: all var(--tr);
     }
+
     .hist-item:hover {
       border-color: var(--accent);
       background: var(--surface2);
     }
-    .hi-info { flex: 1; min-width: 0; }
-    .hi-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .hi-meta { font-size: 12px; color: var(--text2); margin-top: 3px; }
-    .hi-del { background: none; border: none; color: var(--border); cursor: pointer; transition: color var(--tr); display: flex; align-items: center; padding: 4px; border-radius: 4px; outline: none; }
-    .hi-del:hover { color: #e05252; }
+
+    .hi-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hi-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hi-meta {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+
+    .hi-del {
+      background: none;
+      border: none;
+      color: var(--border);
+      cursor: pointer;
+      transition: color var(--tr);
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      outline: none;
+    }
+
+    .hi-del:hover {
+      color: #e05252;
+    }
 
     /* ── Backup / Restore Cards (Side by Side) ── */
-    .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-    .backup-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
-      padding: 20px 24px; display: flex; flex-direction: column; align-items: flex-start;
-      justify-content: space-between; gap: 16px; transition: background var(--tr), border-color var(--tr);
+    .backup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
     }
-    .backup-info h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
-    .backup-info p  { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
-    .backup-btns { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
 
-    @media(max-width: 800px) { .backup-grid { grid-template-columns: 1fr; } }
+    .backup-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      transition: background var(--tr), border-color var(--tr);
+    }
+
+    .backup-info h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .backup-info p {
+      font-size: 12.5px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .backup-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    @media(max-width: 800px) {
+      .backup-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
     /* ── Profile Badge & Modal ── */
-    .user-badge { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; cursor: pointer; transition: all var(--tr); position: relative; overflow: hidden; margin-right: 8px; }
-    .user-badge::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-15deg); animation: badgeShine 3s infinite; pointer-events: none; }
-    [data-theme=dark] .user-badge::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); }
-    @keyframes badgeShine { 0% { left: -100%; } 20%, 100% { left: 200%; } }
-    .user-badge:hover { border-color: var(--accent); background: var(--surface); }
-    .ub-av { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: bold; object-fit: cover; }
-    .ub-nm { font-size: 12px; font-weight: 600; color: var(--text); }
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px 4px 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all var(--tr);
+      position: relative;
+      overflow: hidden;
+      margin-right: 8px;
+    }
 
-    .prof-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: 16px; z-index: 1000; width: 320px; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: all 0.2s ease; }
-    .prof-modal.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+    .user-badge::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: skewX(-15deg);
+      animation: badgeShine 3s infinite;
+      pointer-events: none;
+    }
+
+    [data-theme=dark] .user-badge::after {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    }
+
+    @keyframes badgeShine {
+      0% {
+        left: -100%;
+      }
+
+      20%,
+      100% {
+        left: 200%;
+      }
+    }
+
+    .user-badge:hover {
+      border-color: var(--accent);
+      background: var(--surface);
+    }
+
+    .ub-av {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: bold;
+      object-fit: cover;
+    }
+
+    .ub-nm {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .prof-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 16px;
+      z-index: 1000;
+      width: 320px;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    .prof-modal.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
 
     /* ── Custom Confirm Modal ── */
-    .confirm-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: 16px; z-index: 1100; width: 300px; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: all 0.2s ease; text-align: center; }
-    .confirm-modal.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-    .confirm-icon { width: 48px; height: 48px; border-radius: 50%; background: #fee2e2; color: #e05252; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-    [data-theme=dark] .confirm-icon { background: rgba(224, 82, 82, 0.15); }
-    .confirm-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-    .confirm-desc { font-size: 12.5px; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
+    .confirm-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.95);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 16px;
+      z-index: 1100;
+      width: 300px;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
 
+    .confirm-modal.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .confirm-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #e05252;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    [data-theme=dark] .confirm-icon {
+      background: rgba(224, 82, 82, 0.15);
+    }
+
+    .confirm-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .confirm-desc {
+      font-size: 12.5px;
+      color: var(--text2);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
   </style>
 </head>
 
@@ -1544,9 +1929,23 @@ self.addEventListener('notificationclick', e => {
         <span id="ub-name" class="ub-nm">User</span>
       </div>
 
-      <button class="btn btn-p" id="saveDraftBtn" style="display:none; padding: 6px 12px; font-size: 12px; height: 34px;" onclick="saveCurrentFormDraft()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      <button class="btn btn-p" id="saveDraftBtn"
+        style="display:none; padding: 6px 12px; font-size: 12px; height: 34px;" onclick="saveCurrentFormDraft()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+          <polyline points="17 21 17 13 7 13 7 21" />
+          <polyline points="7 3 7 8 15 8" />
+        </svg>
         Save Draft
+      </button>
+
+      <button class="btn btn-g" id="viewDraftsBtn"
+        style="display:none; padding: 6px 12px; font-size: 12px; height: 34px; border: 1px solid var(--border);" onclick="switchView('dashboard')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+        View Drafts
       </button>
 
       <button class="tbtn" id="themeBtn" title="Toggle theme">
@@ -1603,36 +2002,36 @@ self.addEventListener('notificationclick', e => {
         </button>
         <button class="nav-item" data-view="letterheads">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
           </svg>Letter Heads
           <span class="nav-badge">DOCX</span>
         </button>
         <button class="nav-item" data-view="pwareg">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="8" y1="13" x2="16" y2="13"/>
-            <line x1="8" y1="17" x2="13" y2="17"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="8" y1="13" x2="16" y2="13" />
+            <line x1="8" y1="17" x2="13" y2="17" />
           </svg>PWA Regular
           <span class="nav-badge">XLSX</span>
         </button>
         <button class="nav-item" data-view="etm">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
           </svg>ETM Form
           <span class="nav-badge">PPT</span>
         </button>
         <button class="nav-item" data-view="agm">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <line x1="8" y1="10" x2="16" y2="10"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <line x1="8" y1="10" x2="16" y2="10" />
           </svg>AGM Form
           <span class="nav-badge">XLSX</span>
         </button>
@@ -1661,10 +2060,10 @@ self.addEventListener('notificationclick', e => {
           <div class="tool-card live" onclick="switchView('alcazar')">
             <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
               </svg>
             </div>
             <div>
@@ -1676,8 +2075,8 @@ self.addEventListener('notificationclick', e => {
           <div class="tool-card live" onclick="switchView('keycode')">
             <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2"/>
-                <path d="M7 11V7a5 5 0 0110 0v4"/>
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0110 0v4" />
               </svg>
             </div>
             <div>
@@ -1689,8 +2088,8 @@ self.addEventListener('notificationclick', e => {
           <div class="tool-card live" onclick="switchView('letterheads')">
             <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
               </svg>
             </div>
             <div>
@@ -1702,10 +2101,10 @@ self.addEventListener('notificationclick', e => {
           <div class="tool-card live" onclick="switchView('pwareg')">
             <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="8" y1="13" x2="16" y2="13"/>
-                <line x1="8" y1="17" x2="13" y2="17"/>
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="8" y1="13" x2="16" y2="13" />
+                <line x1="8" y1="17" x2="13" y2="17" />
               </svg>
             </div>
             <div>
@@ -1717,10 +2116,10 @@ self.addEventListener('notificationclick', e => {
           <div class="tool-card live" onclick="switchView('etm')">
             <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
               </svg>
             </div>
             <div>
@@ -1732,11 +2131,11 @@ self.addEventListener('notificationclick', e => {
           <div class="tool-card live" onclick="switchView('agm')">
             <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <line x1="8" y1="10" x2="16" y2="10"/>
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <line x1="8" y1="10" x2="16" y2="10" />
               </svg>
             </div>
             <div>
@@ -1763,11 +2162,20 @@ self.addEventListener('notificationclick', e => {
             </div>
             <div class="backup-btns">
               <button class="btn btn-p" onclick="startBackup('local')" style="flex:1; justify-content:center;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
                 Backup
               </button>
-              <button class="btn btn-p" onclick="document.getElementById('restore-input').click()" style="flex:1; justify-content:center;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <button class="btn btn-p" onclick="document.getElementById('restore-input').click()"
+                style="flex:1; justify-content:center;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
                 Restore
               </button>
               <input type="file" id="restore-input" accept=".json" style="display:none" onchange="restoreLocal(event)">
@@ -1777,20 +2185,45 @@ self.addEventListener('notificationclick', e => {
           <div class="backup-card">
             <div class="backup-info">
               <h3>Cloud Sync</h3>
-              <p>Securely sync data to Google. Only authorized accounts can login and access this. You can sign out account from Avatar.</p>
+              <p>Securely sync data to Google. Only authorized accounts can login and access this. You can sign out
+                account from Avatar.</p>
             </div>
             <div class="backup-btns" style="flex-direction: column;">
-              <button id="googleSignInBtn" class="btn btn-g" onclick="window.googleSignIn()" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              <button id="googleSignInBtn" class="btn btn-g" onclick="window.googleSignIn()"
+                style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    fill="#4285F4" />
+                  <path
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    fill="#34A853" />
+                  <path
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    fill="#FBBC05" />
+                  <path
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    fill="#EA4335" />
+                </svg>
                 <span id="googleSignInText">Sign in with Google</span>
               </button>
               <div style="display: flex; gap: 8px; width: 100%;">
-                <button id="cloudBackupBtn" class="btn btn-p" onclick="startBackup('cloud')" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 13 12 10 15 13"/></svg>
+                <button id="cloudBackupBtn" class="btn btn-p" onclick="startBackup('cloud')"
+                  style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z" />
+                    <polyline points="12 11 12 16" />
+                    <polyline points="9 13 12 10 15 13" />
+                  </svg>
                   Backup
                 </button>
-                <button id="cloudRestoreBtn" class="btn btn-p" onclick="window.cloudRestore()" style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z"/><polyline points="12 11 12 16"/><polyline points="9 14 12 17 15 14"/></svg>
+                <button id="cloudRestoreBtn" class="btn btn-p" onclick="window.cloudRestore()"
+                  style="flex: 1; justify-content: center; opacity: 0.4; cursor: not-allowed;" disabled>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17.5 19H9a7 7 0 116.71-9h1.79a4.5 4.5 0 110 9Z" />
+                    <polyline points="12 11 12 16" />
+                    <polyline points="9 14 12 17 15 14" />
+                  </svg>
                   Restore
                 </button>
               </div>
@@ -1839,16 +2272,27 @@ self.addEventListener('notificationclick', e => {
     <div class="field" style="margin-bottom:20px;">
       <label>Avatar (Optional)</label>
       <div style="display:flex; gap:16px; margin-top:8px; align-items:center;">
-        <div class="pslot" onclick="document.getElementById('p-avInput').click()" style="width:64px; height:64px; border-radius:50%; flex-shrink:0;" title="Upload your own">
+        <div class="pslot" onclick="document.getElementById('p-avInput').click()"
+          style="width:64px; height:64px; border-radius:50%; flex-shrink:0;" title="Upload your own">
           <img id="p-avPreview" style="display:none; border-radius:50%; width:100%; height:100%; object-fit:cover;">
-          <div class="slot-ico" id="p-avIcon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div>
+          <div class="slot-ico" id="p-avIcon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" />
+            </svg></div>
         </div>
 
         <div style="height:40px; width:1px; background:var(--border);"></div>
 
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=e8edf5" style="width:48px; height:48px; border-radius:50%; cursor:pointer; border:1px solid var(--border);" onclick="document.getElementById('p-avPreview').src=this.src; document.getElementById('p-avPreview').style.display='block'; document.getElementById('p-avIcon').style.display='none';" title="Male Avatar">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=e8edf5"
+          style="width:48px; height:48px; border-radius:50%; cursor:pointer; border:1px solid var(--border);"
+          onclick="document.getElementById('p-avPreview').src=this.src; document.getElementById('p-avPreview').style.display='block'; document.getElementById('p-avIcon').style.display='none';"
+          title="Male Avatar">
 
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&backgroundColor=e8edf5" style="width:48px; height:48px; border-radius:50%; cursor:pointer; border:1px solid var(--border);" onclick="document.getElementById('p-avPreview').src=this.src; document.getElementById('p-avPreview').style.display='block'; document.getElementById('p-avIcon').style.display='none';" title="Female Avatar">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&backgroundColor=e8edf5"
+          style="width:48px; height:48px; border-radius:50%; cursor:pointer; border:1px solid var(--border);"
+          onclick="document.getElementById('p-avPreview').src=this.src; document.getElementById('p-avPreview').style.display='block'; document.getElementById('p-avIcon').style.display='none';"
+          title="Female Avatar">
       </div>
       <input type="file" id="p-avInput" accept="image/*" style="display:none" onchange="previewAvatar(event)">
     </div>
@@ -1856,9 +2300,15 @@ self.addEventListener('notificationclick', e => {
       <button class="btn btn-p" style="flex:1; justify-content:center" onclick="saveProfile()">Save</button>
       <button class="btn btn-g" style="flex:1; justify-content:center" onclick="closeProfile()">Cancel</button>
     </div>
-    <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: none;" id="p-signOutDiv">
-      <button class="btn btn-g" style="width: 100%; justify-content:center; color: #e05252; border-color: #e05252;" onclick="window.showSignOutConfirm()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <div style="margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: none;"
+      id="p-signOutDiv">
+      <button class="btn btn-g" style="width: 100%; justify-content:center; color: #e05252; border-color: #e05252;"
+        onclick="window.showSignOutConfirm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
         Sign out of Cloud
       </button>
     </div>
@@ -1867,12 +2317,17 @@ self.addEventListener('notificationclick', e => {
   <div class="drawer-overlay" id="confirmOverlay" onclick="window.closeConfirm()"></div>
   <div class="confirm-modal" id="confirmModal">
     <div class="confirm-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" y1="12" x2="9" y2="12" />
+      </svg>
     </div>
     <div class="confirm-title">Sign Out</div>
     <div class="confirm-desc">Are you sure you want to sign out? Your local tools will remain safe.</div>
     <div class="btn-row" style="margin-top: 0; display:flex; gap:10px;">
-      <button class="btn btn-g" style="flex:1; justify-content:center; color: #e05252; border-color: #e05252;" onclick="window.executeSignOut()">Sign Out</button>
+      <button class="btn btn-g" style="flex:1; justify-content:center; color: #e05252; border-color: #e05252;"
+        onclick="window.executeSignOut()">Sign Out</button>
       <button class="btn btn-g" style="flex:1; justify-content:center" onclick="window.closeConfirm()">Cancel</button>
     </div>
   </div>
@@ -1880,13 +2335,20 @@ self.addEventListener('notificationclick', e => {
   <div class="drawer-overlay" id="restoreOverlay" onclick="window.closeRestoreConfirm()"></div>
   <div class="confirm-modal" id="restoreModal">
     <div class="confirm-icon" style="background:var(--accent-s); color:var(--accent);">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+      </svg>
     </div>
     <div class="confirm-title">Overwrite Data?</div>
-    <div class="confirm-desc">This will replace your current form data with the backup. This action cannot be undone.</div>
+    <div class="confirm-desc">This will replace your current form data with the backup. This action cannot be undone.
+    </div>
     <div class="btn-row" style="margin-top: 0; display:flex; gap:10px;">
-      <button class="btn btn-p" style="flex:1; justify-content:center;" onclick="window.executeRestore()">Overwrite</button>
-      <button class="btn btn-g" style="flex:1; justify-content:center" onclick="window.closeRestoreConfirm()">Cancel</button>
+      <button class="btn btn-p" style="flex:1; justify-content:center;"
+        onclick="window.executeRestore()">Overwrite</button>
+      <button class="btn btn-g" style="flex:1; justify-content:center"
+        onclick="window.closeRestoreConfirm()">Cancel</button>
     </div>
   </div>
 
@@ -1898,8 +2360,10 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-item" data-view="dashboard" onclick="drawerNav('dashboard')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
           </svg>
         </div>
         <div class="drawer-item-label">Home</div>
@@ -1909,9 +2373,10 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-item" data-view="alcazar" onclick="drawerNav('alcazar')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
         </div>
         <div class="drawer-item-label">Alcazar</div>
@@ -1921,8 +2386,8 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-item" data-view="keycode" onclick="drawerNav('keycode')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2"/>
-            <path d="M7 11V7a5 5 0 0110 0v4"/>
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0110 0v4" />
           </svg>
         </div>
         <div class="drawer-item-label">Key Code</div>
@@ -1932,8 +2397,8 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-item" data-view="letterheads" onclick="drawerNav('letterheads')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
           </svg>
         </div>
         <div class="drawer-item-label">Letter Heads</div>
@@ -1943,9 +2408,10 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-item" data-view="pwareg" onclick="drawerNav('pwareg')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="8" y1="13" x2="16" y2="13" />
+            <line x1="8" y1="17" x2="13" y2="17" />
           </svg>
         </div>
         <div class="drawer-item-label">PWA Regular</div>
@@ -1955,9 +2421,10 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-item" data-view="etm" onclick="drawerNav('etm')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
         </div>
         <div class="drawer-item-label">ETM Form</div>
@@ -1967,10 +2434,11 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-item" data-view="agm" onclick="drawerNav('agm')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-            <line x1="8" y1="10" x2="16" y2="10"/>
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <line x1="8" y1="10" x2="16" y2="10" />
           </svg>
         </div>
         <div class="drawer-item-label">AGM Form</div>
@@ -1982,7 +2450,7 @@ self.addEventListener('notificationclick', e => {
       <button class="drawer-close-btn" onclick="closeDrawer()">
         <div class="close-arrow">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <polyline points="6 9 12 15 18 9"/>
+            <polyline points="6 9 12 15 18 9" />
           </svg>
         </div>
         Close
@@ -2018,15 +2486,15 @@ self.addEventListener('notificationclick', e => {
     </button>
     <button class="bnav-item" data-view="letterheads">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
       </svg>
       Letter Heads
     </button>
     <button class="bnav-more" id="bnavMore" onclick="toggleDrawer()">
       <div class="more-arrow" id="moreArrow">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <polyline points="18 15 12 9 6 15"/>
+          <polyline points="18 15 12 9 6 15" />
         </svg>
       </div>
       More
@@ -2038,12 +2506,12 @@ self.addEventListener('notificationclick', e => {
     (function () {
       const ts = Date.now();
       const iframes = [
-        { id: 'alcazar-iframe',     src: './alcazar.html'  },
-        { id: 'keycode-iframe',     src: './keycode.html'  },
+        { id: 'alcazar-iframe', src: './alcazar.html' },
+        { id: 'keycode-iframe', src: './keycode.html' },
         { id: 'letterheads-iframe', src: './letthead.html' },
-        { id: 'pwareg-iframe',      src: './pwareg.html'   },
-        { id: 'etm-iframe',         src: './etm.html'      },
-        { id: 'agm-iframe',         src: './agm.html'      }
+        { id: 'pwareg-iframe', src: './pwareg.html' },
+        { id: 'etm-iframe', src: './etm.html' },
+        { id: 'agm-iframe', src: './agm.html' }
       ];
       iframes.forEach(function (item) {
         const el = document.getElementById(item.id);
@@ -2065,7 +2533,7 @@ self.addEventListener('notificationclick', e => {
           const sendTheme = () => {
             try {
               if (iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'theme', theme: document.documentElement.getAttribute('data-theme') || 'light' }, '*');
-            } catch(e) {}
+            } catch (e) { }
           };
           iframe.addEventListener('load', sendTheme);
           sendTheme();
@@ -2088,14 +2556,22 @@ self.addEventListener('notificationclick', e => {
       document.title = "OfficeDesk : " + (labels[v] || "Utility Suite");
 
       const bc = document.getElementById("bc");
-      if(bc) bc.innerText = labels[v] || "Dashboard";
+      if (bc) bc.innerText = labels[v] || "Dashboard";
 
       const saveDraftBtn = document.getElementById('saveDraftBtn');
+      const viewDraftsBtn = document.getElementById('viewDraftsBtn');
       if (saveDraftBtn) {
         if (v === 'dashboard') {
           saveDraftBtn.style.display = 'none';
         } else {
           saveDraftBtn.style.display = 'inline-flex';
+        }
+      }
+      if (viewDraftsBtn) {
+        if (v === 'dashboard') {
+          viewDraftsBtn.style.display = 'none';
+        } else {
+          viewDraftsBtn.style.display = 'inline-flex';
         }
       }
     }
@@ -2112,13 +2588,13 @@ self.addEventListener('notificationclick', e => {
       document.getElementById("ico-sun").style.display = t === "dark" ? "" : "none";
       const tc = document.getElementById('od-theme-color');
       const as = document.getElementById('od-apple-status');
-      if(tc) tc.content = t === 'dark' ? '#111110' : '#ffffff';
-      if(as) as.content = t === 'dark' ? 'black-translucent' : 'default';
+      if (tc) tc.content = t === 'dark' ? '#111110' : '#ffffff';
+      if (as) as.content = t === 'dark' ? 'black-translucent' : 'default';
       ['letterheads-iframe', 'alcazar-iframe', 'keycode-iframe', 'pwareg-iframe', 'etm-iframe', 'agm-iframe'].forEach(id => {
         const iframe = document.getElementById(id);
         try {
           if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage({ type: 'theme', theme: t }, '*');
-        } catch(e) {}
+        } catch (e) { }
       });
     }
 
@@ -2141,7 +2617,7 @@ self.addEventListener('notificationclick', e => {
     try {
       const saved = localStorage.getItem('od-profile');
       if (saved) currentProfile = JSON.parse(saved);
-    } catch(e) {
+    } catch (e) {
       console.warn("Corrupted profile data cleared.");
       localStorage.removeItem('od-profile');
     }
@@ -2204,7 +2680,7 @@ self.addEventListener('notificationclick', e => {
       toast('Profile updated', 'ok');
     }
 
-    window.masterRestore = function(data) {
+    window.masterRestore = function (data) {
       if (data['user_profile']) {
         currentProfile = data['user_profile'];
         localStorage.setItem('od-profile', JSON.stringify(currentProfile));
@@ -2218,7 +2694,7 @@ self.addEventListener('notificationclick', e => {
         if (iframe && iframe.contentWindow && data[tool]) {
           try {
             iframe.contentWindow.postMessage({ type: 'restore-data', tool: tool, data: data[tool] }, '*');
-          } catch(e) {}
+          } catch (e) { }
         }
       });
     };
@@ -2247,7 +2723,7 @@ self.addEventListener('notificationclick', e => {
       IFRAME_IDS.forEach(id => {
         const iframe = document.getElementById(id);
         if (iframe && iframe.contentWindow) {
-          try { iframe.contentWindow.postMessage({ type: 'backup-request' }, '*'); } catch(err){ pending--; }
+          try { iframe.contentWindow.postMessage({ type: 'backup-request' }, '*'); } catch (err) { pending--; }
         } else {
           pending--;
         }
@@ -2275,7 +2751,7 @@ self.addEventListener('notificationclick', e => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url;
       const d = new Date();
-      const stamp = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+      const stamp = d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2);
       a.download = `officedesk_backup_${stamp}.json`;
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
@@ -2285,7 +2761,7 @@ self.addEventListener('notificationclick', e => {
     let pendingRestoreData = null;
     let pendingRestoreSource = '';
 
-    window.promptRestore = function(data, source) {
+    window.promptRestore = function (data, source) {
       pendingRestoreData = data;
       pendingRestoreSource = source;
       document.getElementById('restoreOverlay').classList.add('open');
@@ -2295,14 +2771,14 @@ self.addEventListener('notificationclick', e => {
       }, 10);
     };
 
-    window.closeRestoreConfirm = function() {
+    window.closeRestoreConfirm = function () {
       document.getElementById('restoreOverlay').classList.remove('visible');
       document.getElementById('restoreModal').classList.remove('show');
       setTimeout(() => document.getElementById('restoreOverlay').classList.remove('open'), 300);
       pendingRestoreData = null;
     };
 
-    window.executeRestore = function() {
+    window.executeRestore = function () {
       if (pendingRestoreData) {
         window.masterRestore(pendingRestoreData);
         toast('Data restored from ' + pendingRestoreSource, 'ok');
@@ -2372,10 +2848,10 @@ self.addEventListener('notificationclick', e => {
       setTimeout(() => switchView(v), 80);
     }
 
-    (function() {
+    (function () {
       let startY = 0;
       const bnav = document.getElementById('mainBnav');
-      if(bnav) {
+      if (bnav) {
         bnav.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
         bnav.addEventListener('touchend', e => {
           const diff = startY - e.changedTouches[0].clientY;
@@ -2389,20 +2865,20 @@ self.addEventListener('notificationclick', e => {
       if (!activeNav) return;
       const tool = activeNav.dataset.view;
       if (tool === 'dashboard') return;
-      
+
       const iframe = document.getElementById(tool + '-iframe');
       if (!iframe) return;
       const iframeWin = iframe.contentWindow;
       const iframeDoc = iframe.contentDocument || iframeWin.document;
       if (!iframeDoc) return;
-      
+
       const formData = {};
       iframeDoc.querySelectorAll('input, select, textarea').forEach(el => {
         if (el.id && el.type !== 'file' && el.type !== 'button' && el.type !== 'submit') {
           formData[el.id] = el.value;
         }
       });
-      
+
       let photos = null;
       if (tool === 'alcazar') {
         if (Array.isArray(iframeWin.photoData)) {
@@ -2413,7 +2889,7 @@ self.addEventListener('notificationclick', e => {
           photos = JSON.parse(JSON.stringify(iframeWin.PHOTOS));
         }
       }
-      
+
       let vin = '';
       if (formData['f-vin']) vin = formData['f-vin'].trim();
       else if (formData['VIN']) vin = formData['VIN'].trim();
@@ -2436,7 +2912,7 @@ self.addEventListener('notificationclick', e => {
       if (!vin) {
         vin = 'Draft-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       }
-      
+
       const draft = {
         id: tool + '_' + vin,
         tool: tool,
@@ -2446,12 +2922,12 @@ self.addEventListener('notificationclick', e => {
         kcRows: tool === 'keycode' ? JSON.parse(JSON.stringify(iframeWin.kcRows || [])) : null,
         timestamp: new Date().toLocaleString()
       };
-      
+
       let drafts = [];
       try {
         drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-      } catch(e) {}
-      
+      } catch (e) { }
+
       drafts = drafts.filter(d => d.id !== draft.id);
       drafts.unshift(draft);
       localStorage.setItem('od_drafts_v1', JSON.stringify(drafts));
@@ -2463,21 +2939,21 @@ self.addEventListener('notificationclick', e => {
       let drafts = [];
       try {
         drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-      } catch(e) {}
-      
+      } catch (e) { }
+
       const draft = drafts.find(d => d.id === id);
       if (!draft) return;
-      
+
       switchView(draft.tool);
-      
+
       const iframe = document.getElementById(draft.tool + '-iframe');
       if (!iframe) return;
-      
+
       const populate = () => {
         const iframeWin = iframe.contentWindow;
         const iframeDoc = iframe.contentDocument || iframeWin.document;
         if (!iframeDoc) return;
-        
+
         Object.entries(draft.formData).forEach(([fieldId, val]) => {
           const el = iframeDoc.getElementById(fieldId);
           if (el) {
@@ -2486,7 +2962,7 @@ self.addEventListener('notificationclick', e => {
             el.dispatchEvent(new Event('change', { bubbles: true }));
           }
         });
-        
+
         if (draft.tool === 'alcazar' && draft.photos) {
           if (Array.isArray(iframeWin.photoData)) {
             draft.photos.forEach((p, idx) => {
@@ -2511,18 +2987,18 @@ self.addEventListener('notificationclick', e => {
             });
           }
         }
-        
+
         if (draft.tool === 'keycode' && draft.kcRows) {
           iframeWin.kcRows = JSON.parse(JSON.stringify(draft.kcRows));
           if (typeof iframeWin.kcRenderRows === 'function') {
             iframeWin.kcRenderRows();
           }
         }
-        
+
         if (typeof iframeWin.updateSteps === 'function') iframeWin.updateSteps();
         if (typeof iframeWin.etmUpdateSteps === 'function') iframeWin.etmUpdateSteps();
         if (typeof iframeWin.kcUpdateSteps === 'function') iframeWin.kcUpdateSteps();
-        
+
         if (draft.tool === 'alcazar') {
           const modelVal = draft.formData['f-model'];
           const csvModel = iframeDoc.getElementById('csv_f-model');
@@ -2541,10 +3017,10 @@ self.addEventListener('notificationclick', e => {
             csvFreq.textContent = freqVal === 'CONTINOUSLY' ? 'CONTINUOUSLY' : (freqVal || 'CONTINUOUSLY');
           }
         }
-        
+
         toast('Draft loaded successfully', 'ok');
       };
-      
+
       if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === 'complete') {
         populate();
       } else {
@@ -2555,17 +3031,17 @@ self.addEventListener('notificationclick', e => {
     function renderDraftsList() {
       const container = document.getElementById('drafts-list');
       if (!container) return;
-      
+
       let drafts = [];
       try {
         drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-      } catch(e) {}
-      
+      } catch (e) { }
+
       if (drafts.length === 0) {
         container.innerHTML = '<div style="text-align:center;font-size:12.5px;color:var(--text2);padding:10px;">No saved drafts yet.</div>';
         return;
       }
-      
+
       const labels = {
         alcazar: "Alcazar Form",
         keycode: "Key Code Form",
@@ -2574,19 +3050,19 @@ self.addEventListener('notificationclick', e => {
         etm: "ETM Form",
         agm: "AGM Form"
       };
-      
+
       container.innerHTML = '';
       drafts.forEach(draft => {
         const item = document.createElement('div');
         item.className = 'hist-item';
-        
+
         const info = document.createElement('div');
         info.className = 'hi-info';
         info.innerHTML = `
           <div class="hi-name">${draft.vin}</div>
           <div class="hi-meta">${labels[draft.tool] || draft.tool} · Saved: ${draft.timestamp}</div>
         `;
-        
+
         const delBtn = document.createElement('button');
         delBtn.className = 'hi-del';
         delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
@@ -2594,14 +3070,14 @@ self.addEventListener('notificationclick', e => {
           e.stopPropagation();
           deleteDraft(draft.id);
         };
-        
+
         item.appendChild(info);
         item.appendChild(delBtn);
-        
+
         item.onclick = () => {
           loadDraft(draft.id);
         };
-        
+
         container.appendChild(item);
       });
     }
@@ -2610,7 +3086,7 @@ self.addEventListener('notificationclick', e => {
       let drafts = [];
       try {
         drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
-      } catch(e) {}
+      } catch (e) { }
       drafts = drafts.filter(d => d.id !== id);
       localStorage.setItem('od_drafts_v1', JSON.stringify(drafts));
       renderDraftsList();
@@ -2683,20 +3159,20 @@ self.addEventListener('notificationclick', e => {
       }
     });
 
-    window.showSignOutConfirm = function() {
+    window.showSignOutConfirm = function () {
       if (typeof closeProfile === "function") closeProfile();
       document.getElementById('confirmOverlay').classList.add('open');
       setTimeout(() => document.getElementById('confirmOverlay').classList.add('visible'), 10);
       document.getElementById('confirmModal').classList.add('show');
     };
 
-    window.closeConfirm = function() {
+    window.closeConfirm = function () {
       document.getElementById('confirmOverlay').classList.remove('visible');
       document.getElementById('confirmModal').classList.remove('show');
       setTimeout(() => document.getElementById('confirmOverlay').classList.remove('open'), 300);
     };
 
-    window.executeSignOut = async function() {
+    window.executeSignOut = async function () {
       window.closeConfirm();
       showLoader(true);
       try {
@@ -2714,7 +3190,7 @@ self.addEventListener('notificationclick', e => {
       showLoader(false);
     };
 
-    window.googleSignIn = async function() {
+    window.googleSignIn = async function () {
       showLoader(true);
       try {
         let user = auth.currentUser;
@@ -2749,7 +3225,7 @@ self.addEventListener('notificationclick', e => {
       showLoader(false);
     };
 
-    window.cloudBackup = async function(data) {
+    window.cloudBackup = async function (data) {
       showLoader(true);
       try {
         const user = auth.currentUser;
@@ -2764,7 +3240,7 @@ self.addEventListener('notificationclick', e => {
       showLoader(false);
     };
 
-    window.cloudRestore = async function() {
+    window.cloudRestore = async function () {
       showLoader(true);
       try {
         const user = auth.currentUser;
@@ -2788,4 +3264,5 @@ self.addEventListener('notificationclick', e => {
     };
   </script>
 </body>
+
 </html>
