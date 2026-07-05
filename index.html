@@ -1940,7 +1940,8 @@ self.addEventListener('notificationclick', e => {
       </button>
 
       <button class="btn btn-g" id="viewDraftsBtn"
-        style="display:none; padding: 6px 12px; font-size: 12px; height: 34px; border: 1px solid var(--border);" onclick="switchView('dashboard')">
+        style="display:none; padding: 6px 12px; font-size: 12px; height: 34px; border: 1px solid var(--border);"
+        onclick="switchView('dashboard')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
           <circle cx="12" cy="12" r="3" />
@@ -3083,6 +3084,7 @@ self.addEventListener('notificationclick', e => {
     }
 
     function deleteDraft(id) {
+      if (!confirm("Are you sure you want to delete this draft?")) return;
       let drafts = [];
       try {
         drafts = JSON.parse(localStorage.getItem('od_drafts_v1') || '[]');
