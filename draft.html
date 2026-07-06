@@ -379,6 +379,14 @@
             return '';
         }
 
+        function getPhotoCount(draft) {
+            if (!draft.photos) return 0;
+            if (Array.isArray(draft.photos)) {
+                return draft.photos.filter(p => p && p.dataUrl).length;
+            }
+            return Object.values(draft.photos).filter(p => p && p.dataUrl).length;
+        }
+
         function renderDrafts() {
             const list = document.getElementById('drafts-list');
             const clearRow = document.getElementById('clear-btn-row');
@@ -408,9 +416,11 @@
 
                     const info = document.createElement('div');
                     info.className = 'hi-info';
+                    const photoCount = getPhotoCount(draft);
+                    const photoInfo = photoCount > 0 ? ` · 📷 ${photoCount} Photo${photoCount > 1 ? 's' : ''}` : '';
                     info.innerHTML = `
               <div class="hi-name">${draft.vin || 'Unnamed Draft'}</div>
-              <div class="hi-meta">${labels[draft.tool] || draft.tool} · Date: ${getDraftDate(draft)} · Saved: ${draft.timestamp}</div>
+              <div class="hi-meta">${labels[draft.tool] || draft.tool} · Date: ${getDraftDate(draft)}${photoInfo} · Saved: ${draft.timestamp}</div>
             `;
 
                     const delBtn = document.createElement('button');
