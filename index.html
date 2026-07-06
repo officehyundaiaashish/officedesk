@@ -3032,8 +3032,34 @@ self.addEventListener('notificationclick', e => {
         if (formData['f-model']) vin = getValStr('f-model');
         else if (formData['MODEL']) vin = getValStr('MODEL');
       }
-      if (!vin) {
-        vin = 'Draft-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      if (vin) {
+        vin = vin.toUpperCase().trim();
+        iframeWin.__activeDraftVin = vin;
+      } else {
+        // No VIN found in form inputs.
+        // Check if there is a VIN field on the form and it is explicitly empty
+        let isVinFieldExplicitlyEmpty = false;
+        for (const key in formData) {
+          if (key.toLowerCase() === 'vin' || key.toLowerCase().endsWith('vin')) {
+            const rawVal = formData[key];
+            const valStr = (rawVal && typeof rawVal === 'object') ? (rawVal.value || '') : (rawVal || '');
+            if (!valStr.toString().trim()) {
+              isVinFieldExplicitlyEmpty = true;
+              break;
+            }
+          }
+        }
+        if (isVinFieldExplicitlyEmpty) {
+          iframeWin.__activeDraftVin = null;
+        }
+
+        if (iframeWin.__activeDraftVin) {
+          vin = iframeWin.__activeDraftVin;
+        } else {
+          vin = 'Draft-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          iframeWin.__activeDraftVin = vin;
+        }
       }
 
       // Generate date string in DD-MM-YYYY format
@@ -3080,6 +3106,8 @@ self.addEventListener('notificationclick', e => {
           const iframeWin = iframe.contentWindow;
           const iframeDoc = iframe.contentDocument || iframeWin.document;
           if (!iframeDoc) return;
+
+          iframeWin.__activeDraftVin = draft.vin ? draft.vin.toUpperCase().trim() : '';
 
           Object.entries(draft.formData).forEach(([fieldId, val]) => {
             const el = iframeDoc.getElementById(fieldId);
