@@ -3284,7 +3284,7 @@ self.addEventListener('notificationclick', e => {
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { initializeFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { initializeFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
@@ -3392,10 +3392,16 @@ self.addEventListener('notificationclick', e => {
       enableCloudButtons(user.email);
 
       toast("Checking cloud profile...", "info");
-      const docSnap = await getDoc(doc(db, "backups", "master_database"));
+      const querySnapshot = await getDocs(collection(db, "backups"));
+      let profileDoc = null;
+      querySnapshot.forEach((doc) => {
+        if (doc.id === 'master_database') {
+          profileDoc = doc.data();
+        }
+      });
 
-      if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
-        currentProfile = docSnap.data().data.user_profile;
+      if (profileDoc && (profileDoc.user_profile || (profileDoc.data && profileDoc.data.user_profile))) {
+        currentProfile = profileDoc.user_profile || profileDoc.data.user_profile;
         localStorage.setItem('od-profile', JSON.stringify(currentProfile));
         if (typeof renderProfile === 'function') renderProfile();
         toast("Signed in & Profile Restored!", "ok");
@@ -3451,9 +3457,48 @@ self.addEventListener('notificationclick', e => {
         const user = auth.currentUser;
         if (!user || !allowedEmails.includes(user.email)) return;
         const cleanData = JSON.parse(JSON.stringify(data));
+
+        // 1. Save master info and profile
         await setDoc(doc(db, "backups", "master_database"), {
-          data: cleanData, timestamp: new Date().toISOString(), lastUpdatedBy: user.email
+          user_profile: cleanData.user_profile || null,
+          timestamp: new Date().toISOString(),
+          lastUpdatedBy: user.email
         });
+
+        // 2. Save tool configurations
+        const tools = ['alcazar', 'keycode', 'letterheads', 'pwareg', 'etm', 'agm'];
+        for (const tool of tools) {
+          if (cleanData[tool]) {
+            await setDoc(doc(db, "backups", "tool_" + tool), {
+              data: cleanData[tool]
+            });
+          }
+        }
+
+        // 3. Get existing cloud drafts to clean up deleted ones
+        const querySnapshot = await getDocs(collection(db, "backups"));
+        const cloudDraftIds = [];
+        querySnapshot.forEach(doc => {
+          if (doc.id.startsWith("draft_")) cloudDraftIds.push(doc.id);
+        });
+
+        // 4. Save active drafts as individual documents
+        const activeDraftIds = new Set();
+        if (Array.isArray(cleanData.drafts)) {
+          for (const draft of cleanData.drafts) {
+            const docId = "draft_" + draft.id;
+            activeDraftIds.add(docId);
+            await setDoc(doc(db, "backups", docId), { draft });
+          }
+        }
+
+        // 5. Delete drafts that were removed locally
+        for (const cloudId of cloudDraftIds) {
+          if (!activeDraftIds.has(cloudId)) {
+            await deleteDoc(doc(db, "backups", cloudId));
+          }
+        }
+
         toast("Saved securely to Firebase Cloud", "ok");
       } catch (e) {
         toast("Database Access Denied: " + e.message, "err");
@@ -3467,13 +3512,36 @@ self.addEventListener('notificationclick', e => {
         const user = auth.currentUser;
         if (!user || !allowedEmails.includes(user.email)) { showLoader(false); return; }
 
-        const docSnap = await getDoc(doc(db, "backups", "master_database"));
+        const querySnapshot = await getDocs(collection(db, "backups"));
         showLoader(false);
 
-        if (docSnap.exists()) {
-          const cloudData = docSnap.data().data;
+        const restored = {};
+        const drafts = [];
+
+        querySnapshot.forEach((doc) => {
+          const id = doc.id;
+          const val = doc.data();
+          if (id === 'master_database') {
+            restored['user_profile'] = val.user_profile;
+            // Backward compatibility: load data from old format if present
+            if (val.data) {
+              Object.assign(restored, val.data);
+            }
+          } else if (id.startsWith('tool_')) {
+            const toolName = id.substring(5);
+            restored[toolName] = val.data;
+          } else if (id.startsWith('draft_')) {
+            if (val.draft) drafts.push(val.draft);
+          }
+        });
+        
+        // If old drafts were loaded from old format, merge them
+        if (!restored['drafts']) restored['drafts'] = [];
+        restored['drafts'] = restored['drafts'].concat(drafts);
+
+        if (Object.keys(restored).length > 0) {
           if (window.promptRestore) {
-            setTimeout(() => window.promptRestore(cloudData, 'Cloud'), 10);
+            setTimeout(() => window.promptRestore(restored, 'Cloud'), 10);
           }
         } else {
           toast("No cloud backup found yet", "info");
