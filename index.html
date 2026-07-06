@@ -3450,8 +3450,9 @@ self.addEventListener('notificationclick', e => {
       try {
         const user = auth.currentUser;
         if (!user || !allowedEmails.includes(user.email)) return;
+        const cleanData = JSON.parse(JSON.stringify(data));
         await setDoc(doc(db, "backups", "master_database"), {
-          data: data, timestamp: new Date().toISOString(), lastUpdatedBy: user.email
+          data: cleanData, timestamp: new Date().toISOString(), lastUpdatedBy: user.email
         });
         toast("Saved securely to Firebase Cloud", "ok");
       } catch (e) {
