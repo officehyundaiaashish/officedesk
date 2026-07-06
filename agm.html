@@ -1765,29 +1765,29 @@
 
     function calcNDMS() {
       const gv = id => { const el = document.getElementById(id); return parseFloat(el?.value) || 0; };
-      const fmt = v => v > 0 ? v.toLocaleString('en-IN', { maximumFractionDigits: 2 }) : '—';
+      const fmt = v => v > 0 ? Math.round(v).toLocaleString('en-IN') : '—';
       const fmtPct = v => v > 0 ? v.toFixed(1) + '%' : '—';
       const setEl = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-      const partTotal = gv('part_total_cost_with_tax');
-      const labTotal = gv('labour_total_cost_with_tax');
+      const partTotal = Math.round(gv('part_total_cost_with_tax'));
+      const labTotal = Math.round(gv('labour_total_cost_with_tax'));
 
       // Part sharing
       const hPctP = gv('hmil_share_pct_part');
       const dPctP = gv('dealer_share_pct_part');
       const cPctP = gv('customer_share_pct_part');
-      const hAmtP = partTotal * (hPctP / 100);
-      const dAmtP = partTotal * (dPctP / 100);
-      const cAmtP = partTotal * (cPctP / 100);
+      const hAmtP = Math.round(partTotal * (hPctP / 100));
+      const dAmtP = Math.round(partTotal * (dPctP / 100));
+      const cAmtP = Math.round(partTotal * (cPctP / 100));
       const checkP = hPctP + dPctP + cPctP;
 
       // Labour sharing
       const hPctL = gv('hmil_share_pct_labour');
       const dPctL = gv('dealer_share_pct_labour');
       const cPctL = gv('customer_share_pct_labour');
-      const hAmtL = labTotal * (hPctL / 100);
-      const dAmtL = labTotal * (dPctL / 100);
-      const cAmtL = labTotal * (cPctL / 100);
+      const hAmtL = Math.round(labTotal * (hPctL / 100));
+      const dAmtL = Math.round(labTotal * (dPctL / 100));
+      const cAmtL = Math.round(labTotal * (cPctL / 100));
       const checkL = hPctL + dPctL + cPctL;
 
       // ── Percentage over-100 validation ──
@@ -1904,19 +1904,19 @@
     function calcPartRow(i) {
       const p = parseFloat(document.getElementById(`part_list_price_${i}`)?.value) || 0;
       const q = parseFloat(document.getElementById(`part_qty_${i}`)?.value) || 0;
-      const a = p * q, t = a * 1.18;
+      const a = p * q, t = Math.round(a * 1.18);
       const ae = document.getElementById(`part_amt_${i}`), te = document.getElementById(`part_tax_${i}`);
-      if (ae) ae.textContent = (a || p || q) ? a.toLocaleString('en-IN') : '—';
-      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN', { maximumFractionDigits: 2 }) : '—';
+      if (ae) ae.textContent = (a || p || q) ? Math.round(a).toLocaleString('en-IN') : '—';
+      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN') : '—';
       updateInvoiceTotals();
     }
     function calcLabourRow(i) {
       const p = parseFloat(document.getElementById(`labour_list_price_${i}`)?.value) || 0;
       const q = parseFloat(document.getElementById(`labour_qty_${i}`)?.value) || 0;
-      const a = p * q, t = a * 1.18;
+      const a = p * q, t = Math.round(a * 1.18);
       const ae = document.getElementById(`labour_amt_${i}`), te = document.getElementById(`labour_tax_${i}`);
-      if (ae) ae.textContent = (a || p || q) ? a.toLocaleString('en-IN') : '—';
-      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN', { maximumFractionDigits: 2 }) : '—';
+      if (ae) ae.textContent = (a || p || q) ? Math.round(a).toLocaleString('en-IN') : '—';
+      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN') : '—';
       updateInvoiceTotals();
     }
     function updateInvoiceTotals() {
@@ -1937,18 +1937,18 @@
         pa += (parseFloat(pVal) || 0) * (parseFloat(qVal) || 0);
         la += (parseFloat(lpVal) || 0) * (parseFloat(lqVal) || 0);
       }
-      const pt = pa * 1.18, lt = la * 1.18, gt = pt + lt;
-      const f = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v > 0 ? v.toLocaleString('en-IN', { maximumFractionDigits: 2 }) : '—'; };
+      const pt = Math.round(pa * 1.18), lt = Math.round(la * 1.18), gt = Math.round(pt + lt);
+      const f = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v > 0 ? Math.round(v).toLocaleString('en-IN') : '—'; };
       f('partAmtTotal', pa); f('partTaxTotal', pt); f('labourAmtTotal', la); f('labourTaxTotal', lt); f('gTotal', gt);
 
       const pCostEl = document.getElementById('part_total_cost_with_tax');
       if (pCostEl && (pt > 0 || hasPartInput)) {
-        pCostEl.value = pt > 0 ? pt.toFixed(2) : '';
+        pCostEl.value = pt > 0 ? pt.toString() : '';
         pCostEl.dispatchEvent(new Event('input', { bubbles: true }));
       }
       const lCostEl = document.getElementById('labour_total_cost_with_tax');
       if (lCostEl && (lt > 0 || hasLabourInput)) {
-        lCostEl.value = lt > 0 ? lt.toFixed(2) : '';
+        lCostEl.value = lt > 0 ? lt.toString() : '';
         lCostEl.dispatchEvent(new Event('input', { bubbles: true }));
       }
       calcNDMS();
@@ -2174,7 +2174,7 @@
           data[`part_list_price_${i}`] = get(`part_list_price_${i}`);
           data[`part_qty_${i}`] = get(`part_qty_${i}`);
           const pp = parseFloat(get(`part_list_price_${i}`)) || 0, pq = parseFloat(get(`part_qty_${i}`)) || 0;
-          data[`part_amount_${i}`] = (pp * pq).toFixed(2);
+          data[`part_amount_${i}`] = Math.round(pp * pq).toString();
 
           data[`si_no_labour_${i}`] = get(`si_no_labour_${i}`);
           data[`labour_code_${i}`] = get(`labour_code_${i}`);
@@ -2182,7 +2182,7 @@
           data[`labour_list_price_${i}`] = get(`labour_list_price_${i}`);
           data[`labour_qty_${i}`] = get(`labour_qty_${i}`);
           const lp = parseFloat(get(`labour_list_price_${i}`)) || 0, lq = parseFloat(get(`labour_qty_${i}`)) || 0;
-          data[`labour_amount_${i}`] = (lp * lq).toFixed(2);
+          data[`labour_amount_${i}`] = Math.round(lp * lq).toString();
         }
 
         // NDMS — collect user inputs
@@ -2194,8 +2194,8 @@
         {
           const pTotalRaw = data.part_total_cost_with_tax;
           const lTotalRaw = data.labour_total_cost_with_tax;
-          const pTotal = parseFloat(pTotalRaw) || 0;
-          const lTotal = parseFloat(lTotalRaw) || 0;
+          const pTotal = Math.round(parseFloat(pTotalRaw)) || 0;
+          const lTotal = Math.round(parseFloat(lTotalRaw)) || 0;
           const hasP = !!(pTotalRaw && pTotal);
           const hasL = !!(lTotalRaw && lTotal);
           const hPctP = parseFloat(data.hmil_share_pct_part) || 0;
@@ -2205,18 +2205,18 @@
           const dPctL = parseFloat(data.dealer_share_pct_labour) || 0;
           const cPctL = parseFloat(data.customer_share_pct_labour) || 0;
           // Part sharing amounts — null if no part total entered
-          data.ndms_hmil_amt_part = hasP ? +((pTotal * hPctP) / 100).toFixed(2) : null;
-          data.ndms_dealer_amt_part = hasP ? +((pTotal * dPctP) / 100).toFixed(2) : null;
-          data.ndms_cust_amt_part = hasP ? +((pTotal * cPctP) / 100).toFixed(2) : null;
+          data.ndms_hmil_amt_part = hasP ? Math.round((pTotal * hPctP) / 100) : null;
+          data.ndms_dealer_amt_part = hasP ? Math.round((pTotal * dPctP) / 100) : null;
+          data.ndms_cust_amt_part = hasP ? Math.round((pTotal * cPctP) / 100) : null;
           // Labour sharing amounts — null if no labour total entered
-          data.ndms_hmil_amt_labour = hasL ? +((lTotal * hPctL) / 100).toFixed(2) : null;
-          data.ndms_dealer_amt_labour = hasL ? +((lTotal * dPctL) / 100).toFixed(2) : null;
-          data.ndms_cust_amt_labour = hasL ? +((lTotal * cPctL) / 100).toFixed(2) : null;
+          data.ndms_hmil_amt_labour = hasL ? Math.round((lTotal * hPctL) / 100) : null;
+          data.ndms_dealer_amt_labour = hasL ? Math.round((lTotal * dPctL) / 100) : null;
+          data.ndms_cust_amt_labour = hasL ? Math.round((lTotal * cPctL) / 100) : null;
           // Grand totals — null if neither part nor labour entered
-          data.ndms_grand_total = (hasP || hasL) ? +(pTotal + lTotal).toFixed(2) : null;
-          data.ndms_grand_hmil_amt = (hasP || hasL) ? +(((pTotal * hPctP) + (lTotal * hPctL)) / 100).toFixed(2) : null;
-          data.ndms_grand_dealer_amt = (hasP || hasL) ? +(((pTotal * dPctP) + (lTotal * dPctL)) / 100).toFixed(2) : null;
-          data.ndms_grand_cust_amt = (hasP || hasL) ? +(((pTotal * cPctP) + (lTotal * cPctL)) / 100).toFixed(2) : null;
+          data.ndms_grand_total = (hasP || hasL) ? Math.round(pTotal + lTotal) : null;
+          data.ndms_grand_hmil_amt = (hasP || hasL) ? Math.round(((pTotal * hPctP) + (lTotal * hPctL)) / 100) : null;
+          data.ndms_grand_dealer_amt = (hasP || hasL) ? Math.round(((pTotal * dPctP) + (lTotal * dPctL)) / 100) : null;
+          data.ndms_grand_cust_amt = (hasP || hasL) ? Math.round(((pTotal * cPctP) + (lTotal * cPctL)) / 100) : null;
         }
 
         // Veh History — per row — keys must match replaceVehHistoryXml lookup format sh${i}_*
@@ -2521,21 +2521,21 @@
       const l1HasData = !!(data.labour_list_price_1 && data.labour_qty_1);
       const l2HasData = !!(data.labour_list_price_2 && data.labour_qty_2);
 
-      const p1amt = p1HasData ? +(n('part_list_price_1') * n('part_qty_1')).toFixed(2) : null;
-      const p2amt = p2HasData ? +(n('part_list_price_2') * n('part_qty_2')).toFixed(2) : null;
-      const l1amt = l1HasData ? +(n('labour_list_price_1') * n('labour_qty_1')).toFixed(2) : null;
-      const l2amt = l2HasData ? +(n('labour_list_price_2') * n('labour_qty_2')).toFixed(2) : null;
+      const p1amt = p1HasData ? Math.round(n('part_list_price_1') * n('part_qty_1')) : null;
+      const p2amt = p2HasData ? Math.round(n('part_list_price_2') * n('part_qty_2')) : null;
+      const l1amt = l1HasData ? Math.round(n('labour_list_price_1') * n('labour_qty_1')) : null;
+      const l2amt = l2HasData ? Math.round(n('labour_list_price_2') * n('labour_qty_2')) : null;
 
-      const w3 = p1amt !== null ? +(p1amt * 1.18).toFixed(2) : null;
-      const w4 = p2amt !== null ? +(p2amt * 1.18).toFixed(2) : null;
-      const w7 = l1amt !== null ? +(l1amt * 1.18).toFixed(2) : null;
-      const w8 = l2amt !== null ? +(l2amt * 1.18).toFixed(2) : null;
+      const w3 = p1amt !== null ? Math.round(p1amt * 1.18) : null;
+      const w4 = p2amt !== null ? Math.round(p2amt * 1.18) : null;
+      const w7 = l1amt !== null ? Math.round(l1amt * 1.18) : null;
+      const w8 = l2amt !== null ? Math.round(l2amt * 1.18) : null;
 
-      const partsAmtTotal = (p1amt !== null || p2amt !== null) ? +((p1amt || 0) + (p2amt || 0)).toFixed(2) : null;
-      const partsTaxTotal = (w3 !== null || w4 !== null) ? +((w3 || 0) + (w4 || 0)).toFixed(2) : null;
-      const labourAmtTotal = (l1amt !== null || l2amt !== null) ? +((l1amt || 0) + (l2amt || 0)).toFixed(2) : null;
-      const labourTaxTotal = (w7 !== null || w8 !== null) ? +((w7 || 0) + (w8 || 0)).toFixed(2) : null;
-      const grandTotal = (partsTaxTotal !== null || labourTaxTotal !== null) ? +((partsTaxTotal || 0) + (labourTaxTotal || 0)).toFixed(2) : null;
+      const partsAmtTotal = (p1amt !== null || p2amt !== null) ? Math.round((p1amt || 0) + (p2amt || 0)) : null;
+      const partsTaxTotal = (w3 !== null || w4 !== null) ? Math.round((w3 || 0) + (w4 || 0)) : null;
+      const labourAmtTotal = (l1amt !== null || l2amt !== null) ? Math.round((l1amt || 0) + (l2amt || 0)) : null;
+      const labourTaxTotal = (w7 !== null || w8 !== null) ? Math.round((w7 || 0) + (w8 || 0)) : null;
+      const grandTotal = (partsTaxTotal !== null || labourTaxTotal !== null) ? Math.round((partsTaxTotal || 0) + (labourTaxTotal || 0)) : null;
 
       // [value, 'str'|'num'] — null value means leave cell blank
       const cellMap = {
