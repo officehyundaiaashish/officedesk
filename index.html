@@ -1978,6 +1978,13 @@ self.addEventListener('notificationclick', e => {
             <polyline points="7 3 7 8 15 8" />
           </svg>Drafts
         </button>
+        <button class="nav-item" data-view="backup">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>Backup & Restore
+        </button>
       </div>
       <div class="sb-div"></div>
       <div class="sb-sec">
@@ -2140,6 +2147,27 @@ self.addEventListener('notificationclick', e => {
               <div class="tool-name">AGM Form</div>
               <span class="tag tag-live" style="margin-top:5px">XLSX</span>
             </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="view view-letterheads-container" id="view-drafts">
+        <iframe id="drafts-iframe" style="width:100%;flex:1;border:none;" loading="eager"></iframe>
+      </div>
+
+      <div class="view view-letterheads-container" id="view-backup" style="padding: 20px 24px;">
+        <div class="welcome" style="margin-bottom: 24px;">
+          <div class="wt">
+            <h2>Backup & Restore</h2>
+            <p>Securely backup all your dealership utility suite data to your local device or sync with Google Cloud.</p>
+          </div>
+          <div class="wi" style="background:var(--accent); display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
           </div>
         </div>
 
@@ -2374,6 +2402,18 @@ self.addEventListener('notificationclick', e => {
         <span class="drawer-item-badge">Local</span>
       </button>
 
+      <button class="drawer-item" data-view="backup" onclick="drawerNav('backup')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+        <div class="drawer-item-label">Backup & Restore</div>
+        <span class="drawer-item-badge">Cloud</span>
+      </button>
+
       <button class="drawer-item" data-view="alcazar" onclick="drawerNav('alcazar')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2556,7 +2596,7 @@ self.addEventListener('notificationclick', e => {
       document.querySelectorAll(`.nav-item[data-view="${v}"],.bnav-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
       document.querySelectorAll(`.drawer-item[data-view="${v}"]`).forEach(el => el.classList.add("active"));
 
-      const labels = { dashboard: "Dashboard", drafts: "Drafts", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads", pwareg: "PWA Regular", etm: "ETM Form", agm: "AGM Form" };
+      const labels = { dashboard: "Dashboard", drafts: "Drafts", backup: "Backup & Restore", alcazar: "Alcazar Form", keycode: "Key Code Form", letterheads: "Letter Heads", pwareg: "PWA Regular", etm: "ETM Form", agm: "AGM Form" };
       document.title = "OfficeDesk : " + (labels[v] || "Utility Suite");
 
       const bc = document.getElementById("bc");
@@ -2564,7 +2604,7 @@ self.addEventListener('notificationclick', e => {
 
       const saveDraftBtn = document.getElementById('saveDraftBtn');
       if (saveDraftBtn) {
-        if (v === 'dashboard' || v === 'drafts') {
+        if (v === 'dashboard' || v === 'drafts' || v === 'backup') {
           saveDraftBtn.style.display = 'none';
         } else {
           saveDraftBtn.style.display = 'inline-flex';
