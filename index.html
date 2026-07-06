@@ -3456,7 +3456,7 @@ self.addEventListener('notificationclick', e => {
         });
         toast("Saved securely to Firebase Cloud", "ok");
       } catch (e) {
-        toast("Database Access Denied: " + (e.code || e.message), "err");
+        toast("Database Access Denied: " + e.message, "err");
       }
       showLoader(false);
     };
@@ -3480,7 +3480,7 @@ self.addEventListener('notificationclick', e => {
         }
       } catch (e) {
         showLoader(false);
-        toast("Database Access Denied: " + (e.code || e.message), "err");
+        toast("Database Access Denied: " + e.message, "err");
       }
     };
   </script>
