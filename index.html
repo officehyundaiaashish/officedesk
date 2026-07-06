@@ -3284,7 +3284,7 @@ self.addEventListener('notificationclick', e => {
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { initializeFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
@@ -3297,7 +3297,9 @@ self.addEventListener('notificationclick', e => {
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db = initializeFirestore(app, {
+      ignoreUndefinedProperties: true
+    });
     const provider = new GoogleAuthProvider();
 
     const allowedEmails = [
