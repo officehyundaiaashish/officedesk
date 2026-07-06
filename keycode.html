@@ -560,7 +560,7 @@
       <div class="field">
         <label>Email Body</label>
         <div style="display:flex; gap:8px; align-items: flex-start;">
-          <textarea id="kc-emailBody" readonly style="flex:1; min-height: 250px; font-family: var(--font); line-height: 1.5; resize: vertical;"></textarea>
+          <div id="kc-emailBody" style="flex:1; min-height: 250px; font-family: var(--font); line-height: 1.5; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); white-space: pre-wrap; overflow-y: auto; text-align: left;"></div>
           <button class="btn btn-g" style="flex:none; width:42px; height:42px; padding:0;" onclick="kcCopyEmail()" title="Copy Email Body">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           </button>
@@ -968,7 +968,7 @@
       const subEl = document.getElementById('kc-emailSubject');
       const bodyEl = document.getElementById('kc-emailBody');
       if (subEl) subEl.value = '';
-      if (bodyEl) bodyEl.value = '';
+      if (bodyEl) bodyEl.innerHTML = '';
       const el = document.getElementById('kc-save-status');
       if (el) { el.textContent = 'Cleared'; setTimeout(() => { el.textContent = ''; }, 2000); }
       toast('Form cleared', 'info');
@@ -1257,30 +1257,30 @@
         // Populate Email Card fields
         const emailVinList = validRows.map(r => r.vin).join(', ');
         const emailSubject = `Request for Key Teaching Code – Vehicle No. ${emailVinList} | Dealer Code: ${dcode}`;
-        const emailBody = `Dear Madam,
+        const emailBody = `<b>Dear Madam,</b>
 
 Kindly provide the Key Teaching Code for the following vehicle:
 
-Dealer Code: ${dcode}
-VIN: ${emailVinList}
+<b>Dealer Code:</b> ${dcode}
+<b>VIN:</b> ${emailVinList}
 
 Your prompt assistance in this matter would be highly appreciated.
 
 Thank you.
 
-Kind Regards,
+<b>Kind Regards,
 ${rname}
 Mob: ${rcontact}
 ${dname} – ${dcode}
 Manglore Road, Near Godavari Hotel,
 Roorkee – 247667
-Email: service@ukhyundai.in`;
+Email: service@ukhyundai.in</b>`;
 
         const subEl = document.getElementById('kc-emailSubject');
         const bodyEl = document.getElementById('kc-emailBody');
         const cardEl = document.getElementById('kc-emailCard');
         if (subEl) subEl.value = emailSubject;
-        if (bodyEl) bodyEl.value = emailBody;
+        if (bodyEl) bodyEl.innerHTML = emailBody.replace(/\n/g, '<br>');
         if (cardEl) cardEl.style.display = 'block';
       } catch (err) {
         toast('Export error: ' + err.message, 'err');
@@ -1302,9 +1302,27 @@ Email: service@ukhyundai.in`;
     function kcCopyEmail() {
       const el = document.getElementById('kc-emailBody');
       if (el) {
-        el.select();
-        navigator.clipboard.writeText(el.value);
-        toast('Email body copied', 'ok');
+        const plainText = el.innerText || el.textContent;
+        const htmlText = el.innerHTML;
+        
+        const blobPlain = new Blob([plainText], { type: 'text/plain' });
+        const blobHtml = new Blob([htmlText], { type: 'text/html' });
+        
+        try {
+          const data = [new ClipboardItem({
+            'text/plain': blobPlain,
+            'text/html': blobHtml
+          })];
+          navigator.clipboard.write(data).then(() => {
+            toast('Email body copied with formatting', 'ok');
+          }).catch(err => {
+            navigator.clipboard.writeText(plainText);
+            toast('Email body copied', 'ok');
+          });
+        } catch(e) {
+          navigator.clipboard.writeText(plainText);
+          toast('Email body copied', 'ok');
+        }
       }
     }
 
