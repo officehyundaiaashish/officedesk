@@ -365,11 +365,36 @@
             agm: "AGM Form"
         };
 
+        function getDraftDate(draft) {
+            if (draft.date) return draft.date;
+            try {
+                const d = new Date(draft.timestamp);
+                if (!isNaN(d.getTime())) {
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const year = d.getFullYear();
+                    return `${day}-${month}-${year}`;
+                }
+            } catch(e) {}
+            return '';
+        }
+
         function renderDrafts() {
             const list = document.getElementById('drafts-list');
             const clearRow = document.getElementById('clear-btn-row');
             getAllDrafts().then(drafts => {
-                if (drafts.length === 0) {
+                const seenKeys = new Set();
+                const uniqueDrafts = [];
+                drafts.forEach(draft => {
+                    const dStr = getDraftDate(draft);
+                    const key = `${draft.tool}_${draft.vin}_${dStr}`;
+                    if (!seenKeys.has(key)) {
+                        seenKeys.add(key);
+                        uniqueDrafts.push(draft);
+                    }
+                });
+
+                if (uniqueDrafts.length === 0) {
                     list.innerHTML = '<div class="empty-state">No saved drafts yet.</div>';
                     clearRow.style.display = 'none';
                     return;
@@ -377,7 +402,7 @@
 
                 clearRow.style.display = 'flex';
                 list.innerHTML = '';
-                drafts.forEach(draft => {
+                uniqueDrafts.forEach(draft => {
                     const item = document.createElement('div');
                     item.className = 'hist-item';
 
@@ -385,7 +410,7 @@
                     info.className = 'hi-info';
                     info.innerHTML = `
               <div class="hi-name">${draft.vin || 'Unnamed Draft'}</div>
-              <div class="hi-meta">${labels[draft.tool] || draft.tool} · Saved: ${draft.timestamp}</div>
+              <div class="hi-meta">${labels[draft.tool] || draft.tool} · Date: ${getDraftDate(draft)} · Saved: ${draft.timestamp}</div>
             `;
 
                     const delBtn = document.createElement('button');
