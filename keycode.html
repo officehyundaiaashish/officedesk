@@ -539,6 +539,36 @@
     </div>
     <div id="kc-rows"></div>
   </div>
+
+  <div class="card" id="kc-emailCard" style="margin-top: 20px;">
+    <div class="card-title">
+      <span style="display:flex;align-items:center;gap:7px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Generated Email Content
+      </span>
+    </div>
+    <div class="fg" style="grid-template-columns: 1fr; gap: 12px;">
+      <div class="field">
+        <label>Subject</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="kc-emailSubject" readonly style="flex:1;">
+          <button class="btn btn-g" style="flex:none; width:42px; height:42px; padding:0;" onclick="kcCopySubject()" title="Copy Subject">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email Body</label>
+        <div style="display:flex; gap:8px; align-items: flex-start;">
+          <textarea id="kc-emailBody" readonly style="flex:1; min-height: 250px; font-family: var(--font); line-height: 1.5; resize: vertical;"></textarea>
+          <button class="btn btn-g" style="flex:none; width:42px; height:42px; padding:0;" onclick="kcCopyEmail()" title="Copy Email Body">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Validation message -->
   <div id="kc-valMsg" style="display:none;background:rgba(214,69,69,0.08);border:1px solid rgba(214,69,69,0.25);color:#d64545;border-radius:7px;padding:10px 14px;font-size:13px;font-weight:500;margin:0 0 10px;align-items:center;gap:8px;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -935,6 +965,10 @@
       kcRows = [{ model: '', vin: '', mileage: '', ro: '', keycode: '' }];
       kcRenderRows();
       kcUpdateSteps();
+      const subEl = document.getElementById('kc-emailSubject');
+      const bodyEl = document.getElementById('kc-emailBody');
+      if (subEl) subEl.value = '';
+      if (bodyEl) bodyEl.value = '';
       const el = document.getElementById('kc-save-status');
       if (el) { el.textContent = 'Cleared'; setTimeout(() => { el.textContent = ''; }, 2000); }
       toast('Form cleared', 'info');
@@ -1219,12 +1253,58 @@
         URL.revokeObjectURL(url);
         toast(`Excel downloaded — ${validRows.length} vehicle(s)`, 'ok');
         kcSaveHistory();
+
+        // Populate Email Card fields
+        const emailVinList = validRows.map(r => r.vin).join(', ');
+        const emailSubject = `Request for Key Teaching Code – Vehicle No. ${emailVinList} | Dealer Code: ${dcode}`;
+        const emailBody = `Dear Madam,
+
+Kindly provide the Key Teaching Code for the following vehicle:
+
+Dealer Code: ${dcode}
+VIN: ${emailVinList}
+
+Your prompt assistance in this matter would be highly appreciated.
+
+Thank you.
+
+Kind Regards,
+${rname}
+Mob: ${rcontact}
+${dname} – ${dcode}
+Manglore Road, Near Godavari Hotel,
+Roorkee – 247667
+Email: service@ukhyundai.in`;
+
+        const subEl = document.getElementById('kc-emailSubject');
+        const bodyEl = document.getElementById('kc-emailBody');
+        const cardEl = document.getElementById('kc-emailCard');
+        if (subEl) subEl.value = emailSubject;
+        if (bodyEl) bodyEl.value = emailBody;
+        if (cardEl) cardEl.style.display = 'block';
       } catch (err) {
         toast('Export error: ' + err.message, 'err');
         console.error(err);
       } finally {
         showLoader(false);
         btn.disabled = false;
+      }
+    }
+
+    function kcCopySubject() {
+      const el = document.getElementById('kc-emailSubject');
+      if (el) {
+        el.select();
+        navigator.clipboard.writeText(el.value);
+        toast('Subject copied', 'ok');
+      }
+    }
+    function kcCopyEmail() {
+      const el = document.getElementById('kc-emailBody');
+      if (el) {
+        el.select();
+        navigator.clipboard.writeText(el.value);
+        toast('Email body copied', 'ok');
       }
     }
 
