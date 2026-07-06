@@ -3016,11 +3016,16 @@ self.addEventListener('notificationclick', e => {
       let vin = '';
       if (formData['f-vin']) vin = getValStr('f-vin');
       else if (formData['VIN']) vin = getValStr('VIN');
+      else if (formData['vin_number']) vin = getValStr('vin_number');
       else {
         for (const key in formData) {
-          if (key.toLowerCase() === 'vin' || key.toLowerCase().endsWith('vin')) {
-            vin = getValStr(key);
-            if (vin) break;
+          const lKey = key.toLowerCase();
+          if (lKey.includes('vin') && !lKey.startsWith('sh') && !lKey.startsWith('si') && !lKey.startsWith('hist')) {
+            const possibleVin = getValStr(key);
+            if (possibleVin) {
+              vin = possibleVin;
+              break;
+            }
           }
         }
       }
