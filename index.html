@@ -2976,7 +2976,20 @@ self.addEventListener('notificationclick', e => {
       const formData = {};
       iframeDoc.querySelectorAll('input, select, textarea').forEach(el => {
         if (el.id && el.type !== 'file' && el.type !== 'button' && el.type !== 'submit') {
-          formData[el.id] = el.value;
+          if (el.type === 'checkbox' || el.type === 'radio') {
+            formData[el.id] = {
+              value: el.value,
+              checked: el.checked,
+              type: el.type
+            };
+          } else if (el.tagName.toLowerCase() === 'select' && el.multiple) {
+            formData[el.id] = {
+              value: Array.from(el.selectedOptions).map(opt => opt.value),
+              type: 'multiselect'
+            };
+          } else {
+            formData[el.id] = el.value;
+          }
         }
       });
 
@@ -2991,14 +3004,23 @@ self.addEventListener('notificationclick', e => {
         }
       }
 
+      const getValStr = (k) => {
+        const item = formData[k];
+        if (!item) return '';
+        if (typeof item === 'object') {
+          return (item.value || '').toString().trim();
+        }
+        return item.toString().trim();
+      };
+
       let vin = '';
-      if (formData['f-vin']) vin = formData['f-vin'].trim();
-      else if (formData['VIN']) vin = formData['VIN'].trim();
+      if (formData['f-vin']) vin = getValStr('f-vin');
+      else if (formData['VIN']) vin = getValStr('VIN');
       else {
         for (const key in formData) {
           if (key.toLowerCase() === 'vin' || key.toLowerCase().endsWith('vin')) {
-            vin = formData[key].trim();
-            break;
+            vin = getValStr(key);
+            if (vin) break;
           }
         }
       }
@@ -3007,17 +3029,25 @@ self.addEventListener('notificationclick', e => {
         if (rowWithVin) vin = rowWithVin.vin.trim();
       }
       if (!vin) {
-        if (formData['f-model']) vin = formData['f-model'].trim();
-        else if (formData['MODEL']) vin = formData['MODEL'].trim();
+        if (formData['f-model']) vin = getValStr('f-model');
+        else if (formData['MODEL']) vin = getValStr('MODEL');
       }
       if (!vin) {
         vin = 'Draft-' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       }
 
+      // Generate date string in DD-MM-YYYY format
+      const d = new Date();
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      const dateStr = `${day}-${month}-${year}`;
+
       const draft = {
-        id: tool + '_' + vin,
+        id: tool + '_' + vin + '_' + dateStr,
         tool: tool,
         vin: vin,
+        date: dateStr,
         formData: formData,
         photos: photos,
         kcRows: tool === 'keycode' ? JSON.parse(JSON.stringify(iframeWin.kcRows || [])) : null,
@@ -3054,9 +3084,97 @@ self.addEventListener('notificationclick', e => {
           Object.entries(draft.formData).forEach(([fieldId, val]) => {
             const el = iframeDoc.getElementById(fieldId);
             if (el) {
-              el.value = val;
+              if (val && typeof val === 'object' && val.type === 'checkbox') {
+                el.checked = val.checked;
+              } else if (val && typeof val === 'object' && val.type === 'radio') {
+                el.checked = val.checked;
+              } else if (val && typeof val === 'object' && val.type === 'multiselect') {
+                if (el.options) {
+                  Array.from(el.options).forEach(opt => {
+                    opt.selected = val.value.includes(opt.value);
+                  });
+                }
+              } else {
+                el.value = val;
+              }
               el.dispatchEvent(new Event('input', { bubbles: true }));
               el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            // Extract the simple string value for custom control UI updates
+            const actualVal = (val && typeof val === 'object' && 'value' in val) ? val.value : val;
+
+            // 1. Custom Dropdown select span text and selected class updating:
+            const csvEl = iframeDoc.getElementById('csv_' + fieldId);
+            if (csvEl) {
+              csvEl.textContent = actualVal || 'Select…';
+              if (actualVal) {
+                csvEl.classList.remove('empty');
+                csvEl.style.color = '';
+              } else {
+                csvEl.classList.add('empty');
+                csvEl.style.color = 'var(--text3)';
+              }
+              const csoEl = iframeDoc.getElementById('cso_' + fieldId);
+              if (csoEl) {
+                csoEl.querySelectorAll('.cs-opt').forEach(opt => {
+                  if (opt.getAttribute('data-val') === actualVal || opt.textContent.trim() === actualVal) {
+                    opt.classList.add('selected');
+                  } else {
+                    opt.classList.remove('selected');
+                  }
+                });
+              }
+            }
+
+            // 2. Custom Date fields
+            if (fieldId.startsWith('di_')) {
+              const baseId = fieldId.substring(3); // e.g. "sale_date" from "di_sale_date"
+              const dvEl = iframeDoc.getElementById('dv_' + baseId);
+              if (dvEl) {
+                dvEl.textContent = actualVal || '';
+                if (actualVal) {
+                  dvEl.classList.remove('empty');
+                } else {
+                  dvEl.classList.add('empty');
+                }
+              }
+              // Parse date and update iframe local calendar state
+              const parseDate = (v) => {
+                if (!v) return null;
+                let p;
+                if (v.includes('-')) {
+                  p = v.split('-');
+                } else if (v.includes('/')) {
+                  p = v.split('/');
+                } else {
+                  return null;
+                }
+                if (p.length === 3) {
+                  const d = new Date(+p[2], +p[1] - 1, +p[0]);
+                  return isNaN(d) ? null : d;
+                }
+                return null;
+              };
+              const parsedDate = parseDate(actualVal);
+              if (parsedDate) {
+                if (iframeWin.CAL && iframeWin.CAL[baseId]) {
+                  Object.assign(iframeWin.CAL[baseId], {
+                    date: parsedDate,
+                    year: parsedDate.getFullYear(),
+                    month: parsedDate.getMonth(),
+                    view: 'days'
+                  });
+                }
+                if (iframeWin._CAL && iframeWin._CAL[baseId]) {
+                  Object.assign(iframeWin._CAL[baseId], {
+                    date: parsedDate,
+                    year: parsedDate.getFullYear(),
+                    month: parsedDate.getMonth(),
+                    view: 'days'
+                  });
+                }
+              }
             }
           });
 
@@ -3098,7 +3216,7 @@ self.addEventListener('notificationclick', e => {
           if (typeof iframeWin.updateStepper === 'function') iframeWin.updateStepper();
 
           if (draft.tool === 'alcazar') {
-            const modelVal = draft.formData['f-model'];
+            const modelVal = (draft.formData['f-model'] && typeof draft.formData['f-model'] === 'object') ? draft.formData['f-model'].value : draft.formData['f-model'];
             const csvModel = iframeDoc.getElementById('csv_f-model');
             if (csvModel) {
               if (modelVal) {
@@ -3109,7 +3227,7 @@ self.addEventListener('notificationclick', e => {
                 csvModel.style.color = 'var(--text3)';
               }
             }
-            const freqVal = draft.formData['f-freq'];
+            const freqVal = (draft.formData['f-freq'] && typeof draft.formData['f-freq'] === 'object') ? draft.formData['f-freq'].value : draft.formData['f-freq'];
             const csvFreq = iframeDoc.getElementById('csv_f-freq');
             if (csvFreq) {
               csvFreq.textContent = freqVal === 'CONTINOUSLY' ? 'CONTINUOUSLY' : (freqVal || 'CONTINUOUSLY');
@@ -3119,183 +3237,183 @@ self.addEventListener('notificationclick', e => {
           toast('Draft loaded successfully', 'ok');
         };
 
-      if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === 'complete') {
-        populate();
-      } else {
-        iframe.addEventListener('load', populate, { once: true });
-      }
-    });
-  }
+        if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.readyState === 'complete') {
+          populate();
+        } else {
+          iframe.addEventListener('load', populate, { once: true });
+        }
+      });
+    }
   </script>
 
   <script src="./ppt-template.js"></script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-      import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-      import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
-        authDomain: "officedesk-6c56e.firebaseapp.com",
-        projectId: "officedesk-6c56e",
-        storageBucket: "officedesk-6c56e.firebasestorage.app",
-        messagingSenderId: "342843064222",
-        appId: "1:342843064222:web:b4e81090796664bf39608f"
-      };
+    const firebaseConfig = {
+      apiKey: "AIzaSyApVZ0wN8eIZKO9ys7CkpVHwBZ1P7q6ztE",
+      authDomain: "officedesk-6c56e.firebaseapp.com",
+      projectId: "officedesk-6c56e",
+      storageBucket: "officedesk-6c56e.firebasestorage.app",
+      messagingSenderId: "342843064222",
+      appId: "1:342843064222:web:b4e81090796664bf39608f"
+    };
 
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-      const provider = new GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-      const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
+    const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
 
-      function enableCloudButtons(email) {
-        document.getElementById('googleSignInText').innerText = email;
-        document.getElementById('googleSignInBtn').style.borderColor = 'var(--border)';
-        document.getElementById('googleSignInBtn').style.color = 'var(--text2)';
+    function enableCloudButtons(email) {
+      document.getElementById('googleSignInText').innerText = email;
+      document.getElementById('googleSignInBtn').style.borderColor = 'var(--border)';
+      document.getElementById('googleSignInBtn').style.color = 'var(--text2)';
 
-        document.getElementById('cloudBackupBtn').disabled = false;
-        document.getElementById('cloudBackupBtn').style.opacity = '1';
-        document.getElementById('cloudBackupBtn').style.cursor = 'pointer';
+      document.getElementById('cloudBackupBtn').disabled = false;
+      document.getElementById('cloudBackupBtn').style.opacity = '1';
+      document.getElementById('cloudBackupBtn').style.cursor = 'pointer';
 
-        document.getElementById('cloudRestoreBtn').disabled = false;
-        document.getElementById('cloudRestoreBtn').style.opacity = '1';
-        document.getElementById('cloudRestoreBtn').style.cursor = 'pointer';
+      document.getElementById('cloudRestoreBtn').disabled = false;
+      document.getElementById('cloudRestoreBtn').style.opacity = '1';
+      document.getElementById('cloudRestoreBtn').style.cursor = 'pointer';
 
-        const signOutDiv = document.getElementById('p-signOutDiv');
-        if (signOutDiv) signOutDiv.style.display = 'block';
+      const signOutDiv = document.getElementById('p-signOutDiv');
+      if (signOutDiv) signOutDiv.style.display = 'block';
+    }
+
+    function disableCloudButtons() {
+      document.getElementById('googleSignInText').innerText = "Sign in with Google";
+      document.getElementById('googleSignInBtn').style.borderColor = '';
+      document.getElementById('googleSignInBtn').style.color = '';
+
+      document.getElementById('cloudBackupBtn').disabled = true;
+      document.getElementById('cloudBackupBtn').style.opacity = '0.4';
+      document.getElementById('cloudBackupBtn').style.cursor = 'not-allowed';
+
+      document.getElementById('cloudRestoreBtn').disabled = true;
+      document.getElementById('cloudRestoreBtn').style.opacity = '0.4';
+      document.getElementById('cloudRestoreBtn').style.cursor = 'not-allowed';
+
+      const signOutDiv = document.getElementById('p-signOutDiv');
+      if (signOutDiv) signOutDiv.style.display = 'none';
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && allowedEmails.includes(user.email)) {
+        enableCloudButtons(user.email);
+      } else {
+        disableCloudButtons();
       }
+    });
 
-      function disableCloudButtons() {
-        document.getElementById('googleSignInText').innerText = "Sign in with Google";
-        document.getElementById('googleSignInBtn').style.borderColor = '';
-        document.getElementById('googleSignInBtn').style.color = '';
+    window.showSignOutConfirm = function () {
+      if (typeof closeProfile === "function") closeProfile();
+      document.getElementById('confirmOverlay').classList.add('open');
+      setTimeout(() => document.getElementById('confirmOverlay').classList.add('visible'), 10);
+      document.getElementById('confirmModal').classList.add('show');
+    };
 
-        document.getElementById('cloudBackupBtn').disabled = true;
-        document.getElementById('cloudBackupBtn').style.opacity = '0.4';
-        document.getElementById('cloudBackupBtn').style.cursor = 'not-allowed';
+    window.closeConfirm = function () {
+      document.getElementById('confirmOverlay').classList.remove('visible');
+      document.getElementById('confirmModal').classList.remove('show');
+      setTimeout(() => document.getElementById('confirmOverlay').classList.remove('open'), 300);
+    };
 
-        document.getElementById('cloudRestoreBtn').disabled = true;
-        document.getElementById('cloudRestoreBtn').style.opacity = '0.4';
-        document.getElementById('cloudRestoreBtn').style.cursor = 'not-allowed';
+    window.executeSignOut = async function () {
+      window.closeConfirm();
+      showLoader(true);
+      try {
+        await signOut(auth);
+        toast("Signed out successfully", "info");
+        disableCloudButtons();
 
-        const signOutDiv = document.getElementById('p-signOutDiv');
-        if (signOutDiv) signOutDiv.style.display = 'none';
+        currentProfile = { name: 'User', avatar: '' };
+        localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+        if (typeof renderProfile === 'function') renderProfile();
+
+      } catch (e) {
+        toast("Error signing out", "err");
       }
+      showLoader(false);
+    };
 
-      onAuthStateChanged(auth, (user) => {
-        if (user && allowedEmails.includes(user.email)) {
-          enableCloudButtons(user.email);
-        } else {
-          disableCloudButtons();
+    window.googleSignIn = async function () {
+      showLoader(true);
+      try {
+        let user = auth.currentUser;
+        if (!user) {
+          user = (await signInWithPopup(auth, provider)).user;
         }
-      });
 
-      window.showSignOutConfirm = function () {
-        if (typeof closeProfile === "function") closeProfile();
-        document.getElementById('confirmOverlay').classList.add('open');
-        setTimeout(() => document.getElementById('confirmOverlay').classList.add('visible'), 10);
-        document.getElementById('confirmModal').classList.add('show');
-      };
-
-      window.closeConfirm = function () {
-        document.getElementById('confirmOverlay').classList.remove('visible');
-        document.getElementById('confirmModal').classList.remove('show');
-        setTimeout(() => document.getElementById('confirmOverlay').classList.remove('open'), 300);
-      };
-
-      window.executeSignOut = async function () {
-        window.closeConfirm();
-        showLoader(true);
-        try {
+        if (!allowedEmails.includes(user.email)) {
+          toast("Unauthorized Email ID. Access Denied.", "err");
           await signOut(auth);
-          toast("Signed out successfully", "info");
-          disableCloudButtons();
+        } else {
+          enableCloudButtons(user.email);
 
-          currentProfile = { name: 'User', avatar: '' };
-          localStorage.setItem('od-profile', JSON.stringify(currentProfile));
-          if (typeof renderProfile === 'function') renderProfile();
-
-        } catch (e) {
-          toast("Error signing out", "err");
-        }
-        showLoader(false);
-      };
-
-      window.googleSignIn = async function () {
-        showLoader(true);
-        try {
-          let user = auth.currentUser;
-          if (!user) {
-            user = (await signInWithPopup(auth, provider)).user;
-          }
-
-          if (!allowedEmails.includes(user.email)) {
-            toast("Unauthorized Email ID. Access Denied.", "err");
-            await signOut(auth);
-          } else {
-            enableCloudButtons(user.email);
-
-            toast("Checking cloud profile...", "info");
-            const docSnap = await getDoc(doc(db, "backups", "master_database"));
-
-            if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
-              currentProfile = docSnap.data().data.user_profile;
-              localStorage.setItem('od-profile', JSON.stringify(currentProfile));
-              if (typeof renderProfile === 'function') renderProfile();
-              toast("Signed in & Profile Restored!", "ok");
-            } else {
-              toast("Welcome! Please setup your profile.", "ok");
-              setTimeout(() => {
-                if (typeof openProfile === 'function') openProfile();
-              }, 800);
-            }
-          }
-        } catch (e) {
-          toast("Sign in failed. Try again.", "err");
-        }
-        showLoader(false);
-      };
-
-      window.cloudBackup = async function (data) {
-        showLoader(true);
-        try {
-          const user = auth.currentUser;
-          if (!user || !allowedEmails.includes(user.email)) return;
-          await setDoc(doc(db, "backups", "master_database"), {
-            data: data, timestamp: new Date().toISOString(), lastUpdatedBy: user.email
-          });
-          toast("Saved securely to Firebase Cloud", "ok");
-        } catch (e) {
-          toast("Database Access Denied", "err");
-        }
-        showLoader(false);
-      };
-
-      window.cloudRestore = async function () {
-        showLoader(true);
-        try {
-          const user = auth.currentUser;
-          if (!user || !allowedEmails.includes(user.email)) { showLoader(false); return; }
-
+          toast("Checking cloud profile...", "info");
           const docSnap = await getDoc(doc(db, "backups", "master_database"));
-          showLoader(false);
 
-          if (docSnap.exists()) {
-            const cloudData = docSnap.data().data;
-            if (window.promptRestore) {
-              setTimeout(() => window.promptRestore(cloudData, 'Cloud'), 10);
-            }
+          if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
+            currentProfile = docSnap.data().data.user_profile;
+            localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+            if (typeof renderProfile === 'function') renderProfile();
+            toast("Signed in & Profile Restored!", "ok");
           } else {
-            toast("No cloud backup found yet", "info");
+            toast("Welcome! Please setup your profile.", "ok");
+            setTimeout(() => {
+              if (typeof openProfile === 'function') openProfile();
+            }, 800);
           }
-        } catch (e) {
-          showLoader(false);
-          toast("Database Access Denied", "err");
         }
-      };
+      } catch (e) {
+        toast("Sign in failed. Try again.", "err");
+      }
+      showLoader(false);
+    };
+
+    window.cloudBackup = async function (data) {
+      showLoader(true);
+      try {
+        const user = auth.currentUser;
+        if (!user || !allowedEmails.includes(user.email)) return;
+        await setDoc(doc(db, "backups", "master_database"), {
+          data: data, timestamp: new Date().toISOString(), lastUpdatedBy: user.email
+        });
+        toast("Saved securely to Firebase Cloud", "ok");
+      } catch (e) {
+        toast("Database Access Denied", "err");
+      }
+      showLoader(false);
+    };
+
+    window.cloudRestore = async function () {
+      showLoader(true);
+      try {
+        const user = auth.currentUser;
+        if (!user || !allowedEmails.includes(user.email)) { showLoader(false); return; }
+
+        const docSnap = await getDoc(doc(db, "backups", "master_database"));
+        showLoader(false);
+
+        if (docSnap.exists()) {
+          const cloudData = docSnap.data().data;
+          if (window.promptRestore) {
+            setTimeout(() => window.promptRestore(cloudData, 'Cloud'), 10);
+          }
+        } else {
+          toast("No cloud backup found yet", "info");
+        }
+      } catch (e) {
+        showLoader(false);
+        toast("Database Access Denied", "err");
+      }
+    };
   </script>
 </body>
 
