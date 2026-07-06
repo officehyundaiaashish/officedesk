@@ -3426,7 +3426,7 @@ self.addEventListener('notificationclick', e => {
         await window.handleSignInSuccess(user);
       } catch (e) {
         console.error("Sign in error:", e);
-        toast("Sign in failed. Try again.", "err");
+        toast("Sign in failed: " + (e.code || e.message), "err");
       }
       showLoader(false);
     };
@@ -3440,7 +3440,7 @@ self.addEventListener('notificationclick', e => {
       }
     }).catch((error) => {
       console.error("Redirect sign-in error:", error);
-      toast("Sign in failed. Try again.", "err");
+      toast("Sign in failed: " + (error.code || error.message), "err");
     });
 
     window.cloudBackup = async function (data) {
