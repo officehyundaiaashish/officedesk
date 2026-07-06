@@ -3283,7 +3283,7 @@ self.addEventListener('notificationclick', e => {
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -3375,40 +3375,67 @@ self.addEventListener('notificationclick', e => {
       showLoader(false);
     };
 
+    window.handleSignInSuccess = async function (user) {
+      if (!allowedEmails.includes(user.email)) {
+        toast("Unauthorized Email ID. Access Denied.", "err");
+        await signOut(auth);
+        return;
+      }
+      enableCloudButtons(user.email);
+
+      toast("Checking cloud profile...", "info");
+      const docSnap = await getDoc(doc(db, "backups", "master_database"));
+
+      if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
+        currentProfile = docSnap.data().data.user_profile;
+        localStorage.setItem('od-profile', JSON.stringify(currentProfile));
+        if (typeof renderProfile === 'function') renderProfile();
+        toast("Signed in & Profile Restored!", "ok");
+      } else {
+        toast("Welcome! Please setup your profile.", "ok");
+        setTimeout(() => {
+          if (typeof openProfile === 'function') openProfile();
+        }, 800);
+      }
+    };
+
     window.googleSignIn = async function () {
       showLoader(true);
       try {
         let user = auth.currentUser;
         if (!user) {
-          user = (await signInWithPopup(auth, provider)).user;
-        }
-
-        if (!allowedEmails.includes(user.email)) {
-          toast("Unauthorized Email ID. Access Denied.", "err");
-          await signOut(auth);
-        } else {
-          enableCloudButtons(user.email);
-
-          toast("Checking cloud profile...", "info");
-          const docSnap = await getDoc(doc(db, "backups", "master_database"));
-
-          if (docSnap.exists() && docSnap.data().data && docSnap.data().data.user_profile) {
-            currentProfile = docSnap.data().data.user_profile;
-            localStorage.setItem('od-profile', JSON.stringify(currentProfile));
-            if (typeof renderProfile === 'function') renderProfile();
-            toast("Signed in & Profile Restored!", "ok");
-          } else {
-            toast("Welcome! Please setup your profile.", "ok");
-            setTimeout(() => {
-              if (typeof openProfile === 'function') openProfile();
-            }, 800);
+          const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+          if (isMobile) {
+            await signInWithRedirect(auth, provider);
+            return;
+          }
+          try {
+            user = (await signInWithPopup(auth, provider)).user;
+          } catch (popupErr) {
+            console.warn("Popup blocked or failed, falling back to redirect:", popupErr);
+            await signInWithRedirect(auth, provider);
+            return;
           }
         }
+        await window.handleSignInSuccess(user);
       } catch (e) {
+        console.error("Sign in error:", e);
         toast("Sign in failed. Try again.", "err");
       }
       showLoader(false);
     };
+
+    // Handle redirect result on page load
+    getRedirectResult(auth).then(async (result) => {
+      if (result && result.user) {
+        showLoader(true);
+        await window.handleSignInSuccess(result.user);
+        showLoader(false);
+      }
+    }).catch((error) => {
+      console.error("Redirect sign-in error:", error);
+      toast("Sign in failed. Try again.", "err");
+    });
 
     window.cloudBackup = async function (data) {
       showLoader(true);
