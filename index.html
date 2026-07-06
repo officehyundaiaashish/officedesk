@@ -3300,7 +3300,13 @@ self.addEventListener('notificationclick', e => {
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    const allowedEmails = ["office.hyundai.aashish@gmail.com", "giriaashish02@gmail.com"];
+    const allowedEmails = [
+      "office.hyundai.aashish@gmail.com", 
+      "giriaashish02@gmail.com",
+      "girideepali02@gmail.com",
+      "girihimanshu998@gmail.com",
+      "sharmaharsh22h@gmail.com"
+    ];
 
     function enableCloudButtons(email) {
       document.getElementById('googleSignInText').innerText = email;
