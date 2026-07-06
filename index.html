@@ -2148,6 +2148,20 @@ self.addEventListener('notificationclick', e => {
               <span class="tag tag-live" style="margin-top:5px">XLSX</span>
             </div>
           </div>
+
+          <div class="tool-card live" onclick="switchView('backup')" style="border-color: var(--accent); background: var(--accent-s);">
+            <div class="tool-icon" style="background:var(--accent);color:#fff">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name" style="color: var(--accent); font-weight: 600;">Backup & Restore</div>
+              <span class="tag tag-live" style="margin-top:5px; background: var(--accent); color: #fff;">Cloud & Local</span>
+            </div>
+          </div>
         </div>
 
       </div>
