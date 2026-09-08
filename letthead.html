@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tyre/Battery Letter Head</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.49.0/build/docxtemplater.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.7/pizzip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.49.0/docxtemplater.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script src="heads-templates.js"></script>
 
   <style>
@@ -1483,10 +1483,14 @@
       if (modeWrap) modeWrap.classList.add('show');
       try {
         await loadTemplate('new');
+      } catch (err) {
+        console.error("Template buffer load error, building UI with offline fallback", err);
+      }
+      try {
         setMode('tyre');
         clearStatus();
       } catch (err) {
-        console.error("Initial load failed", err);
+        console.error("Initial setMode failed", err);
       }
     }
 
@@ -1512,12 +1516,10 @@
       } else {
         histWrap.classList.remove('show');
         formWrap.style.display = 'block';
-        if (templateBuffers[currentFormat]) {
-          actionsBar.style.display = 'flex';
-          if (sw) sw.style.display = 'block';
-          buildForm();
-          setTimeout(updateStepper, 100);
-        }
+        actionsBar.style.display = 'flex';
+        if (sw) sw.style.display = 'block';
+        buildForm();
+        setTimeout(updateStepper, 100);
       }
     }
 
