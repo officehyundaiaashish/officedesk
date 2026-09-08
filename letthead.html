@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.49.0/build/docxtemplater.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="heads-templates.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
@@ -1427,9 +1428,32 @@
     // ─────────────────────────────────────────────────────────────────
     // INITIALIZE & FETCH DOCUMENT ON LOAD
     // ─────────────────────────────────────────────────────────────────
+    // Base64 helper for offline / file:// protocol loading
+    function b64ToArrayBuffer(b64) {
+      const binaryString = window.atob(b64);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
     async function loadTemplate(format) {
       const filename = (format === 'new') ? 'heads.docx' : 'oldheads.docx';
       if (templateBuffers[format]) return;
+
+      // Check for pre-bundled Base64 template first
+      const b64 = (format === 'new') ? window.HEADS_DOCX_B64 : window.OLDHEADS_DOCX_B64;
+      if (b64) {
+        try {
+          templateBuffers[format] = b64ToArrayBuffer(b64);
+          clearStatus();
+          return;
+        } catch (e) {
+          console.warn("Could not parse embedded template, trying fetch fallback", e);
+        }
+      }
 
       formWrap.innerHTML = `<div class="no-file-msg">Fetching template (${filename})...</div>`;
       try {
