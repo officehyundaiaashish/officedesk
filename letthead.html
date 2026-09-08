@@ -1479,8 +1479,8 @@
       }
     }
 
-    window.addEventListener('DOMContentLoaded', async () => {
-      modeWrap.classList.add('show');
+    async function init() {
+      if (modeWrap) modeWrap.classList.add('show');
       try {
         await loadTemplate('new');
         setMode('tyre');
@@ -1488,7 +1488,13 @@
       } catch (err) {
         console.error("Initial load failed", err);
       }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
 
     function setMode(mode) {
       currentMode = mode;
