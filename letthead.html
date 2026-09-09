@@ -10,6 +10,42 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.49.0/docxtemplater.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script src="heads-templates.js"></script>
+  <script>
+    // Fallback script loader if primary CDN is blocked by extensions/ad-blockers
+    function loadScriptFallback(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    async function ensureLibrariesLoaded() {
+      if (typeof window.PizZip === 'undefined') {
+        try {
+          await loadScriptFallback('https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js');
+        } catch (e) {
+          await loadScriptFallback('https://unpkg.com/pizzip@3.1.7/dist/pizzip.min.js').catch(() => {});
+        }
+      }
+      if (typeof window.docxtemplater === 'undefined') {
+        try {
+          await loadScriptFallback('https://cdn.jsdelivr.net/npm/docxtemplater@3.49.0/build/docxtemplater.js');
+        } catch (e) {
+          await loadScriptFallback('https://unpkg.com/docxtemplater@3.49.0/build/docxtemplater.js').catch(() => {});
+        }
+      }
+      if (typeof window.saveAs === 'undefined') {
+        try {
+          await loadScriptFallback('https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js');
+        } catch (e) {
+          await loadScriptFallback('https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js').catch(() => {});
+        }
+      }
+    }
+  </script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
@@ -1899,20 +1935,28 @@
     // DOCXTEMPLATER LOGIC 
     // ─────────────────────────────────────────────────────────────────
     btnInject.addEventListener('click', async () => {
-      if (!templateBuffers[currentFormat]) { showStatus('Template not loaded yet.', 'error'); return; }
-
-      const data = collectData();
-      const histEntry = { ...data }; // Copy for history
-      
-      // Add docxtemplater specific flags
-      data.isTyre = (currentMode === 'tyre');
-      data.isBattery = (currentMode === 'battery');
-
-      if (Object.keys(histEntry).length <= 2) { showStatus('Fill in at least one field.', 'error'); return; }
-
       btnInject.disabled = true; btnInject.textContent = 'Processing\u2026'; clearStatus();
 
       try {
+        await ensureLibrariesLoaded();
+        if (!templateBuffers[currentFormat]) {
+          await loadTemplate(currentFormat);
+        }
+        if (!templateBuffers[currentFormat]) { showStatus('Template not loaded yet.', 'error'); return; }
+
+        const data = collectData();
+        const histEntry = { ...data }; // Copy for history
+        
+        // Add docxtemplater specific flags
+        data.isTyre = (currentMode === 'tyre');
+        data.isBattery = (currentMode === 'battery');
+
+        if (Object.keys(histEntry).length <= 2) { showStatus('Fill in at least one field.', 'error'); return; }
+
+        if (typeof window.PizZip === 'undefined' || typeof window.docxtemplater === 'undefined') {
+          throw new Error('Required Word template libraries could not be loaded. Check your internet connection.');
+        }
+
         const zip = new window.PizZip(templateBuffers[currentFormat].slice(0));
 
         const doc = new window.docxtemplater(zip, {
