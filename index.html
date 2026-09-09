@@ -188,33 +188,32 @@ self.addEventListener('notificationclick', e => {
 });
 `;
 
-      if ('serviceWorker' in navigator) {
-        const swBlob = new Blob([swCode], { type: 'text/javascript' });
-        navigator.serviceWorker.register(URL.createObjectURL(swBlob), { scope: './' })
-          .then(reg => {
-            console.log('[OfficeDesk SW] Registered ✓');
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        try {
+          const swBlob = new Blob([swCode], { type: 'text/javascript' });
+          const swUrl = URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl, { scope: './' })
+            .then(reg => {
+              // Har 30 sec mein check karo
+              setInterval(() => reg.update(), 30000);
 
-            // Har 30 sec mein check karo — koi update aaya kya
-            setInterval(() => reg.update(), 30000);
-
-            // Naya SW mila — activate karo
-            reg.addEventListener('updatefound', () => {
-              const newSW = reg.installing;
-              if (!newSW) return;
-              newSW.addEventListener('statechange', () => {
-                if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-                  newSW.postMessage({ type: 'SKIP_WAITING' });
-                }
+              reg.addEventListener('updatefound', () => {
+                const newSW = reg.installing;
+                if (!newSW) return;
+                newSW.addEventListener('statechange', () => {
+                  if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                    newSW.postMessage({ type: 'SKIP_WAITING' });
+                  }
+                });
               });
-            });
 
-            // SW activate hone ke baad page silently reload
-            let refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-              if (!refreshing) { refreshing = true; window.location.reload(); }
-            });
-          })
-          .catch(err => console.warn('[OfficeDesk SW] Error:', err));
+              let refreshing = false;
+              navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) { refreshing = true; window.location.reload(); }
+              });
+            })
+            .catch(() => {});
+        } catch (e) {}
       }
 
       // ── 4. NOTIFICATION PERMISSION (ask once only) ──────────────────────
