@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -121,9 +122,11 @@
 
     /* ── Stepper ── */
     .stepper-container {
-      padding: 14px 20px;
+      padding: 12px 28px;
       border-bottom: 1px solid var(--border-light);
-      background: var(--bg-card);
+      background: color-mix(in srgb, var(--bg-card) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
       z-index: 900;
@@ -245,10 +248,10 @@
 
     .card {
       background: var(--bg-card);
-      border-radius: 12px;
+      border-radius: 18px;
       width: 100%;
-      max-width: 800px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      max-width: 840px;
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
       border: 1px solid var(--border-light);
     }
 
@@ -272,7 +275,7 @@
     }
 
     .page-jumper {
-      bottom: 80px;
+      bottom: 92px;
     }
 
     .pj-btn {
@@ -323,74 +326,114 @@
     }
 
     .card-header {
-      padding: 24px 32px 20px;
+      padding: 26px 32px 22px;
       border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .card-header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 44, 95, 0.22);
     }
 
     .card-header h1 {
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 600;
       color: var(--text-main);
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
     .card-header p {
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--text-muted);
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
-    /* Tabs (Mode Picker) */
+    /* Modern Segmented Control Toolbar */
     .mode-wrap {
-      margin: 20px 32px 0;
+      padding: 16px 32px;
+      background: var(--bg-hover);
+      border-bottom: 1px solid var(--border-light);
       display: none;
     }
 
     .mode-wrap.show {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .mode-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .mode-lbl {
-      font-size: 9.5px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: .1em;
+      letter-spacing: .08em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 7px;
     }
 
     .mode-btns {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 11px;
+      flex-wrap: wrap;
     }
 
     .mode-btn {
-      padding: 0 22px;
-      min-width: 120px;
-      height: 35px;
-      border-radius: 7px;
-      border: 1.5px solid var(--border-input);
-      background: var(--bg-hover);
+      padding: 0 14px;
+      min-width: auto;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
       font-size: 13px;
       font-weight: 500;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all .18s;
+      transition: all .18s ease;
       outline: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 7px;
+      white-space: nowrap;
     }
 
     .mode-btn:focus {
-      border-color: var(--border-focus);
       box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
     .mode-btn:hover {
-      border-color: var(--text-muted);
+      background: var(--bg-hover);
       color: var(--text-main);
     }
 
@@ -398,6 +441,7 @@
       background: var(--accent-bg);
       border-color: var(--accent-bg);
       color: var(--accent-text);
+      box-shadow: 0 2px 6px rgba(0, 44, 95, 0.2);
     }
 
     /* History Section */
@@ -549,26 +593,42 @@
       color: var(--danger-color);
     }
 
-    /* Forms - CSS Grid Setup */
+    /* Forms - Modern Section Cards */
     .form-section {
-      padding: 24px 32px 0;
+      margin: 20px 32px 0;
+      padding: 20px 22px 22px;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      background: var(--bg-card);
     }
 
     .sec-lbl {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--accent-bg);
       margin-bottom: 16px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--border-light);
-      padding-bottom: 8px;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.07em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sec-lbl::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-bg);
+      flex-shrink: 0;
     }
 
     .grid-wrap {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px 24px;
+      gap: 16px 20px;
     }
 
     .field-col {
@@ -579,26 +639,34 @@
     }
 
     .field-col label {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 500;
-      color: var(--text-label);
+      color: var(--text-muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .field-col input {
-      height: 42px;
+      height: 44px;
       border: 1px solid var(--border-input);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 0 14px;
       font-size: 14px;
       color: var(--text-main);
-      background: var(--bg-input);
-      transition: all 0.2s;
+      background: var(--bg-hover);
+      transition: all 0.18s ease;
       width: 100%;
       outline: none;
       font-family: 'Inter', sans-serif;
+    }
+
+    .field-col input:hover {
+      border-color: var(--text-placeholder);
+    }
+
+    .field-col input:focus {
+      background: var(--bg-input);
     }
 
     .field-col input::placeholder {
@@ -622,18 +690,23 @@
     }
 
     .custom-select-trigger {
-      height: 42px;
+      height: 44px;
       border: 1px solid var(--border-input);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 0 14px;
-      background: var(--bg-input);
+      background: var(--bg-hover);
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.18s ease;
       width: 100%;
       outline: none;
+    }
+
+    .custom-select-trigger:focus-within,
+    .custom-select-trigger.active {
+      background: var(--bg-input);
     }
 
     .custom-select-trigger:hover {
@@ -645,9 +718,80 @@
       box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
+    .custom-select-trigger:focus-within,
     .custom-select-trigger.active {
       border-color: var(--border-focus);
       box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .field-col .cs-input {
+      flex: 1;
+      height: 100%;
+      border: none;
+      border-radius: 0;
+      padding: 0 8px 0 0;
+      font-size: 14px;
+      color: var(--text-main);
+      background: transparent;
+      outline: none;
+      box-shadow: none;
+      width: 100%;
+      min-width: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .field-col .cs-input:focus {
+      border: none;
+      box-shadow: none;
+    }
+
+    .cs-arr {
+      padding: 4px;
+      margin-right: -4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .cs-empty {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .cs-empty:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .cs-empty strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .cs-hl {
+      background: rgba(0, 44, 95, 0.14);
+      color: var(--accent-bg);
+      font-weight: 600;
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+
+    [data-theme=dark] .cs-hl {
+      background: rgba(77, 143, 214, 0.25);
+      color: #8cc0f8;
+    }
+
+    .custom-select-opts.flip-up {
+      top: auto;
+      bottom: calc(100% + 6px);
+      transform-origin: bottom;
+      transform: translateY(10px) scaleY(0.95);
+    }
+
+    .custom-select-opts.flip-up.open {
+      transform: translateY(0) scaleY(1);
     }
 
     .cs-val {
@@ -684,15 +828,16 @@
       z-index: 500;
       background: var(--bg-card);
       border: 1px solid var(--border-input);
-      border-radius: 8px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      padding: 5px;
+      box-shadow: 0 14px 32px -6px rgba(0, 0, 0, 0.18);
       max-height: 220px;
       overflow-y: auto;
       opacity: 0;
       transform: translateY(-10px) scaleY(0.95);
       transform-origin: top;
       pointer-events: none;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .custom-select-opts.open {
@@ -702,17 +847,13 @@
     }
 
     .cs-opt {
-      padding: 12px 14px;
-      font-size: 13px;
+      padding: 10px 12px;
+      font-size: 13.5px;
       color: var(--text-main);
       cursor: pointer;
-      transition: background 0.15s;
-      border-bottom: 1px solid var(--border-light);
+      border-radius: 8px;
+      transition: background 0.14s;
       outline: none;
-    }
-
-    .cs-opt:last-child {
-      border-bottom: none;
     }
 
     .cs-opt:hover,
@@ -723,7 +864,7 @@
 
     /* Date picker */
     .date-trigger {
-      height: 42px;
+      height: 44px;
       display: flex;
       align-items: center;
       padding: 0 14px;
@@ -731,12 +872,17 @@
       user-select: none;
       gap: 8px;
       border: 1px solid var(--border-input);
-      border-radius: 8px;
-      background: var(--bg-input);
-      transition: all 0.2s ease;
+      border-radius: 10px;
+      background: var(--bg-hover);
+      transition: all 0.18s ease;
       position: relative;
       width: 100%;
       outline: none;
+    }
+
+    .date-trigger:focus-within,
+    .date-trigger.active {
+      background: var(--bg-input);
     }
 
     .date-trigger:hover {
@@ -788,6 +934,17 @@
       transform: translateY(-8px);
       pointer-events: none;
       transition: all 0.2s ease;
+    }
+
+    .cal-pop.flip-up {
+      top: auto;
+      bottom: calc(100% + 8px);
+      transform: translateY(8px);
+    }
+
+    .cal-pop.flip-right {
+      left: auto;
+      right: 0;
     }
 
     .cal-pop.open {
@@ -925,27 +1082,56 @@
 
     .actions {
       display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
-      padding: 24px 32px 32px;
+      padding: 14px 32px;
       border-top: 1px solid var(--border-light);
       margin-top: 24px;
+      position: sticky;
+      bottom: 0;
+      z-index: 800;
+      background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.1);
+    }
+
+    .actions.actions-top {
+      display: none !important;
     }
 
     .btn {
-      flex: 1;
-      height: 42px;
-      border-radius: 7px;
+      height: 44px;
+      padding: 0 22px;
+      border-radius: 10px;
       border: none;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
+      transition: all 0.18s ease;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
+      gap: 8px;
       font-family: 'Inter', sans-serif;
       outline: none;
+    }
+
+    .btn-inject {
+      flex: 1;
+      max-width: 320px;
+      box-shadow: 0 4px 12px rgba(0, 44, 95, 0.22);
+    }
+
+    .btn-inject:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 44, 95, 0.28);
+    }
+
+    .btn-clear {
+      flex: 0 0 auto;
     }
 
     .btn:focus {
@@ -1126,20 +1312,29 @@
 
       .card-header,
       .mode-wrap,
-      .form-section,
       .actions,
       .history-wrap {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .form-section {
+        margin: 14px 16px 0;
+        padding: 16px;
       }
 
       .actions {
         flex-direction: row;
+        padding: 12px 16px;
       }
 
       .btn {
-        min-height: 48px;
-        width: 100%;
+        min-height: 44px;
+        padding: 0 14px;
+      }
+
+      .btn-inject {
+        max-width: none;
       }
     }
   </style>
@@ -1159,8 +1354,20 @@
 
   <div class="card">
     <div class="card-header">
-      <h1>Tyre/Battery Letter Head</h1>
-      <p>Fill out the form below to automatically generate your clean DOCX report.</p>
+      <div class="card-header-brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </div>
+        <div>
+          <h1>Tyre / Battery Letter Head</h1>
+          <p>Fill out the details below to generate your clean DOCX report.</p>
+        </div>
+      </div>
     </div>
 
     <!-- Stepper -->
@@ -1191,39 +1398,40 @@
     </div>
 
     <div class="mode-wrap" id="modeWrap">
-      <div class="mode-lbl" style="text-align:center;">Select Letter Type</div>
-      <div class="mode-btns">
-        <button class="mode-btn active" id="modeTyre" onclick="setMode('tyre')" tabindex="0">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="12" cy="12" r="10" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          Tyre Report
-        </button>
-        <button class="mode-btn" id="modeBattery" onclick="setMode('battery')" tabindex="0">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <rect x="2" y="7" width="20" height="10" rx="2" />
-            <line x1="22" y1="11" x2="24" y2="11" />
-            <line x1="22" y1="13" x2="24" y2="13" />
-          </svg>
-          Battery Report
-        </button>
-      </div>
-      <div class="mode-lbl" style="text-align:center; margin-top:20px;">Select Generation Format</div>
-      <div class="mode-btns">
-        <button class="mode-btn active" id="formatNew" onclick="setFormat('new')" tabindex="0">New Format</button>
-        <button class="mode-btn" id="formatOld" onclick="setFormat('old')" tabindex="0">Old Format</button>
+      <div class="mode-group">
+        <div class="mode-lbl">Letter Type</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="modeTyre" onclick="setMode('tyre')" tabindex="0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            Tyre Report
+          </button>
+          <button class="mode-btn" id="modeBattery" onclick="setMode('battery')" tabindex="0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="2" y="7" width="20" height="10" rx="2" />
+              <line x1="22" y1="11" x2="24" y2="11" />
+              <line x1="22" y1="13" x2="24" y2="13" />
+            </svg>
+            Battery Report
+          </button>
+          <button class="mode-btn" id="modeHistory" onclick="setMode('history')" tabindex="0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            Saved Entries
+          </button>
+        </div>
       </div>
 
-      <div class="mode-btns" style="margin-top: 18px; justify-content: center;">
-        <button class="mode-btn" id="modeHistory" onclick="setMode('history')" tabindex="0"
-          style="flex:0 0 auto; min-width:160px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-          Saved Entries
-        </button>
+      <div class="mode-group">
+        <div class="mode-lbl">Template Format</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" id="formatNew" onclick="setFormat('new')" tabindex="0">New Format</button>
+          <button class="mode-btn" id="formatOld" onclick="setFormat('old')" tabindex="0">Old Format</button>
+        </div>
       </div>
     </div>
 
@@ -1239,11 +1447,8 @@
       <div class="hist-list" id="histList"></div>
     </div>
 
-    <div class="status" id="status"></div>
-    <div id="formWrap"></div>
-
-    <div class="actions" id="actionsBar" style="display:none">
-      <button class="btn btn-inject" id="btnInject" tabindex="0">
+    <div class="actions actions-top" id="actionsBarTop" style="display:none">
+      <button class="btn btn-inject" id="btnInjectTop" tabindex="0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
           <polyline points="7 10 12 15 17 10" />
@@ -1251,6 +1456,20 @@
         </svg>
         Generate DOCX
       </button>
+      <button class="btn btn-clear" id="btnClearTop" tabindex="0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6" />
+          <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+          <path d="M10 11v6M14 11v6" />
+        </svg>
+        Clear Form
+      </button>
+    </div>
+
+    <div class="status" id="status"></div>
+    <div id="formWrap"></div>
+
+    <div class="actions" id="actionsBar" style="display:none">
       <button class="btn btn-clear" id="btnClear" tabindex="0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="3 6 5 6 21 6" />
@@ -1258,6 +1477,14 @@
           <path d="M10 11v6M14 11v6" />
         </svg>
         Clear Form
+      </button>
+      <button class="btn btn-inject" id="btnInject" tabindex="0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Generate DOCX
       </button>
     </div>
   </div>
@@ -1309,6 +1536,8 @@
     // LISTS & OPTIONS (New to Old)
     // ─────────────────────────────────────────────────────────────────
     const hyundaiModels = [
+      "Hyundai Bayon", "Hyundai Creta Electric", "Hyundai Creta N Line",
+      "Hyundai Venue N Line", "Hyundai i20 N Line",
       "Hyundai Ioniq 5", "Hyundai Exter", "Hyundai Alcazar", "Hyundai Venue",
       "Hyundai Creta", "Hyundai Tucson", "Hyundai Verna", "Hyundai Aura",
       "Hyundai Grand i10 Nios", "Hyundai i20", "Hyundai Kona Electric",
@@ -1421,8 +1650,11 @@
     // DOM elements
     const formWrap = document.getElementById('formWrap');
     const actionsBar = document.getElementById('actionsBar');
+    const actionsBarTop = document.getElementById('actionsBarTop');
     const btnClear = document.getElementById('btnClear');
+    const btnClearTop = document.getElementById('btnClearTop');
     const btnInject = document.getElementById('btnInject');
+    const btnInjectTop = document.getElementById('btnInjectTop');
     const statusEl = document.getElementById('status');
     const modeWrap = document.getElementById('modeWrap');
     const histWrap = document.getElementById('histWrap');
@@ -1546,6 +1778,7 @@
       if (mode === 'history') {
         formWrap.style.display = 'none';
         actionsBar.style.display = 'none';
+        if (actionsBarTop) actionsBarTop.style.display = 'none';
         histWrap.classList.add('show');
         if (sw) sw.style.display = 'none';
         renderHistory();
@@ -1553,6 +1786,7 @@
         histWrap.classList.remove('show');
         formWrap.style.display = 'block';
         actionsBar.style.display = 'flex';
+        if (actionsBarTop) actionsBarTop.style.display = 'flex';
         if (sw) sw.style.display = 'block';
         buildForm();
         setTimeout(updateStepper, 100);
@@ -1675,10 +1909,62 @@
     // ─────────────────────────────────────────────────────────────────
     // CLOSE ALL POPUPS SCRIPT
     // ─────────────────────────────────────────────────────────────────
+    function positionPopup(triggerEl, popupEl, isCalendar = false) {
+      if (!triggerEl || !popupEl) return;
+      const rect = triggerEl.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const vw = window.innerWidth || document.documentElement.clientWidth;
+      const margin = 12;
+
+      const stickyFooter = actionsBar && actionsBar.style.display !== 'none' ? actionsBar.getBoundingClientRect().height : 0;
+      const stickyHeader = document.getElementById('stepperWrap')?.getBoundingClientRect().height || 0;
+      const spaceBelow = (vh - stickyFooter) - rect.bottom - margin;
+      const spaceAbove = (rect.top - stickyHeader) - margin;
+
+      // Measure natural height (dropdowns max 220px, calendar ~290px)
+      const defaultMax = isCalendar ? 310 : 220;
+      const neededHeight = isCalendar
+        ? Math.max(popupEl.scrollHeight || 0, 280)
+        : Math.min(Math.max(popupEl.scrollHeight || 0, 44), defaultMax);
+
+      const flipUp = spaceBelow < neededHeight && spaceAbove > spaceBelow;
+      popupEl.classList.toggle('flip-up', flipUp);
+
+      if (!isCalendar) {
+        const avail = flipUp ? spaceAbove : spaceBelow;
+        popupEl.style.maxHeight = Math.max(100, Math.min(defaultMax, Math.floor(avail))) + 'px';
+      } else {
+        const popW = popupEl.offsetWidth || 260;
+        const spaceRight = vw - rect.left - margin;
+        const spaceLeft = rect.right - margin;
+        const flipRight = spaceRight < popW && spaceLeft > spaceRight;
+        popupEl.classList.toggle('flip-right', flipRight);
+      }
+    }
+
+    function repositionOpenPopups() {
+      document.querySelectorAll('.custom-select-opts.open').forEach(opts => {
+        const trig = opts.parentElement?.querySelector('.custom-select-trigger');
+        if (trig) positionPopup(trig, opts, false);
+      });
+      document.querySelectorAll('.cal-pop.open').forEach(pop => {
+        const trig = pop.parentElement?.querySelector('.date-trigger');
+        if (trig) positionPopup(trig, pop, true);
+      });
+    }
+
+    window.addEventListener('scroll', repositionOpenPopups, { passive: true });
+    window.addEventListener('resize', repositionOpenPopups, { passive: true });
+
     function closeAllPopups() {
-      document.querySelectorAll('.cal-pop.open').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('.cal-pop.open').forEach(el => {
+        el.classList.remove('open', 'flip-up', 'flip-right');
+      });
       document.querySelectorAll('.date-trigger.active').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.custom-select-opts.open').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('.custom-select-opts.open').forEach(el => {
+        el.classList.remove('open', 'flip-up');
+        el.style.maxHeight = '';
+      });
       document.querySelectorAll('.custom-select-trigger.active').forEach(el => el.classList.remove('active'));
     }
     document.addEventListener('click', closeAllPopups);
@@ -1768,8 +2054,13 @@
       if (!CAL[id]) CAL[id] = { date: null, open: false, view: 'days' };
       CAL[id].year = ref.getFullYear(); CAL[id].month = ref.getMonth(); CAL[id].view = 'days';
       renderCal(id);
-      document.getElementById('cp_' + id)?.classList.add('open');
-      document.getElementById('dt_' + id)?.classList.add('active');
+      const pop = document.getElementById('cp_' + id);
+      const dt = document.getElementById('dt_' + id);
+      if (pop && dt) {
+        positionPopup(dt, pop, true);
+        pop.classList.add('open');
+        dt.classList.add('active');
+      }
       CAL[id].open = true;
     }
 
@@ -1839,45 +2130,131 @@
             });
           } else if (f.type === 'select') {
             col.innerHTML = `
-          <label>${f.label}</label>
+          <label for="${f.id}">${f.label}</label>
           <div class="custom-select-wrap">
-            <div class="custom-select-trigger" id="cst_${f.id}" tabindex="0">
-              <span class="cs-val empty" id="csv_${f.id}">Select ${f.label}...</span>
-              <span class="cs-arr">${icons.chevronDown}</span>
+            <div class="custom-select-trigger" id="cst_${f.id}" style="cursor:text;">
+              <input type="text" id="${f.id}" class="cs-input" placeholder="Select or type ${f.label}..." autocomplete="off" tabindex="0">
+              <span class="cs-arr" id="csa_${f.id}" tabindex="0" role="button" aria-label="Toggle ${f.label} options">${icons.chevronDown}</span>
             </div>
             <div class="custom-select-opts" id="cso_${f.id}">
               ${f.options.map(o => `<div class="cs-opt" data-val="${o}" tabindex="0">${o}</div>`).join('')}
+              <div class="cs-empty" id="cse_${f.id}" style="display:none;">No match in list — your typed text will be used</div>
             </div>
-            <input type="hidden" id="${f.id}" value="">
           </div>`;
             grid.appendChild(col);
 
             requestAnimationFrame(() => {
               const trig = document.getElementById('cst_' + f.id);
+              const arr = document.getElementById('csa_' + f.id);
               const opts = document.getElementById('cso_' + f.id);
-              const valEl = document.getElementById('csv_' + f.id);
-              const hidInp = document.getElementById(f.id);
+              const inp = document.getElementById(f.id);
+              const emptyMsg = document.getElementById('cse_' + f.id);
+              const optEls = Array.from(opts.querySelectorAll('.cs-opt'));
 
-              const trigAction = e => {
+              const highlightMatch = (label, rawQuery) => {
+                const q = rawQuery.trim();
+                if (!q) return escHtml(label);
+                const lowerLabel = label.toLowerCase();
+                const lowerQ = q.toLowerCase();
+                const idx = lowerLabel.indexOf(lowerQ);
+                if (idx === -1) return escHtml(label);
+                const before = escHtml(label.slice(0, idx));
+                const match = escHtml(label.slice(idx, idx + q.length));
+                const after = escHtml(label.slice(idx + q.length));
+                return `${before}<mark class="cs-hl">${match}</mark>${after}`;
+              };
+
+              const filterOpts = (query) => {
+                const rawQ = query.trim();
+                const q = rawQ.toLowerCase();
+                let visibleCount = 0;
+                optEls.forEach(opt => {
+                  const val = opt.getAttribute('data-val');
+                  const match = !q || val.toLowerCase().includes(q);
+                  opt.style.display = match ? '' : 'none';
+                  if (match) {
+                    opt.innerHTML = highlightMatch(val, rawQ);
+                    visibleCount++;
+                  }
+                });
+                if (emptyMsg) {
+                  if (visibleCount === 0 && rawQ) {
+                    emptyMsg.innerHTML = `Use custom: <strong>${escHtml(rawQ)}</strong>`;
+                    emptyMsg.style.display = 'block';
+                  } else {
+                    emptyMsg.style.display = 'none';
+                  }
+                }
+              };
+
+              if (emptyMsg) {
+                emptyMsg.addEventListener('click', e => {
+                  e.stopPropagation();
+                  closeAllPopups();
+                  updateStepper();
+                });
+              }
+
+              const openDropdown = (showAll = false) => {
+                closeAllPopups();
+                filterOpts(showAll ? '' : inp.value);
+                positionPopup(trig, opts, false);
+                opts.classList.add('open');
+                trig.classList.add('active');
+              };
+
+              // Clicking arrow toggles full list
+              const arrAction = e => {
                 e.stopPropagation();
                 const isOpen = opts.classList.contains('open');
-                closeAllPopups();
-                if (!isOpen) {
+                if (isOpen) {
+                  closeAllPopups();
+                } else {
+                  openDropdown(true);
+                }
+              };
+              arr.addEventListener('click', arrAction);
+              handleKeyClick(arr, arrAction);
+
+              // Clicking trigger focuses input and opens dropdown
+              trig.addEventListener('click', e => {
+                e.stopPropagation();
+                if (e.target !== arr && !arr.contains(e.target)) {
+                  inp.focus();
+                  if (!opts.classList.contains('open')) openDropdown(false);
+                }
+              });
+
+              // Typing filters & highlights options while allowing any custom text
+              inp.addEventListener('input', () => {
+                filterOpts(inp.value);
+                positionPopup(trig, opts, false);
+                if (!opts.classList.contains('open')) {
                   opts.classList.add('open');
                   trig.classList.add('active');
                 }
-              };
-              trig.addEventListener('click', trigAction);
-              handleKeyClick(trig, trigAction);
+                updateStepper();
+              });
 
-              opts.querySelectorAll('.cs-opt').forEach(opt => {
+              inp.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                  closeAllPopups();
+                } else if (e.key === 'ArrowDown') {
+                  e.preventDefault();
+                  if (!opts.classList.contains('open')) openDropdown(false);
+                  const firstVisible = optEls.find(o => o.style.display !== 'none');
+                  if (firstVisible) firstVisible.focus();
+                } else if (e.key === 'Enter') {
+                  closeAllPopups();
+                }
+              });
+
+              optEls.forEach(opt => {
                 const optAction = e => {
                   e.stopPropagation();
-                  const val = opt.getAttribute('data-val');
-                  valEl.textContent = val;
-                  valEl.classList.remove('empty');
-                  hidInp.value = val;
+                  inp.value = opt.getAttribute('data-val');
                   closeAllPopups();
+                  updateStepper();
                 };
                 opt.addEventListener('click', optAction);
                 handleKeyClick(opt, optAction);
@@ -1902,7 +2279,7 @@
       });
     }
 
-    btnClear.addEventListener('click', async () => {
+    async function handleClearForm() {
       if (!(await customConfirm('Are you sure you want to clear the form?'))) return;
 
       allFields().forEach(f => {
@@ -1913,13 +2290,8 @@
           const dv = document.getElementById('dv_' + f.id);
           if (dv) { dv.textContent = 'Pick a date'; dv.classList.add('empty'); }
         } else if (f.type === 'select') {
-          const valEl = document.getElementById('csv_' + f.id);
-          const hidInp = document.getElementById(f.id);
-          if (valEl && hidInp) {
-            valEl.textContent = 'Select ' + f.label + '...';
-            valEl.classList.add('empty');
-            hidInp.value = '';
-          }
+          const inp = document.getElementById(f.id);
+          if (inp) inp.value = '';
         } else {
           const inp = document.getElementById(f.id);
           if (!inp) return;
@@ -1929,13 +2301,24 @@
       closeAllPopups();
       clearStatus();
       updateStepper();
-    });
+    }
+    btnClear.addEventListener('click', handleClearForm);
+    if (btnClearTop) btnClearTop.addEventListener('click', handleClearForm);
 
     // ─────────────────────────────────────────────────────────────────
     // DOCXTEMPLATER LOGIC 
     // ─────────────────────────────────────────────────────────────────
-    btnInject.addEventListener('click', async () => {
-      btnInject.disabled = true; btnInject.textContent = 'Processing\u2026'; clearStatus();
+    const setInjectButtonsState = (busy) => {
+      const iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>`;
+      [btnInject, btnInjectTop].forEach(b => {
+        if (!b) return;
+        b.disabled = busy;
+        b.innerHTML = busy ? 'Processing\u2026' : `${iconSvg} Generate DOCX`;
+      });
+    };
+
+    async function handleGenerateDocx() {
+      setInjectButtonsState(true); clearStatus();
 
       try {
         await ensureLibrariesLoaded();
@@ -1993,9 +2376,11 @@
         }
         showStatus('Error: ' + msg, 'error'); console.error(err);
       } finally {
-        btnInject.disabled = false; btnInject.textContent = 'Generate DOCX';
+        setInjectButtonsState(false);
       }
-    });
+    }
+    btnInject.addEventListener('click', handleGenerateDocx);
+    if (btnInjectTop) btnInjectTop.addEventListener('click', handleGenerateDocx);
 
     // ─────────────────────────────────────────────────────────────────
     // HISTORY & SEARCH LOGIC
@@ -2091,15 +2476,9 @@
         });
         allFields().filter(f => f.type === 'text' || f.type === 'select').forEach(f => {
           const inp = document.getElementById(f.id);
-          if (f.type === 'select') {
-            const valEl = document.getElementById('csv_' + f.id);
-            if (inp && valEl && entry[f.id]) {
-              inp.value = entry[f.id];
-              valEl.textContent = entry[f.id];
-              valEl.classList.remove('empty');
-            }
-          } else {
-            if (inp && entry[f.id] !== undefined) { inp.value = entry[f.id]; inp.classList.remove('pre'); }
+          if (inp && entry[f.id] !== undefined) {
+            inp.value = entry[f.id];
+            inp.classList.remove('pre');
           }
         });
         closeAllPopups();
