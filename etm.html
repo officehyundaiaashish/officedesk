@@ -1,348 +1,59 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Key Code Form</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ETM Form</title>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
     :root {
-      --bg: #f4f4f2;
-      --surface: #ffffff;
-      --surface2: #f0f0ee;
-      --border: #e3e3df;
-      --text: #181816;
-      --text2: #6a6a67;
-      --text3: #9a9a97;
-      --accent: #002C5F;
-      --accent-h: #001F47;
-      --accent-s: #e8edf5;
-      --radius: 10px;
-      --radius-lg: 16px;
-      --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 12px rgba(0, 0, 0, .04);
-      --shadow-lg: 0 4px 24px rgba(0, 0, 0, .09);
-      --font: 'Inter', sans-serif;
-      --mono: 'ui-monospace', monospace;
-      --tr: 180ms ease;
+      --bg-page: #f4f4f2;
+      --bg-card: #ffffff;
+      --bg-input: #ffffff;
+      --bg-hover: #f0f0ee;
+      --bg-active: #e3e3df;
+      --text-main: #181816;
+      --text-label: #181816;
+      --text-muted: #6a6a67;
+      --text-placeholder: #9a9a97;
+      --border-light: #e3e3df;
+      --border-input: #e3e3df;
+      --border-focus: #002C5F;
+      --accent-bg: #002C5F;
+      --accent-text: #ffffff;
+      --focus-ring: rgba(0, 44, 95, 0.1);
+      --danger-color: #ef4444;
+      --table-head: #f0f0ee;
     }
 
     [data-theme=dark] {
-      --bg: #111110;
-      --surface: #1c1c1a;
-      --surface2: #232321;
-      --border: #2d2d2b;
-      --text: #f0f0ee;
-      --text2: #888885;
-      --text3: #525250;
-      --accent: #4D8FD6;
-      --accent-h: #3A7BC8;
-      --accent-s: #001A3A;
-      --shadow: 0 1px 4px rgba(0, 0, 0, .3), 0 4px 16px rgba(0, 0, 0, .2);
-      --shadow-lg: 0 4px 28px rgba(0, 0, 0, .45);
-    }
-
-    .hist-clr-btn:hover,
-    .hist-clr-btn:focus {
-      color: #ef4444;
-    }
-
-    /* ── History Panel ── */
-    .hist-panel {
-      display: none;
-    }
-
-    .hist-panel.show {
-      display: block;
-    }
-
-    .hist-search {
-      width: 100%;
-      height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0 14px;
-      font-size: 14px;
-      margin-bottom: 14px;
-      outline: none;
-      background: var(--surface2);
-      color: var(--text);
-      font-family: var(--font);
-    }
-
-    .hist-search:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-s);
-    }
-
-    .hist-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .hist-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      background: var(--surface);
-      transition: all 0.18s;
-    }
-
-    .hist-item:hover,
-    .hist-item:focus {
-      border-color: var(--accent);
-      background: var(--surface2);
-      outline: none;
-    }
-
-    .hi-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .hi-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .hi-meta {
-      font-size: 12px;
-      color: var(--text2);
-      margin-top: 3px;
-    }
-
-    .hi-del {
-      background: none;
-      border: none;
-      color: var(--border);
-      cursor: pointer;
-      transition: color 0.18s;
-      display: flex;
-      align-items: center;
-      padding: 4px;
-      border-radius: 4px;
-      outline: none;
-    }
-
-    .hi-del:hover,
-    .hi-del:focus {
-      color: #d64545;
-    }
-
-    .hist-empty {
-      text-align: center;
-      font-size: 13px;
-      color: var(--text3);
-      padding: 24px;
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      font-size: 14px;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 14px 18px 20px;
-      transition: background var(--tr), color var(--tr);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .ph {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .ph-title {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      margin-bottom: 4px;
-    }
-
-    .ph-sub {
-      font-size: 14px;
-      color: var(--text2);
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      background: var(--accent-s);
-      color: var(--accent);
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      margin-bottom: 14px;
-      transition: background var(--tr), border-color var(--tr);
-    }
-
-    .card-title {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin-bottom: 14px;
-      color: var(--text2);
-      justify-content: space-between;
-    }
-
-    .card-title svg {
-      color: var(--accent);
-    }
-
-    .fg {
-      display: grid;
-      gap: 12px;
-    }
-
-    .fg.c3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .field.s2 {
-      grid-column: span 2;
-    }
-
-    .field.s3 {
-      grid-column: span 3;
-    }
-
-    .field label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .req {
-      color: #d64545;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      padding: 0 14px;
-      height: 42px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 14px;
-      font-family: var(--font);
-      transition: all var(--tr);
-    }
-
-    .field textarea {
-      height: auto;
-      padding: 10px 14px;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-s);
-    }
-
-    .vrow {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      position: relative;
-      transition: all var(--tr);
-    }
-
-    .vrow:hover {
-      border-color: var(--accent);
-    }
-
-    .vrow-num {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text3);
-      margin-bottom: 10px;
-      letter-spacing: .5px;
-    }
-
-    .vrow-rm {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 24px;
-      height: 24px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all var(--tr);
-    }
-
-    .vrow-rm:hover {
-      background: #d64545;
-      border-color: #d64545;
-      color: white;
-    }
-
-    .divhr {
-      height: 1px;
-      background: var(--border);
-      margin: 20px 0;
+      --bg-page: #111110;
+      --bg-card: #1c1c1a;
+      --bg-input: #1c1c1a;
+      --bg-hover: #232321;
+      --bg-active: #2d2d2b;
+      --text-main: #f0f0ee;
+      --text-label: #f0f0ee;
+      --text-muted: #888885;
+      --text-placeholder: #525250;
+      --border-light: #2d2d2b;
+      --border-input: #2d2d2b;
+      --border-focus: #4D8FD6;
+      --accent-bg: #4D8FD6;
+      --accent-text: #111110;
+      --focus-ring: rgba(77, 143, 214, 0.2);
+      --danger-color: #f87171;
+      --table-head: #232321;
     }
 
     /* ── Modern Scrollbar ── */
     * {
       scrollbar-width: thin;
-      scrollbar-color: var(--border) transparent;
+      scrollbar-color: var(--bg-active) transparent;
     }
 
     *::-webkit-scrollbar {
@@ -355,76 +66,19 @@
     }
 
     *::-webkit-scrollbar-thumb {
-      background: var(--border);
+      background: var(--bg-active);
       border-radius: 99px;
     }
 
     *::-webkit-scrollbar-thumb:hover {
-      background: var(--text3);
+      background: var(--border-input);
     }
 
-    /* ── Mode Buttons ── */
-    .mode-wrap {
-      margin: 0 0 16px;
-      display: block;
-    }
-
-    .mode-lbl {
-      font-size: 9.5px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--text2);
-      margin-bottom: 6px;
-    }
-
-    .mode-btns {
-      display: flex;
-      gap: 6px;
-    }
-
-    .mode-btn {
-      flex: 1;
-      height: 36px;
-      border-radius: 7px;
-      border: 1.5px solid var(--border);
-      background: var(--surface2);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text2);
-      cursor: pointer;
-      transition: all .18s;
-      outline: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-family: var(--font);
-    }
-
-    .mode-btn:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-s);
-    }
-
-    .mode-btn:hover {
-      border-color: var(--text2);
-      color: var(--text);
-    }
-
-    .mode-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    /* ── Sticky Stepper ── */
+    /* ── Stepper ── */
     .stepper-container {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 14px 16px;
-      margin-bottom: 14px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-light);
+      background: var(--bg-card);
       position: sticky;
       top: 0;
       z-index: 900;
@@ -441,208 +95,459 @@
       align-items: center;
       gap: 10px;
       padding: 10px 12px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      transition: all var(--tr);
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      transition: all .18s;
     }
 
     .step.done {
-      background: var(--accent-s);
-      border-color: var(--accent);
+      background: rgba(0, 44, 95, .06);
+      border-color: var(--accent-bg);
+    }
+
+    [data-theme=dark] .step.done {
+      background: rgba(77, 143, 214, .1);
     }
 
     .step.active {
-      border-color: var(--accent);
+      border-color: var(--accent-bg);
+      box-shadow: 0 0 0 2px var(--focus-ring);
     }
 
     .step-n {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: var(--surface2);
-      color: var(--text2);
+      background: var(--bg-hover);
+      color: var(--text-muted);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       flex-shrink: 0;
     }
 
-    .step.done .step-n,
+    .step.done .step-n {
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
     .step.active .step-n {
-      background: var(--accent);
-      color: white;
+      background: var(--accent-bg);
+      color: var(--accent-text);
     }
 
     .step-t {
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 600;
-      color: var(--text);
+      color: var(--text-main);
     }
 
     .step-s {
-      font-size: 11px;
-      color: var(--text2);
+      font-size: 10.5px;
+      color: var(--text-muted);
     }
 
-    /* ── Page Jumpers ── */
-    .page-jumper {
-      position: fixed;
-      right: 16px;
-      bottom: 80px;
-      z-index: 9000;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 14px 18px 20px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .pj-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: none;
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      width: 100%;
+      max-width: none;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .05);
+      border: 1px solid var(--border-light);
+    }
+
+    .card-header {
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-header h1 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .card-header p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .mode-wrap {
+      margin: 14px 20px 0;
+      display: none;
+    }
+
+    .mode-wrap.show {
+      display: block;
+    }
+
+    .mode-lbl {
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .mode-btns {
+      display: flex;
+      gap: 5px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      height: 32px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border-input);
+      background: var(--bg-hover);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
       cursor: pointer;
+      transition: all .18s;
+      outline: none;
+    }
+
+    .mode-btn:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .mode-btn:hover {
+      border-color: var(--text-muted);
+      color: var(--text-main);
+    }
+
+    .mode-btn.active {
+      background: var(--accent-bg);
+      border-color: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
+    .history-wrap {
+      padding: 16px 20px 24px;
+      display: none;
+    }
+
+    .history-wrap.show {
+      display: block;
+    }
+
+    .hist-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
-      transition: all .25s cubic-bezier(.4, 0, .2, 1);
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .hist-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .hist-clr {
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color .2s;
+      padding: 0;
       outline: none;
-      background: var(--accent);
-      color: #fff;
     }
 
-    .pj-btn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
+    .hist-clr:hover,
+    .hist-clr:focus {
+      color: var(--danger-color);
     }
 
-    .pj-btn:active {
-      transform: scale(.95);
+    .search-input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      padding: 0 12px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      outline: none;
+      transition: all .2s;
+      background: var(--bg-hover);
+      color: var(--text-main);
     }
 
-    .pj-btn:focus {
-      box-shadow: 0 0 0 3px var(--accent-s), 0 4px 14px rgba(0, 0, 0, .2);
+    .search-input:focus {
+      border-color: var(--border-focus);
+      background: var(--bg-input);
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
-    .pj-btn.hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(12px);
+    .search-input::placeholder {
+      color: var(--text-placeholder);
     }
 
-    @media(max-width:640px) {
-      .pj-btn {
-        width: 38px;
-        height: 38px;
-      }
-
-      .page-jumper {
-        right: 10px;
-        bottom: 70px;
-      }
+    .hist-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 360px;
+      overflow-y: auto;
     }
 
-    /* ── Custom Select (model dropdown) ── */
-    .cs-wrap {
+    .hist-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 13px;
+      border: 1px solid var(--border-light);
+      border-radius: 7px;
+      cursor: pointer;
+      background: var(--bg-input);
+      transition: all .2s;
+      outline: none;
+    }
+
+    .hist-item:hover,
+    .hist-item:focus {
+      background: var(--bg-hover);
+    }
+
+    .hi-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hi-name {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hi-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .hi-del {
+      background: none;
+      border: none;
+      color: var(--border-input);
+      cursor: pointer;
+      transition: color .2s;
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      outline: none;
+      border-radius: 4px;
+    }
+
+    .hi-del:hover,
+    .hi-del:focus {
+      color: var(--danger-color);
+    }
+
+    .form-section {
+      padding: 14px 20px 0;
+    }
+
+    .sec-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 6px;
+      letter-spacing: .05em;
+    }
+
+    .grid-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 16px;
+    }
+
+    .field-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .field-col.full {
+      grid-column: 1/-1;
+    }
+
+    .field-col label {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-label);
+    }
+
+    .field-col label .req {
+      color: var(--danger-color);
+      margin-left: 2px;
+      font-weight: 700;
+    }
+
+    .field-col input,
+    .field-col textarea {
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      padding: 0 11px;
+      font-size: 13px;
+      color: var(--text-main);
+      background: var(--bg-input);
+      transition: all .2s;
+      width: 100%;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .field-col input {
+      height: 36px;
+    }
+
+    .field-col textarea {
+      padding: 8px 11px;
+      min-height: 72px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field-col input::placeholder,
+    .field-col textarea::placeholder {
+      color: var(--text-placeholder);
+    }
+
+    .field-col input:focus,
+    .field-col textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .field-col input.pre {
+      color: var(--text-muted);
+    }
+
+    /* ── Custom Select ── */
+    .custom-select-wrap {
       position: relative;
       user-select: none;
       width: 100%;
     }
 
-    .cs-trigger {
-      height: 42px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0 14px;
-      background: var(--bg);
+    .custom-select-trigger {
+      height: 36px;
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      padding: 0 11px;
+      background: var(--bg-input);
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: all var(--tr);
+      transition: all .2s;
       width: 100%;
       outline: none;
-      font-size: 14px;
-      font-family: var(--font);
-      color: var(--text);
     }
 
-    .cs-trigger:hover {
-      border-color: var(--accent);
+    .custom-select-trigger:hover {
+      border-color: var(--text-placeholder);
     }
 
-    .cs-trigger:focus,
-    .cs-trigger.open {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-s);
+    .custom-select-trigger:focus,
+    .custom-select-trigger.active {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
     .cs-val {
+      font-size: 13px;
+      color: var(--text-main);
       flex: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       padding-right: 8px;
-      text-align: left;
     }
 
     .cs-val.empty {
-      color: var(--text3);
+      color: var(--text-placeholder);
     }
 
     .cs-arr {
-      color: var(--text3);
-      transition: transform .25s;
+      color: var(--text-placeholder);
+      transition: transform .3s cubic-bezier(.4, 0, .2, 1);
       display: flex;
       align-items: center;
-      flex-shrink: 0;
     }
 
-    .cs-trigger.open .cs-arr {
+    .custom-select-trigger.active .cs-arr {
       transform: rotate(180deg);
-      color: var(--text);
+      color: var(--text-main);
     }
 
-    .cs-opts {
+    .custom-select-opts {
       position: absolute;
-      top: calc(100% + 4px);
+      top: calc(100% + 5px);
       left: 0;
       right: 0;
       z-index: 1200;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+      background: var(--bg-card);
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, .2);
       max-height: 200px;
       overflow-y: auto;
       opacity: 0;
-      transform: translateY(-6px) scaleY(.96);
+      transform: translateY(-8px) scaleY(.95);
       transform-origin: top;
       pointer-events: none;
-      transition: all .18s cubic-bezier(.4, 0, .2, 1);
+      transition: all .2s cubic-bezier(.4, 0, .2, 1);
     }
 
-    [data-theme=dark] .cs-opts {
-      background: #222220;
-      border-color: #3a3a38;
-    }
-
-    .cs-opts.open {
+    .custom-select-opts.open {
       opacity: 1;
       transform: translateY(0) scaleY(1);
       pointer-events: all;
     }
 
     .cs-opt {
-      padding: 9px 14px;
-      font-size: 13px;
-      color: var(--text);
+      padding: 9px 11px;
+      font-size: 12.5px;
+      color: var(--text-main);
       cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      transition: background .12s;
+      transition: background .15s;
+      border-bottom: 1px solid var(--border-light);
       outline: none;
     }
 
@@ -652,306 +557,74 @@
 
     .cs-opt:hover,
     .cs-opt:focus {
-      background: var(--surface2);
+      background: var(--bg-hover);
       font-weight: 500;
     }
 
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      flex: 1;
-      height: 42px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--tr);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      font-family: var(--font);
-      outline: none;
-    }
-
-    .btn:focus {
-      box-shadow: 0 0 0 3px var(--accent-s);
-    }
-
-    .btn-p {
-      background: var(--accent);
-      color: white;
-    }
-
-    .btn-p:hover {
-      background: var(--accent-h);
-    }
-
-    .btn-g {
-      background: var(--surface2);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .btn-g:hover {
-      background: var(--border);
-    }
-
-    .btn-danger {
-      background: rgba(239, 68, 68, .08);
-      color: #dc2626;
-      border: 1px solid rgba(239, 68, 68, .2);
-    }
-
-    .btn-danger:hover {
-      background: rgba(239, 68, 68, .15);
-      border-color: rgba(239, 68, 68, .35);
-    }
-
-    [data-theme=dark] .btn-danger {
-      background: rgba(248, 113, 113, .08);
-      color: #f87171;
-      border: 1px solid rgba(248, 113, 113, .2);
-    }
-
-    [data-theme=dark] .btn-danger:hover {
-      background: rgba(248, 113, 113, .15);
-    }
-
-    .btn:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    #kc-actionsBar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 18px;
-      margin: 14px -18px -20px;
-      border-top: 1px solid var(--border);
-      position: sticky;
-      bottom: 0;
-      z-index: 800;
-      background: color-mix(in srgb, var(--surface) 92%, transparent);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.1);
-    }
-
-    #kc-actionsBar .btn {
-      padding: 0 20px;
-    }
-
-    #kc-actionsBar .btn-p {
-      flex: 1;
-      max-width: 320px;
-    }
-
-    #kc-actionsBar .btn-danger {
-      flex: 0 0 auto;
-    }
-
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .25);
-      backdrop-filter: blur(2px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 500;
-    }
-
-    #loader.show {
-      display: flex;
-    }
-
-    .ld-card {
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 28px 36px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .spin {
-      width: 32px;
-      height: 32px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: sp 650ms linear infinite;
-    }
-
-    @keyframes sp {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .ld-card p {
-      font-size: 13.5px;
-      color: var(--text2);
-      font-weight: 500;
-    }
-
-    #toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 11px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: var(--shadow-lg);
-      opacity: 0;
-      transition: all 280ms ease;
-      z-index: 600;
-    }
-
-    #toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    #toast.ok {
-      color: #16a34a;
-      border-color: #16a34a;
-    }
-
-    #toast.err {
-      color: #d64545;
-      border-color: #d64545;
-    }
-
-    #toast.info {
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    @media(max-width:768px) {
-      .fg.c3 {
-        grid-template-columns: 1fr;
-      }
-
-      .field.s2,
-      .field.s3 {
-        grid-column: span 1;
-      }
-
-      .btn-row {
-        flex-direction: column-reverse;
-      }
-
-      .stepper {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .mode-btns {
-        flex-wrap: wrap;
-      }
-
-      .mode-btn {
-        flex: 1 1 calc(50% - 3px);
-      }
-
-      #kc-actionsBar .btn-p {
-        max-width: none;
-      }
-    }
-
-    /* ── Custom Calendar Picker ── */
+    /* ── Date Trigger ── */
     .date-trigger {
-      height: 42px;
+      height: 36px;
       display: flex;
       align-items: center;
-      padding: 0 14px;
+      padding: 0 11px;
       cursor: pointer;
       user-select: none;
-      gap: 8px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      transition: all 0.2s ease;
+      gap: 7px;
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      background: var(--bg-input);
+      transition: all .2s;
       position: relative;
       width: 100%;
       outline: none;
-      box-sizing: border-box;
-      font-size: 14px;
     }
 
     .date-trigger:hover {
-      border-color: var(--accent);
+      border-color: var(--text-placeholder);
     }
 
     .date-trigger:focus,
     .date-trigger.active {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
 
     .date-icon {
-      color: var(--text3);
+      color: var(--text-placeholder);
       display: flex;
       align-items: center;
-      flex-shrink: 0;
     }
 
     .dval {
-      font-size: 14px;
-      color: var(--text);
+      font-size: 13px;
+      color: var(--text-main);
       flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .dval.empty {
-      color: var(--text3);
+      color: var(--text-placeholder);
     }
 
     .cal-pop {
-      position: fixed;
-      z-index: 9999;
-      background: #ffffff;
-      border: 1px solid var(--border);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 400;
+      background: var(--bg-card);
+      border: 1px solid var(--border-input);
       border-radius: 10px;
       padding: 14px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
-      width: 252px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, .2);
+      width: 250px;
       opacity: 0;
+      transform: translateY(-6px);
       pointer-events: none;
-      transition: opacity 0.18s ease;
-    }
-
-    [data-theme=dark] .cal-pop {
-      background: #222220;
-      border-color: #3a3a38;
-    }
-
-    [data-theme=dark] .cs-opts {
-      background: #222220;
-      border-color: #3a3a38;
+      transition: all .2s ease;
     }
 
     .cal-pop.open {
       opacity: 1;
+      transform: translateY(0);
       pointer-events: all;
     }
 
@@ -965,22 +638,21 @@
     .mnth {
       font-size: 13px;
       font-weight: 600;
-      color: var(--text);
       cursor: pointer;
-      padding: 3px 7px;
+      padding: 3px 6px;
       border-radius: 5px;
-      transition: background 0.15s;
+      transition: background .2s;
       outline: none;
     }
 
     .mnth:hover,
     .mnth:focus {
-      background: var(--surface2);
+      background: var(--bg-hover);
     }
 
     .cal-nav button {
       background: none;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-input);
       border-radius: 5px;
       width: 26px;
       height: 26px;
@@ -988,14 +660,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text3);
-      transition: all 0.15s;
+      color: var(--text-muted);
+      transition: all .2s;
       outline: none;
     }
 
-    .cal-nav button:hover {
-      background: var(--surface2);
-      color: var(--text);
+    .cal-nav button:hover,
+    .cal-nav button:focus {
+      background: var(--bg-hover);
+      color: var(--text-main);
     }
 
     .cal-grid {
@@ -1010,10 +683,10 @@
     }
 
     .dn {
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 600;
       text-transform: uppercase;
-      color: var(--text3);
+      color: var(--text-muted);
       text-align: center;
       padding-bottom: 6px;
     }
@@ -1024,25 +697,25 @@
       padding: 7px 2px;
       border-radius: 5px;
       cursor: pointer;
-      color: var(--text);
-      transition: all 0.12s;
+      color: var(--text-label);
+      transition: all .15s;
       outline: none;
     }
 
     .cal-grid.years .cd {
-      padding: 10px 3px;
+      padding: 10px 4px;
       font-weight: 500;
     }
 
     .cd:hover,
     .cd:focus {
-      background: var(--surface2);
+      background: var(--bg-hover);
     }
 
     .cd.sel {
-      background: var(--accent) !important;
-      color: #fff !important;
-      font-weight: 600;
+      background: var(--accent-bg) !important;
+      color: var(--accent-text) !important;
+      font-weight: 500;
     }
 
     .cd.today {
@@ -1051,30 +724,328 @@
     }
 
     .cd.om {
-      color: var(--border);
+      color: var(--border-input);
       pointer-events: none;
     }
 
-    .date-wrap {
-      position: relative;
+    /* ── Table ── */
+    .tbl-wrap {
+      overflow-x: auto;
+      margin-top: 4px;
     }
 
-    /* ── Custom Modal ── */
+    .pwa-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      user-select: none;
+    }
+
+    .pwa-table th {
+      background: var(--table-head);
+      color: var(--text-muted);
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      padding: 8px;
+      text-align: left;
+      border: 1px solid var(--border-light);
+      white-space: nowrap;
+    }
+
+    .pwa-table td {
+      border: 1px solid var(--border-light);
+      padding: 0;
+      vertical-align: middle;
+    }
+
+    .pwa-table td.num {
+      width: 28px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 11px;
+      background: var(--table-head);
+      font-weight: 600;
+      padding: 0 6px;
+      white-space: nowrap;
+    }
+
+    .pwa-table td input {
+      width: 100%;
+      height: 34px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-family: 'Inter', sans-serif;
+      padding: 0 8px;
+      outline: none;
+      transition: background .15s;
+    }
+
+    .pwa-table td input:focus {
+      background: var(--focus-ring);
+    }
+
+    .pwa-table td input::placeholder {
+      color: var(--text-placeholder);
+    }
+
+    .pwa-table td.cell-selected input {
+      background: rgba(0, 44, 95, 0.12);
+    }
+
+    [data-theme=dark] .pwa-table td.cell-selected input {
+      background: rgba(77, 143, 214, 0.18);
+    }
+
+    .pwa-table td.cell-selected {
+      background: rgba(0, 44, 95, 0.08);
+    }
+
+    [data-theme=dark] .pwa-table td.cell-selected {
+      background: rgba(77, 143, 214, 0.12);
+    }
+
+    /* ── Photos ── */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .photo-slot {
+      position: relative;
+      border: 1.5px dashed var(--border-input);
+      border-radius: 7px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .2s;
+      aspect-ratio: 16/10;
+      background: var(--bg-hover);
+    }
+
+    .photo-slot:hover {
+      border-color: var(--accent-bg);
+    }
+
+    .photo-slot.filled {
+      border-style: solid;
+      border-color: var(--border-input);
+    }
+
+    .photo-slot input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .photo-slot .slot-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, .55);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px 3px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .photo-slot .slot-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .photo-slot .slot-placeholder svg {
+      color: var(--text-placeholder);
+    }
+
+    .photo-slot .slot-placeholder span {
+      font-size: 10px;
+      color: var(--text-placeholder);
+    }
+
+    .photo-slot img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      z-index: 1;
+    }
+
+    .photo-slot.filled img {
+      display: block;
+    }
+
+    .photo-slot.filled .slot-placeholder {
+      display: none;
+    }
+
+    .photo-slot .remove-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, .6);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .photo-slot.filled .remove-btn {
+      display: flex;
+    }
+
+    /* ── Status & Actions ── */
+    .status {
+      margin: 14px 20px 0;
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 7px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, .1);
+      color: var(--danger-color);
+      border: 1px solid rgba(239, 68, 68, .2);
+      display: block;
+    }
+
+    .status.success {
+      background: rgba(34, 197, 94, .1);
+      color: #15803d;
+      border: 1px solid rgba(34, 197, 94, .2);
+      display: block;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border-light);
+      margin-top: 14px;
+      align-items: center;
+      position: sticky;
+      bottom: 0;
+      z-index: 800;
+      background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      height: 42px;
+      padding: 0 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+    }
+
+    .btn-inject {
+      flex: 1;
+      max-width: 320px;
+    }
+
+    .btn-clear {
+      flex: 0 0 auto;
+    }
+
+    .btn:focus {
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .btn-inject {
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
+    .btn-inject:hover {
+      opacity: .9;
+    }
+
+    .btn-inject:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .btn-clear {
+      background: rgba(239, 68, 68, .08);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, .2);
+    }
+
+    .btn-clear:hover {
+      background: rgba(239, 68, 68, .15);
+      border-color: rgba(239, 68, 68, .35);
+    }
+
+    [data-theme=dark] .btn-clear {
+      background: rgba(248, 113, 113, .08);
+      color: #f87171;
+      border: 1px solid rgba(248, 113, 113, .2);
+    }
+
+    [data-theme=dark] .btn-clear:hover {
+      background: rgba(248, 113, 113, .15);
+    }
+
+    /* ── Modal ── */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, .4);
       backdrop-filter: blur(3px);
-      z-index: 99999;
+      z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity .2s ease;
     }
 
     .modal-overlay.show {
@@ -1083,15 +1054,15 @@
     }
 
     .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 20px;
       width: 90%;
       max-width: 340px;
-      box-shadow: var(--shadow-lg);
-      transform: scale(0.95) translateY(10px);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, .1);
+      transform: scale(.95) translateY(10px);
+      transition: all .2s cubic-bezier(.4, 0, .2, 1);
     }
 
     .modal-overlay.show .modal-box {
@@ -1100,7 +1071,7 @@
 
     .modal-msg {
       font-size: 14px;
-      color: var(--text);
+      color: var(--text-main);
       font-weight: 500;
       margin-bottom: 20px;
       line-height: 1.5;
@@ -1113,1118 +1084,1170 @@
     }
 
     .modal-btn {
-      padding: 9px 16px;
-      border-radius: 8px;
-      font-size: 13px;
+      padding: 8px 14px;
+      border-radius: 7px;
+      font-size: 12.5px;
       font-weight: 600;
       cursor: pointer;
+      transition: all .2s;
       border: none;
-      font-family: var(--font);
+      font-family: 'Inter', sans-serif;
       outline: none;
-      transition: all 0.15s;
     }
 
     .modal-btn-cancel {
-      background: var(--surface2);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: var(--bg-active);
+      color: var(--text-label);
     }
 
-    .modal-btn-cancel:hover {
-      background: var(--border);
+    .modal-btn-cancel:hover,
+    .modal-btn-cancel:focus {
+      background: var(--border-input);
+      color: var(--text-main);
     }
 
     .modal-btn-ok {
-      background: #ef4444;
+      background: var(--danger-color);
       color: #fff;
     }
 
-    .modal-btn-ok:hover {
-      opacity: 0.88;
+    .modal-btn-ok:hover,
+    .modal-btn-ok:focus {
+      opacity: .9;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, .2);
+    }
+
+    /* ── Page Jumpers ── */
+    .page-jumper {
+      position: fixed;
+      right: 16px;
+      bottom: 80px;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pj {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
+      transition: all .25s cubic-bezier(.4, 0, .2, 1);
+      outline: none;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+    }
+
+    .pj:hover {
+      transform: scale(1.12);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
+    }
+
+    .pj:active {
+      transform: scale(.95);
+    }
+
+    .pj:focus {
+      box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 14px rgba(0, 0, 0, .2);
+    }
+
+    .pj.vis {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+
+    /* ── Date field with manual input ── */
+    .date-wrap {
+      display: flex;
+      gap: 5px;
+      align-items: flex-start;
+    }
+
+    .date-wrap .date-trigger {
+      flex: 1;
+    }
+
+    .date-manual {
+      flex: 1;
+      height: 36px;
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      padding: 0 10px;
+      font-size: 13px;
+      color: var(--text-main);
+      background: var(--bg-input);
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: all .2s;
+    }
+
+    .date-manual:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .date-manual::placeholder {
+      color: var(--text-placeholder);
+    }
+
+    @media(max-width:640px) {
+      body {
+        padding: 10px 8px 70px;
+      }
+
+      .grid-wrap {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .card-header,
+      .mode-wrap,
+      .form-section,
+      .actions,
+      .history-wrap {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .photo-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stepper-container {
+        padding: 10px 14px;
+      }
+
+      .stepper {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .btn-inject {
+        max-width: none;
+      }
+
+      .page-jumper {
+        right: 10px;
+        bottom: 70px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="modal-overlay" id="kcModalOverlay">
+
+  <div class="modal-overlay" id="customModal">
     <div class="modal-box">
-      <div class="modal-msg" id="kcModalMsg">Are you sure?</div>
+      <div class="modal-msg" id="modalMsg">Are you sure?</div>
       <div class="modal-actions">
-        <button class="modal-btn modal-btn-cancel" id="kcModalCancel">Cancel</button>
-        <button class="modal-btn modal-btn-ok" id="kcModalOk">Confirm</button>
+        <button class="modal-btn modal-btn-cancel" id="modalCancel">Cancel</button>
+        <button class="modal-btn modal-btn-ok" id="modalOk">Confirm</button>
       </div>
     </div>
   </div>
 
-  <div id="toast"></div>
-  <div id="loader">
-    <div class="ld-card">
-      <div class="spin"></div>
-      <p>Processing...</p>
-    </div>
+  <div class="page-jumper" id="pageJumper">
+    <button id="pjTop" class="pj" title="Back to top" aria-label="Scroll to top"><svg width="14" height="14"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15" />
+      </svg></button>
+    <button id="pjBot" class="pj" title="Go to bottom" aria-label="Scroll to bottom"><svg width="14" height="14"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg></button>
   </div>
 
-  <div class="ph">
-    <div>
-      <div class="ph-title">Key Code Request Form</div>
-      <div class="ph-sub">Multiple vehicles per export — shared fields apply to all rows</div>
+  <div class="card">
+    <div class="card-header">
+      <h1>ETM Form</h1>
+      <p>Engine &amp; TM Replacement — fill form then generate PPTX report.</p>
     </div>
-    <span class="chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="2.5">
-        <rect x="3" y="11" width="18" height="11" rx="2" />
-        <path d="M7 11V7a5 5 0 0110 0v4" />
-      </svg>XLS Export</span>
-  </div>
 
-  <div class="stepper-container">
-    <div class="stepper">
-      <div class="step active" id="kc-st1">
-        <div class="step-n" id="kc-sn1">1</div>
-        <div>
-          <div class="step-t">Shared Info</div>
-          <div class="step-s">Date, dealer, requester</div>
-        </div>
-      </div>
-      <div class="step" id="kc-st2">
-        <div class="step-n" id="kc-sn2">2</div>
-        <div>
-          <div class="step-t">Vehicles</div>
-          <div class="step-s">VIN rows added</div>
-        </div>
-      </div>
-      <div class="step" id="kc-st3">
-        <div class="step-n" id="kc-sn3">3</div>
-        <div>
-          <div class="step-t">Ready</div>
-          <div class="step-s">Export to Excel</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-  <div class="mode-wrap">
-    <div class="mode-btns">
-      <button class="mode-btn active" id="kc-modeForm" onclick="kcSetMode('form')" tabindex="0">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <line x1="8" y1="8" x2="16" y2="8" />
-          <line x1="8" y1="12" x2="16" y2="12" />
-          <line x1="8" y1="16" x2="12" y2="16" />
-        </svg>
-        Fill Form
-      </button>
-      <button class="mode-btn" id="kc-modeHistory" onclick="kcSetMode('history')" tabindex="0">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-        Saved Entries
-      </button>
-    </div>
-  </div>
-
-  <!-- History Panel — sits right after mode buttons, same as ETM -->
-  <div class="card hist-panel" id="kc-histPanel" style="padding:16px 20px 24px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <span style="font-size:13px;font-weight:600;color:var(--text);">Saved Records</span>
-      <button id="kc-clearAllBtn" class="hist-clr-btn"
-        style="font-size:12px;color:var(--text2);cursor:pointer;background:none;border:none;transition:color .2s;padding:0;outline:none;font-family:var(--font);"
-        onclick="kcClearAllHistory()">Clear all</button>
-    </div>
-    <input type="text" class="hist-search" id="kc-histSearch" placeholder="Search by VIN or Dealer Code..."
-      autocomplete="off">
-    <div class="hist-list" id="kc-histList"></div>
-  </div>
-
-  <!-- Form cards wrapped so kcSetMode can hide/show them -->
-  <div id="kc-formWrap">
-    <div class="card">
-      <div class="card-title">
-        <span style="display:flex;align-items:center;gap:7px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 00-3-3.87" />
-            <path d="M16 3.13a4 4 0 010 7.75" />
-          </svg>
-          Shared Details
-        </span>
-        <span style="font-weight:400;color:var(--text3);font-size:12px;">(applies to all vehicles)</span>
-      </div>
-      <div class="fg c3">
-        <div class="field"><label>Date <span class="req">*</span></label>
-          <div class="date-wrap">
-            <div class="date-trigger" id="dt_kc-date" tabindex="0" style="cursor:text;">
-              <input type="text" id="di_kc-date" placeholder="DD-MM-YYYY or pick →"
-                style="flex:1;border:none;background:transparent;font-size:14px;color:var(--text);outline:none;font-family:var(--font);width:100%;cursor:text;"
-                tabindex="-1">
-              <span class="date-icon" id="dico_kc-date" style="cursor:pointer;flex-shrink:0;"><svg width="16"
-                  height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg></span>
-            </div>
-            <div class="cal-pop" id="cp_kc-date"></div>
-            <input type="hidden" id="kc-date" value="">
+    <div class="stepper-container">
+      <div class="stepper" id="etm-stepper">
+        <div class="step active" id="etm-st1">
+          <div class="step-n" id="etm-sn1">1</div>
+          <div>
+            <div class="step-t">Vehicle Info</div>
+            <div class="step-s">VIN, model</div>
           </div>
         </div>
-        <div class="field"><label>Dealer Code</label><input type="text" id="kc-dcode" value="N3235"
-            placeholder="e.g. N3235"></div>
-        <div class="field"><label>Dealer Name</label><input type="text" id="kc-dname" value="KHANNA AUTOMART PVT. LTD."
-            placeholder="Full dealer name"></div>
-        <div class="field"><label>Requester Name <span class="req">*</span></label><input type="text" id="kc-rname"
-            value="NARENDRA KUMAR" placeholder="e.g. NARENDRA KUMAR"></div>
-        <div class="field"><label>Requester Contact No.</label><input type="tel" id="kc-rcontact" value="8979040022"
-            placeholder="e.g. 8979040022"></div>
-        <div class="field"><label>TPSM Name</label><input type="text" id="kc-tpsm" placeholder="e.g. AVINASH"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">
-        <span style="display:flex;align-items:center;gap:7px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <rect x="1" y="3" width="15" height="13" rx="1" />
-            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-            <circle cx="5.5" cy="18.5" r="2.5" />
-            <circle cx="18.5" cy="18.5" r="2.5" />
-          </svg>
-          Vehicles
-        </span>
-        <button class="btn btn-g" style="padding:5px 12px;font-size:12px;flex:none;height:32px;width:auto;"
-          onclick="kcAddRow()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg> Add Vehicle
-        </button>
-      </div>
-      <div id="kc-rows"></div>
-    </div>
-
-    <div class="card" id="kc-emailCard" style="margin-top: 20px;">
-      <div class="card-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-        <span style="display:flex;align-items:center;gap:7px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-            <polyline points="22,6 12,13 2,6" />
-          </svg>
-          Generated Email Content
-        </span>
-        <button class="btn btn-p" style="padding: 5px 12px; font-size: 12px; flex: none; height: 32px; width: auto; background: var(--accent);" onclick="kcSendEmail()" id="kc-sendEmailBtn" disabled>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <line x1="22" y1="2" x2="11" y2="13" />
-            <polygon points="22 2 15 22 11 13 2 9 22 2" />
-          </svg> Send Email
-        </button>
-      </div>
-      <div class="fg" style="grid-template-columns: 1fr; gap: 12px;">
-        <div class="field">
-          <label>Subject</label>
-          <div style="display:flex; gap:8px;">
-            <input type="text" id="kc-emailSubject" readonly style="flex:1;">
-            <button class="btn btn-g" style="flex:none; width:42px; height:42px; padding:0;" onclick="kcCopySubject()"
-              title="Copy Subject">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-              </svg>
-            </button>
+        <div class="step" id="etm-st2">
+          <div class="step-n" id="etm-sn2">2</div>
+          <div>
+            <div class="step-t">Details</div>
+            <div class="step-s">Dealer, parts</div>
           </div>
         </div>
-        <div class="field">
-          <label>Email Body</label>
-          <div style="display:flex; gap:8px; align-items: flex-start;">
-            <div id="kc-emailBody"
-              style="flex:1; min-height: 250px; font-family: var(--font); line-height: 1.5; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); white-space: pre-wrap; overflow-y: auto; text-align: left;">
-            </div>
-            <button class="btn btn-g" style="flex:none; width:42px; height:42px; padding:0;" onclick="kcCopyEmail()"
-              title="Copy Email Body">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-              </svg>
-            </button>
+        <div class="step" id="etm-st3">
+          <div class="step-n" id="etm-sn3">3</div>
+          <div>
+            <div class="step-t">Ready</div>
+            <div class="step-s">Generate PPTX</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Validation message -->
-    <div id="kc-valMsg"
-      style="display:none;background:rgba(214,69,69,0.08);border:1px solid rgba(214,69,69,0.25);color:#d64545;border-radius:7px;padding:10px 14px;font-size:13px;font-weight:500;margin:0 0 10px;align-items:center;gap:8px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="8" x2="12" y2="12" />
-        <line x1="12" y1="16" x2="12.01" y2="16" />
-      </svg>
-      <span id="kc-valText"></span>
+    <div class="mode-wrap show" id="modeWrap">
+      <div class="mode-lbl">Navigation</div>
+      <div class="mode-btns">
+        <button class="mode-btn active" id="modeForm" tabindex="0">Fill Form</button>
+        <button class="mode-btn" id="modeHistory" tabindex="0">Saved Entries</button>
+      </div>
     </div>
-    <span style="font-size:11.5px;color:var(--text3);display:block;margin:8px 0;" id="kc-save-status"></span>
-    <div id="kc-actionsBar">
-      <button class="btn btn-danger" onclick="clearKcSaved()"><svg width="14" height="14" viewBox="0 0 24 24"
+
+    <div class="history-wrap" id="histWrap">
+      <div class="hist-header">
+        <span class="hist-title">Saved Records</span>
+        <button class="hist-clr" id="btnHistoryClearAll" tabindex="0">Clear all</button>
+      </div>
+      <input type="text" id="historySearch" class="search-input" placeholder="Search by VIN…" autocomplete="off"
+        tabindex="0">
+      <div class="hist-list" id="histList"></div>
+    </div>
+
+    <div id="formWrap"></div>
+
+    <div class="status" id="status"></div>
+    <div class="actions" id="actionsBar" style="display:none">
+      <button class="btn btn-clear" id="btnClear" tabindex="0"><svg width="14" height="14" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="3 6 5 6 21 6" />
           <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
           <path d="M10 11v6M14 11v6" />
         </svg>Clear Form</button>
-      <button class="btn btn-p" id="kc-exportBtn" onclick="exportKeyCode()"><svg width="14" height="14"
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <button class="btn btn-inject" id="btnInject" tabindex="0"><svg width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
           <polyline points="7 10 12 15 17 10" />
           <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>Generate Excel</button>
+        </svg>Generate PPTX</button>
     </div>
-
-  </div><!-- end kc-formWrap -->
+  </div>
 
   <script>
-    // ── Custom Confirm Modal ──
-    function kcConfirm(message, okText = 'Confirm') {
-      return new Promise(resolve => {
-        const overlay = document.getElementById('kcModalOverlay');
-        document.getElementById('kcModalMsg').textContent = message;
-        document.getElementById('kcModalOk').textContent = okText;
-        const ok = document.getElementById('kcModalOk');
-        const cancel = document.getElementById('kcModalCancel');
-        const cleanup = () => { overlay.classList.remove('show'); ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel); };
-        const onOk = () => { cleanup(); resolve(true); };
-        const onCancel = () => { cleanup(); resolve(false); };
-        ok.addEventListener('click', onOk); cancel.addEventListener('click', onCancel);
-        overlay.classList.add('show'); cancel.focus();
-      });
-    }
-    // ── End Modal ──
+    // ─────── ICONS ───────
+    const icons = {
+      calendar: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+      chevronDown: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
+      chevLeft: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
+      chevRight: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+      photo: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+      close: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
+    };
 
+    // ─────── DROPDOWN LISTS ───────
+    const hyundaiModels = [
+      'Hyundai Grand i10 NIOS', 'Hyundai i20', 'Hyundai i20 N Line',
+      'Hyundai Aura', 'Hyundai Verna', 'Hyundai Exter',
+      'Hyundai Venue', 'Hyundai Venue N Line', 'Hyundai Creta',
+      'Hyundai Creta N Line', 'Hyundai Alcazar', 'Hyundai Tucson',
+      'Hyundai Ioniq 5', 'Hyundai Ioniq 6', 'Hyundai Kona Electric',
+      'Hyundai Stargazer'
+    ];
 
-    // ── Backup / Restore via postMessage ──
-    window.addEventListener('message', (e) => {
-      if (e.data && e.data.type === 'theme') {
-        document.documentElement.setAttribute('data-theme', e.data.theme);
-      }
-      if (e.data && e.data.type === 'backup-request') {
-        const keys = ['od_keycode_v1', 'od_kc_hist_v1'];
-        const payload = {};
-        keys.forEach(k => {
-          try { const v = localStorage.getItem(k); if (v) payload[k] = v; } catch (e) { }
-        });
-        e.source.postMessage({ type: 'backup-response', tool: 'keycode', data: payload }, '*');
-      }
-      if (e.data && e.data.type === 'restore-data') {
-        if (e.data.tool === 'keycode' && e.data.data) {
-          Object.entries(e.data.data).forEach(([k, v]) => {
-            try { localStorage.setItem(k, v); } catch (e) { }
-          });
-          // Reload form
-          kcRestoreData();
-          kcRenderRows();
-          const el = document.getElementById('kc-save-status');
-          if (el) el.textContent = 'Restored';
-          // Reload history
-          try { KC_HISTORY = JSON.parse(localStorage.getItem(KC_HIST_KEY) || '[]'); } catch (e) { }
-          kcRenderHistory();
-        }
+    // ─────── STATE ───────
+    const HIST_KEY = 'etm_hist';
+    let templateBuffer = null;
+    let HISTORY = [];
+    try { HISTORY = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { }
+    const PHOTOS = {};
+    window.PHOTOS = PHOTOS;
+    const CAL = {};
+
+    const formWrap = document.getElementById('formWrap');
+    const histWrap = document.getElementById('histWrap');
+    const histList = document.getElementById('histList');
+    const statusEl = document.getElementById('status');
+    const actionsBar = document.getElementById('actionsBar');
+    const historySearch = document.getElementById('historySearch');
+    const btnInject = document.getElementById('btnInject');
+
+    // ─────── TEMPLATE LOAD (relative path — same folder as etm.html) ───────
+    window.addEventListener('DOMContentLoaded', async () => {
+      formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Loading template (etm.pptx)…</div>';
+      try {
+        const r = await fetch('etm.pptx');
+        if (!r.ok) throw new Error('not found');
+        templateBuffer = await r.arrayBuffer();
+        document.getElementById('modeWrap').classList.add('show');
+        setMode('form');
+        clearStatus();
+      } catch (e) {
+        showStatus('Error: Could not load etm.pptx — make sure it is in the same folder.', 'error');
+        formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Template missing. Place etm.pptx in the same folder as etm.html.</div>';
       }
     });
 
-
-    const KC_SHARED_IDS = ["kc-date", "kc-dcode", "kc-dname", "kc-rname", "kc-rcontact", "kc-tpsm"];
-    const KC_SAVE_KEY = "od_keycode_v1";
-
-    // ── Saved Entries History ──
-    const KC_HIST_KEY = "od_kc_hist_v1";
-    let KC_HISTORY = [];
-    try { KC_HISTORY = JSON.parse(localStorage.getItem(KC_HIST_KEY) || '[]'); } catch (e) { }
-
-    function kcSaveHistory() {
-      kcReadRows();
-      const shared = {};
-      KC_SHARED_IDS.forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.value.trim()) shared[id] = el.value.trim();
+    // ─────── MODAL ───────
+    function customConfirm(msg, okLabel = 'Confirm') {
+      return new Promise(res => {
+        const ov = document.getElementById('customModal');
+        document.getElementById('modalMsg').textContent = msg;
+        document.getElementById('modalOk').textContent = okLabel;
+        ov.classList.add('show');
+        const ok = document.getElementById('modalOk');
+        const cancel = document.getElementById('modalCancel');
+        const cleanup = r => { ov.classList.remove('show'); ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel); res(r); };
+        const onOk = () => cleanup(true);
+        const onCancel = () => cleanup(false);
+        ok.addEventListener('click', onOk);
+        cancel.addEventListener('click', onCancel);
       });
-      const validRows = kcRows.filter(r => r.vin && r.vin.trim());
-      if (!validRows.length && !shared['kc-dcode']) return;
-      const entry = { shared, rows: validRows.map(r => ({ ...r })) };
-      // Replace entry with same dealer code
-      const dcode = shared['kc-dcode'] || '';
-      if (dcode) KC_HISTORY = KC_HISTORY.filter(h => (h.shared?.['kc-dcode'] || '') !== dcode);
-      KC_HISTORY.unshift(entry);
-      if (KC_HISTORY.length > 50) KC_HISTORY = KC_HISTORY.slice(0, 50);
-      try { localStorage.setItem(KC_HIST_KEY, JSON.stringify(KC_HISTORY)); } catch (e) { }
-      kcRenderHistory();
     }
 
-    function kcRenderHistory(filter = '') {
-      const list = document.getElementById('kc-histList');
-      if (!list) return;
-      if (!KC_HISTORY.length) { list.innerHTML = '<div class="hist-empty">No saved entries yet.</div>'; return; }
-      list.innerHTML = '';
-      const q = filter.toLowerCase().trim();
-      let shown = 0;
-      KC_HISTORY.forEach((entry, idx) => {
-        const dcode = entry.shared?.['kc-dcode'] || '';
-        const dname = entry.shared?.['kc-dname'] || '';
-        const vins = (entry.rows || []).map(r => r.vin).filter(Boolean).join(', ');
-        if (q && !`${dcode} ${dname} ${vins}`.toLowerCase().includes(q)) return;
-        shown++;
-        const item = document.createElement('div');
-        item.className = 'hist-item'; item.tabIndex = 0;
-        item.innerHTML = `<div class="hi-info">
-          <div class="hi-name">${_kcEsc(dcode || dname || 'Unknown')}</div>
-          <div class="hi-meta">${_kcEsc(dname)}${vins ? ' · ' + _kcEsc(vins.substring(0, 40)) : ''}</div>
-        </div>
-        <button class="hi-del" data-idx="${idx}" title="Delete" tabindex="0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
-        const delBtn = item.querySelector('.hi-del');
-        const delAct = async e => {
-          e.stopPropagation();
-          if (!(await kcConfirm('Delete this entry?', 'Delete'))) return;
-          KC_HISTORY.splice(idx, 1);
-          try { localStorage.setItem(KC_HIST_KEY, JSON.stringify(KC_HISTORY)); } catch (e) { }
-          kcRenderHistory(document.getElementById('kc-histSearch')?.value || '');
+    // ─────── KEYBOARD HELPER ───────
+    function handleKeyClick(el, fn) {
+      if (!el) return;
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } });
+    }
+
+    // ─────── MODE ───────
+    function setMode(m) {
+      document.getElementById('modeForm').classList.toggle('active', m === 'form');
+      document.getElementById('modeHistory').classList.toggle('active', m === 'history');
+      if (m === 'history') {
+        formWrap.style.display = 'none'; actionsBar.style.display = 'none';
+        histWrap.classList.add('show'); renderHistory(historySearch.value);
+      } else {
+        histWrap.classList.remove('show'); formWrap.style.display = 'block';
+        if (templateBuffer) { actionsBar.style.display = 'flex'; buildForm(); }
+      }
+    }
+    const _mf = document.getElementById('modeForm'), _mh = document.getElementById('modeHistory');
+    _mf.addEventListener('click', () => setMode('form')); handleKeyClick(_mf, () => setMode('form'));
+    _mh.addEventListener('click', () => setMode('history')); handleKeyClick(_mh, () => setMode('history'));
+
+    // ─────── CLOSE ALL POPUPS ───────
+    function closeAllPopups() {
+      document.querySelectorAll('.custom-select-opts.open').forEach(el => { el.classList.remove('open'); el.previousElementSibling?.classList.remove('active'); });
+      document.querySelectorAll('.cal-pop.open').forEach(el => { el.classList.remove('open'); });
+      document.querySelectorAll('.date-trigger.active').forEach(el => el.classList.remove('active'));
+    }
+    document.addEventListener('click', closeAllPopups);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllPopups(); });
+
+    // ─────── CALENDAR ───────
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+    function renderCal(id) {
+      const st = CAL[id]; const pop = document.getElementById('cp_' + id); if (!pop) return;
+      if (st.view === 'years') {
+        const base = Math.floor(st.year / 15) * 15;
+        pop.innerHTML = `<div class="cal-nav"><button id="cy_prev_${id}" tabindex="0">${icons.chevLeft}</button><span class="mnth" id="cy_lbl_${id}" tabindex="0">${base}–${base + 14}</span><button id="cy_next_${id}" tabindex="0">${icons.chevRight}</button></div><div class="cal-grid years" id="cg_${id}"></div>`;
+        const grid = document.getElementById('cg_' + id);
+        for (let y = base; y < base + 15; y++) {
+          const d = document.createElement('div'); d.className = 'cd' + (y === st.year ? ' sel' : ''); d.textContent = y; d.setAttribute('tabindex', '0');
+          const a = () => { st.year = y; st.view = 'days'; renderCal(id); }; d.addEventListener('click', e => { e.stopPropagation(); a(); }); handleKeyClick(d, a);
+          grid.appendChild(d);
+        }
+        const prevA = e => { e.stopPropagation(); st.year -= 15; renderCal(id); };
+        const nextA = e => { e.stopPropagation(); st.year += 15; renderCal(id); };
+        const prevBtn = document.getElementById('cy_prev_' + id); const nextBtn = document.getElementById('cy_next_' + id);
+        prevBtn?.addEventListener('click', prevA); handleKeyClick(prevBtn, prevA);
+        nextBtn?.addEventListener('click', nextA); handleKeyClick(nextBtn, nextA);
+        const lblA = e => { e.stopPropagation(); }; document.getElementById('cy_lbl_' + id)?.addEventListener('click', lblA);
+        return;
+      }
+      // Days view
+      const now = new Date();
+      const firstDay = new Date(st.year, st.month, 1).getDay();
+      const daysInMonth = new Date(st.year, st.month + 1, 0).getDate();
+      const prevDays = new Date(st.year, st.month, 0).getDate();
+      pop.innerHTML = `<div class="cal-nav"><button id="cp_prev_${id}" tabindex="0">${icons.chevLeft}</button><span class="mnth" id="cp_lbl_${id}" tabindex="0">${MONTHS[st.month]} ${st.year}</span><button id="cp_next_${id}" tabindex="0">${icons.chevRight}</button></div><div class="cal-grid" id="cg_${id}">${DAYS.map(d => `<div class="dn">${d}</div>`).join('')}</div>`;
+      const grid = document.getElementById('cg_' + id);
+      for (let i = 0; i < firstDay; i++) { const d = document.createElement('div'); d.className = 'cd om'; d.textContent = prevDays - firstDay + 1 + i; grid.appendChild(d); }
+      for (let i = 1; i <= daysInMonth; i++) {
+        const d = document.createElement('div'); d.setAttribute('tabindex', '0');
+        const isToday = i === now.getDate() && st.month === now.getMonth() && st.year === now.getFullYear();
+        const isSel = st.date && i === st.date.getDate() && st.month === st.date.getMonth() && st.year === st.date.getFullYear();
+        d.className = 'cd' + (isToday ? ' today' : '') + (isSel ? ' sel' : ''); d.textContent = i;
+        const a = () => {
+          st.date = new Date(st.year, st.month, i);
+          const dd = String(i).padStart(2, '0'), mm = String(st.month + 1).padStart(2, '0'), yy = st.year;
+          const fmt = `${dd}-${mm}-${yy}`;
+          const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = fmt; dv.classList.remove('empty'); }
+          const manEl = document.getElementById('dm_' + id); if (manEl) manEl.value = fmt;
+          closeAllPopups();
         };
-        delBtn.addEventListener('click', delAct);
-        delBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); delAct(e); } });
-        const loadAct = () => kcLoadFromHistory(entry);
-        item.addEventListener('click', e => { if (!e.target.closest('.hi-del')) loadAct(); });
-        item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); loadAct(); } });
-        list.appendChild(item);
-      });
-      if (!shown) list.innerHTML = '<div class="hist-empty">No matching entries found.</div>';
+        d.addEventListener('click', e => { e.stopPropagation(); a(); }); handleKeyClick(d, a);
+        grid.appendChild(d);
+      }
+      const rem = 42 - firstDay - daysInMonth; for (let i = 1; i <= rem; i++) { const d = document.createElement('div'); d.className = 'cd om'; d.textContent = i; grid.appendChild(d); }
+      const prevA = e => { e.stopPropagation(); st.month--; if (st.month < 0) { st.month = 11; st.year--; } renderCal(id); };
+      const nextA = e => { e.stopPropagation(); st.month++; if (st.month > 11) { st.month = 0; st.year++; } renderCal(id); };
+      const lblA = e => { e.stopPropagation(); st.view = 'years'; renderCal(id); };
+      const prevBtn = document.getElementById('cp_prev_' + id); const nextBtn = document.getElementById('cp_next_' + id); const lbl = document.getElementById('cp_lbl_' + id);
+      prevBtn?.addEventListener('click', prevA); handleKeyClick(prevBtn, prevA);
+      nextBtn?.addEventListener('click', nextA); handleKeyClick(nextBtn, nextA);
+      lbl?.addEventListener('click', lblA); handleKeyClick(lbl, lblA);
     }
 
-    function kcLoadFromHistory(entry) {
-      // Restore shared fields
-      if (entry.shared) {
-        KC_SHARED_IDS.forEach(id => {
+    function openCal(id) {
+      closeAllPopups();
+      if (!CAL[id]) CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
+      const ref = CAL[id].date || new Date(); CAL[id].year = ref.getFullYear(); CAL[id].month = ref.getMonth(); CAL[id].view = 'days';
+      renderCal(id); document.getElementById('cp_' + id)?.classList.add('open'); document.getElementById('dt_' + id)?.classList.add('active');
+    }
+
+    function makeDateField(id, label) {
+      if (!CAL[id]) CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
+      const wrap = document.createElement('div'); wrap.className = 'field-col';
+      wrap.innerHTML = `<label>${label}</label>
+  <div style="position:relative;">
+    <div style="display:flex;gap:5px;">
+      <input type="text" id="dm_${id}" class="date-manual" placeholder="DD-MM-YYYY" maxlength="10" tabindex="0">
+      <div class="date-trigger" id="dt_${id}" tabindex="0" title="Open calendar" style="flex:0 0 36px;padding:0;justify-content:center;">
+        <span class="date-icon">${icons.calendar}</span>
+      </div>
+    </div>
+    <div class="cal-pop" id="cp_${id}"></div>
+  </div>`;
+      // Calendar pick → fills manual input
+      const origA = () => { };
+      const pop = wrap.querySelector('.cal-pop');
+      let wt; pop.addEventListener('wheel', e => { e.preventDefault(); if (wt) return; wt = setTimeout(() => { wt = null; }, 150); const st = CAL[id]; if (st.view === 'years') { st.year += e.deltaY > 0 ? 15 : -15; } else { st.month += e.deltaY > 0 ? 1 : -1; if (st.month > 11) { st.month = 0; st.year++; } else if (st.month < 0) { st.month = 11; st.year--; } } renderCal(id); }, { passive: false });
+      requestAnimationFrame(() => {
+        const dt = document.getElementById('dt_' + id);
+        const manEl = document.getElementById('dm_' + id);
+        const a = e => { e.stopPropagation(); const isOpen = document.getElementById('cp_' + id)?.classList.contains('open'); if (isOpen) closeAllPopups(); else openCal(id); };
+        dt?.addEventListener('click', a); handleKeyClick(dt, a);
+        // Manual input: auto-format as user types
+        manEl?.addEventListener('input', () => {
+          let v = manEl.value.replace(/[^0-9]/g, '');
+          if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+          if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+          if (v.length > 10) v = v.slice(0, 10);
+          manEl.value = v;
+          // Sync to CAL state if full date
+          if (v.length === 10) {
+            const [dd, mm, yyyy] = v.split('-').map(Number);
+            const d = new Date(yyyy, mm - 1, dd);
+            if (!isNaN(d)) { CAL[id].date = d; CAL[id].year = d.getFullYear(); CAL[id].month = d.getMonth(); }
+          }
+        });
+      });
+      return wrap;
+    }
+
+
+    function makeSelect(id, label, options, required = false) {
+      const wrap = document.createElement('div'); wrap.className = 'field-col';
+      wrap.innerHTML = `<label>${label}${required ? '<span class="req">*</span>' : ''}</label><div class="custom-select-wrap"><div class="custom-select-trigger" id="cst_${id}" tabindex="0"><span class="cs-val empty" id="csv_${id}">Select…</span><span class="cs-arr">${icons.chevronDown}</span></div><div class="custom-select-opts" id="cso_${id}">${options.map(o => `<div class="cs-opt" data-val="${o}" tabindex="0">${o}</div>`).join('')}</div><input type="hidden" id="${id}" value=""></div>`;
+      requestAnimationFrame(() => {
+        const trig = document.getElementById('cst_' + id), opts = document.getElementById('cso_' + id), valEl = document.getElementById('csv_' + id), hidInp = document.getElementById(id);
+        if (!trig) return;
+        const trigA = e => { e.stopPropagation(); const isOpen = opts.classList.contains('open'); closeAllPopups(); if (!isOpen) { opts.classList.add('open'); trig.classList.add('active'); } };
+        trig.addEventListener('click', trigA); handleKeyClick(trig, trigA);
+        opts.querySelectorAll('.cs-opt').forEach(opt => { const a = e => { e.stopPropagation(); valEl.textContent = opt.getAttribute('data-val'); valEl.classList.remove('empty'); hidInp.value = opt.getAttribute('data-val'); closeAllPopups(); }; opt.addEventListener('click', a); handleKeyClick(opt, a); });
+      });
+      return wrap;
+    }
+
+    function makeInput(id, label, placeholder, defVal = '', full = false, required = false) {
+      const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
+      const lbl = document.createElement('label');
+      lbl.innerHTML = label + (required ? '<span class="req">*</span>' : '');
+      const inp = document.createElement('input'); inp.type = 'text'; inp.id = id; inp.setAttribute('tabindex', '0');
+      if (defVal) { inp.value = defVal; inp.classList.add('pre'); inp.addEventListener('focus', () => inp.classList.remove('pre')); }
+      else inp.placeholder = placeholder || 'Enter value…';
+      wrap.appendChild(lbl); wrap.appendChild(inp); return wrap;
+    }
+
+    function makeTextarea(id, label, placeholder, hasPrefill = false, defVal = '', full = true) {
+      const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
+      const ta = document.createElement('textarea'); ta.id = id; ta.setAttribute('tabindex', '0');
+      if (hasPrefill && defVal) { ta.value = defVal; ta.classList.add('pre'); ta.addEventListener('focus', () => ta.classList.remove('pre')); }
+      else { ta.placeholder = placeholder || ''; }
+      wrap.innerHTML = `<label>${label}</label>`;
+      wrap.appendChild(ta); return wrap;
+    }
+
+    function mkSec(title) {
+      const sec = document.createElement('div'); sec.className = 'form-section';
+      const lbl = document.createElement('div'); lbl.className = 'sec-lbl'; lbl.textContent = title;
+      sec.appendChild(lbl); return sec;
+    }
+
+    // ─────── BUILD FORM ───────
+    function buildForm() {
+      formWrap.innerHTML = '';
+
+      // ── Vehicle Info ──
+      let sec = mkSec('Vehicle Information');
+      const vGrid = document.createElement('div'); vGrid.className = 'grid-wrap';
+      vGrid.appendChild(makeInput('VIN', 'VIN Number', 'Enter VIN…', '', false, true));
+      vGrid.appendChild(makeSelect('MODEL', 'Vehicle Model', hyundaiModels, true));
+      // Clear validation highlight on input + update stepper
+      requestAnimationFrame(() => {
+        const vinEl = document.getElementById('VIN');
+        if (vinEl) vinEl.addEventListener('input', () => { vinEl.style.borderColor = ''; vinEl.style.boxShadow = ''; });
+        // MODEL clears on select
+        const modelOpts = document.getElementById('cso_MODEL');
+        if (modelOpts) modelOpts.querySelectorAll('.cs-opt').forEach(opt => { opt.addEventListener('click', () => { const t = document.getElementById('cst_MODEL'); if (t) { t.style.borderColor = ''; t.style.boxShadow = ''; } etmUpdateSteps(); }); });
+        // PROB_NAT and DRV_PAT selects trigger stepper
+        ['PROB_NAT', 'DRV_PAT'].forEach(id => {
+          const opts = document.getElementById('cso_' + id);
+          if (opts) opts.querySelectorAll('.cs-opt').forEach(opt => { opt.addEventListener('click', etmUpdateSteps); });
+        });
+      });
+      // Single delegated listener covers all inputs including service history
+      formWrap.addEventListener('input', etmUpdateSteps);
+      vGrid.appendChild(makeInput('KMS', 'Mileage (Kms)', 'Enter mileage…'));
+      vGrid.appendChild(makeInput('ENG_TM', 'Engine / TM Type', 'e.g. 1.5 Turbo GDi…'));
+      vGrid.appendChild(makeInput('ROM_ID', 'ROM ID (ECU / TCU)', 'Enter ROM ID…', 'NA'));
+      vGrid.appendChild(makeInput('DTC', 'DTC', '', 'NA'));
+      vGrid.appendChild(makeInput('DLR_CD', 'Dealer Code', '', 'N3235'));
+      vGrid.appendChild(makeInput('DLR_NM', 'Dealer Name', '', 'KHANNA AUTOMART PVT LTD'));
+      sec.appendChild(vGrid); formWrap.appendChild(sec);
+
+      // ── Complaint & Field Info ──
+      sec = mkSec('Complaint & Field Details');
+      const cGrid = document.createElement('div'); cGrid.className = 'grid-wrap';
+      cGrid.appendChild(makeTextarea('COMPLAINT', 'Field Complaint', 'Describe the field complaint…'));
+      cGrid.appendChild(makeSelect('PROB_NAT', 'Problem Nature', [
+        'Abnormal Noise', 'Vibration', 'Poor Performance', 'Hard Starting / No Start',
+        'Stalling / Cutting Off', 'Overheating', 'Oil Leak', 'Coolant Leak',
+        'Excessive Smoke', 'MIL / Warning Lamp ON'
+      ]));
+      cGrid.appendChild(makeSelect('DRV_PAT', 'Driving Pattern / Condition', [
+        'City Driving – Stop & Go', 'Highway Driving – Steady Speed', 'Mixed City & Highway',
+        'Uphill / Mountain Driving', 'Cold Start – Morning First Start',
+        'Hot Restart – After Engine Warm', 'AC ON – City Driving',
+        'AC OFF – City Driving', 'Heavy Load / Full Passenger',
+        'Low Speed Crawling / Parking'
+      ]));
+      cGrid.appendChild(makeTextarea('DLR_STD', 'Dealer Study Details', 'Standard reference / specification…'));
+      cGrid.appendChild(makeTextarea('DLR_OBS', 'Dealer Observation', 'What was observed during investigation…'));
+      cGrid.appendChild(makeTextarea('DLR_ACT', 'Dealer Action & RO History', 'Actions taken, RO references…'));
+      cGrid.appendChild(makeTextarea('RMRKS', 'Remarks', '', true, 'Please review and do needful.'));
+      cGrid.appendChild(makeTextarea('PHOTO_NOTE', 'Photo Note', '', true, 'NA'));
+      sec.appendChild(cGrid); formWrap.appendChild(sec);
+
+      // ── Service History Table ──
+      buildServiceHistorySection();
+
+      // ── Photos ──
+      buildPhotosSection();
+    }
+
+    // ─────── SERVICE HISTORY TABLE ───────
+    function buildServiceHistorySection() {
+      const sec = mkSec('Service History (Slide 2)');
+      sec.innerHTML += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Paste directly from Excel — click any cell then Ctrl+V to fill multiple rows/columns.</div>`;
+
+      const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
+
+      let rows = '';
+      for (let i = 1; i <= 12; i++) {
+        rows += `<tr>
+      <td class="num">${i}</td>
+      <td><input id="sh${i}N"   placeholder="S.No…"        tabindex="0"></td>
+      <td><input id="sh${i}DC"  placeholder="Dealer Code…"  tabindex="0"></td>
+      <td><input id="sh${i}RO"  placeholder="RO No…"        tabindex="0"></td>
+      <td><input id="sh${i}VIN" placeholder="VIN…"          tabindex="0"></td>
+      <td><input id="sh${i}KM"  placeholder="KMs…"          tabindex="0"></td>
+      <td><input id="sh${i}RS"  placeholder="Reason…"       tabindex="0"></td>
+      <td><input id="sh${i}DT"  placeholder="Date…"         tabindex="0"></td>
+      <td><input id="sh${i}ACT" placeholder="Action…"       tabindex="0"></td>
+      <td><input id="sh${i}STS" placeholder="Status…"       tabindex="0"></td>
+    </tr>`;
+      }
+
+      const tbl = document.createElement('div');
+      tbl.innerHTML = `<div class="tbl-wrap"><table class="pwa-table">
+    <thead><tr>
+      <th style="width:28px">#</th>
+      <th style="min-width:45px">S.No</th>
+      <th style="min-width:60px">Dealer Code</th>
+      <th style="min-width:90px">R/O No.</th>
+      <th style="min-width:130px">VIN</th>
+      <th style="min-width:70px">Odo (Kms)</th>
+      <th style="min-width:110px">Reason for Service</th>
+      <th style="min-width:90px">Service Date</th>
+      <th style="min-width:110px">Dealer Action Taken</th>
+      <th style="min-width:80px">Current Status</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+      sec.appendChild(tbl);
+      formWrap.appendChild(sec);
+
+      // Paste handler
+      requestAnimationFrame(() => {
+        for (let i = 1; i <= 12; i++) {
+          shCols.forEach(col => {
+            const el = document.getElementById(`sh${i}${col}`);
+            if (el) el.addEventListener('paste', e => handlePaste(e, 'sh', i, col, 12, shCols));
+          });
+        }
+        // ── Bulk drag-select + keyboard edit ──
+        initTableBulkEdit(sec);
+      });
+    }
+
+    // ─────── BULK TABLE DRAG SELECT + KEYBOARD ───────
+    function initTableBulkEdit(sec) {
+      const table = sec.querySelector('.pwa-table');
+      if (!table) return;
+      let isDragging = false;
+      let dragStart = null;
+      const selectedCells = new Set();
+
+      const getCellCoords = (td) => {
+        const tr = td.parentElement;
+        const rowIdx = tr.rowIndex;
+        const cellIdx = td.cellIndex;
+        return { r: rowIdx, c: cellIdx };
+      };
+
+      const clearSelection = () => {
+        selectedCells.forEach(td => td.classList.remove('cell-selected'));
+        selectedCells.clear();
+      };
+
+      const selectRange = (startTd, endTd) => {
+        clearSelection();
+        const s = getCellCoords(startTd), e = getCellCoords(endTd);
+        const r1 = Math.min(s.r, e.r), r2 = Math.max(s.r, e.r);
+        const c1 = Math.min(s.c, e.c), c2 = Math.max(s.c, e.c);
+        table.querySelectorAll('tbody tr').forEach(tr => {
+          if (tr.rowIndex < r1 || tr.rowIndex > r2) return;
+          Array.from(tr.cells).forEach(td => {
+            if (td.classList.contains('num')) return;
+            if (td.cellIndex >= c1 && td.cellIndex <= c2) {
+              td.classList.add('cell-selected');
+              selectedCells.add(td);
+            }
+          });
+        });
+      };
+
+      table.addEventListener('mousedown', e => {
+        const td = e.target.closest('tbody td:not(.num)');
+        if (!td) return;
+        if (e.button !== 0) return;
+        isDragging = true;
+        dragStart = td;
+        clearSelection();
+        td.classList.add('cell-selected');
+        selectedCells.add(td);
+        e.preventDefault();
+      });
+
+      table.addEventListener('mouseover', e => {
+        if (!isDragging || !dragStart) return;
+        const td = e.target.closest('tbody td:not(.num)');
+        if (!td) return;
+        selectRange(dragStart, td);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDragging) { isDragging = false; }
+      });
+
+      table.addEventListener('click', e => {
+        const inp = e.target.closest('input');
+        if (inp && selectedCells.size <= 1) { clearSelection(); }
+      });
+
+      const buildSelectionTSV = () => {
+        const coords = [];
+        selectedCells.forEach(td => { coords.push({ r: td.parentElement.rowIndex, c: td.cellIndex, td }); });
+        if (!coords.length) return '';
+        const r1 = Math.min(...coords.map(x => x.r)), r2 = Math.max(...coords.map(x => x.r));
+        const c1 = Math.min(...coords.map(x => x.c)), c2 = Math.max(...coords.map(x => x.c));
+        const grid = [];
+        for (let r = r1; r <= r2; r++) {
+          const row = [];
+          for (let c = c1; c <= c2; c++) {
+            const match = coords.find(x => x.r === r && x.c === c);
+            row.push(match ? match.td.querySelector('input')?.value || '' : '');
+          }
+          grid.push(row.join('\t'));
+        }
+        return grid.join('\n');
+      };
+
+      document.addEventListener('keydown', e => {
+        if (selectedCells.size === 0) return;
+        const active = document.activeElement;
+        const inTable = table.contains(active);
+        if (!inTable && active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
+
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+          e.preventDefault();
+          selectedCells.forEach(td => { const inp = td.querySelector('input'); if (inp) inp.value = ''; });
+          etmUpdateSteps();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+          const rows = buildSelectionTSV();
+          navigator.clipboard?.writeText(rows).catch(() => { });
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'x') {
+          const rows = buildSelectionTSV();
+          navigator.clipboard?.writeText(rows).catch(() => { });
+          selectedCells.forEach(td => { const inp = td.querySelector('input'); if (inp) inp.value = ''; });
+          etmUpdateSteps();
+        }
+      });
+    }
+
+    function handlePaste(e, prefix, rowIdx, colKey, maxRows, cols) {
+      const text = e.clipboardData.getData('text');
+      if (!text.includes('\t') && !text.includes('\n')) return;
+      e.preventDefault();
+      const rows = text.trim().split(/\r?\n/);
+      const colStart = cols.indexOf(colKey);
+      rows.forEach((row, ri) => {
+        const cells = row.split('\t');
+        cells.forEach((val, ci) => {
+          const r = rowIdx + ri, c = colStart + ci;
+          if (r > maxRows || c >= cols.length) return;
+          const el = document.getElementById(`${prefix}${r}${cols[c]}`);
+          if (el) el.value = val.trim();
+        });
+      });
+    }
+
+    // ─────── PHOTOS ───────
+    function buildPhotosSection() {
+      const sec = mkSec('Photos (2 slots — Slide 1)');
+      const grid = document.createElement('div'); grid.className = 'photo-grid';
+
+      [
+        { id: 'photo1', rId: 'rId3', label: 'Photo 1' },
+        { id: 'photo2', rId: 'rId4', label: 'Photo 2' }
+      ].forEach(slot => {
+        const div = document.createElement('div'); div.className = 'photo-slot'; div.id = 'ps_' + slot.id;
+        div.innerHTML = `<input type="file" accept="image/*" id="pf_${slot.id}"><div class="slot-placeholder">${icons.photo}<span>Upload Photo</span></div><img id="pi_${slot.id}" alt="${slot.label}"><div class="slot-label">${slot.label}</div><button type="button" class="remove-btn" id="prm_${slot.id}" tabindex="0">✕</button>`;
+        grid.appendChild(div);
+        requestAnimationFrame(() => {
+          document.getElementById('pf_' + slot.id)?.addEventListener('change', e => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+              PHOTOS[slot.id] = { dataUrl: ev.target.result, filename: file.name, rId: slot.rId };
+              document.getElementById('pi_' + slot.id).src = ev.target.result;
+              document.getElementById('ps_' + slot.id).classList.add('filled');
+              etmUpdateSteps();
+            };
+            reader.readAsDataURL(file);
+          });
+          const rmBtn = document.getElementById('prm_' + slot.id);
+          const rmA = e => { e.stopPropagation(); delete PHOTOS[slot.id]; document.getElementById('pi_' + slot.id).src = ''; document.getElementById('pf_' + slot.id).value = ''; document.getElementById('ps_' + slot.id).classList.remove('filled'); etmUpdateSteps(); };
+          rmBtn?.addEventListener('click', rmA); handleKeyClick(rmBtn, rmA);
+        });
+      });
+      sec.appendChild(grid);
+      formWrap.appendChild(sec);
+    }
+
+    // ─────── CLEAR FORM ───────
+    document.getElementById('btnClear').addEventListener('click', async () => {
+      if (!(await customConfirm('Clear all fields?', 'Yes, Clear'))) return;
+      // Clear all text inputs and textareas
+      formWrap.querySelectorAll('input[type=text],textarea').forEach(el => { el.value = ''; el.classList.remove('pre'); el.style.borderColor = ''; el.style.boxShadow = ''; });
+      // Clear hidden inputs (custom selects)
+      formWrap.querySelectorAll('input[type=hidden]').forEach(el => el.value = '');
+      // Reset custom select triggers
+      document.querySelectorAll('.cs-val').forEach(el => { el.textContent = 'Select…'; el.classList.add('empty'); });
+      document.querySelectorAll('.custom-select-trigger').forEach(el => { el.style.borderColor = ''; el.style.boxShadow = ''; });
+      // Reset date manual inputs and CAL state
+      document.querySelectorAll('input[id^="dm_"]').forEach(el => { el.value = ''; });
+      document.querySelectorAll('.dval').forEach(el => { el.textContent = 'Pick date'; el.classList.add('empty'); });
+      Object.keys(CAL).forEach(id => { if (CAL[id]) CAL[id].date = null; });
+      // Reset photos
+      ['photo1', 'photo2'].forEach(id => {
+        delete PHOTOS[id];
+        const img = document.getElementById('pi_' + id); if (img) img.src = '';
+        const inp = document.getElementById('pf_' + id); if (inp) inp.value = '';
+        document.getElementById('ps_' + id)?.classList.remove('filled');
+      });
+      // Restore pre-filled defaults
+      const defaults = { DLR_CD: 'N3235', DLR_NM: 'KHANNA AUTOMART PVT LTD', DTC: 'NA', ROM_ID: 'NA' };
+      Object.entries(defaults).forEach(([id, val]) => { const el = document.getElementById(id); if (el) { el.value = val; el.classList.add('pre'); } });
+      // Restore textarea prefills
+      const taDefaults = { RMRKS: 'Please review and do needful.', PHOTO_NOTE: 'NA' };
+      Object.entries(taDefaults).forEach(([id, val]) => { const el = document.getElementById(id); if (el) { el.value = val; el.classList.add('pre'); } });
+      // Reset PROB_NAT and DRV_PAT dropdowns
+      ['PROB_NAT', 'DRV_PAT'].forEach(id => {
+        const hidEl = document.getElementById(id); if (hidEl) hidEl.value = '';
+        const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = 'Select…'; lbl.classList.add('empty'); }
+        const trig = document.getElementById('cst_' + id); if (trig) { trig.style.borderColor = ''; trig.style.boxShadow = ''; }
+      });
+      closeAllPopups();
+      clearStatus();
+      etmUpdateSteps();
+    });
+
+    // ─────── STEPPER ───────
+    function etmUpdateSteps() {
+      const vin = document.getElementById('VIN')?.value?.trim();
+      const model = document.getElementById('MODEL')?.value?.trim();
+      const dlr = document.getElementById('DLR_CD')?.value?.trim() || document.getElementById('DLR_NM')?.value?.trim();
+
+      // Step 1 done: VIN + Model both filled
+      const s1done = !!(vin && model);
+
+      // Step 2 done: dealer filled + at least 1 service history row has any value
+      const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
+      let tableHasRow = false;
+      for (let i = 1; i <= 12 && !tableHasRow; i++) {
+        for (const col of shCols) {
+          const el = document.getElementById(`sh${i}${col}`);
+          if (el && el.value.trim()) { tableHasRow = true; break; }
+        }
+      }
+      const s2done = !!(dlr && tableHasRow);
+
+      // Step 3 done: at least 1 photo uploaded
+      const s3done = Object.keys(PHOTOS).length > 0;
+
+      // Scroll-based: which section is currently in view?
+      const sections = formWrap.querySelectorAll('.form-section');
+      let activeSecIdx = 0;
+      sections.forEach((sec, i) => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.55) activeSecIdx = i;
+      });
+
+      const s1active = activeSecIdx >= 0;
+      const s2active = activeSecIdx >= 1 || s2done;
+      const s3active = activeSecIdx >= 2 || s3done;
+
+      const steps = [
+        { done: s1done, active: s1active },
+        { done: s2done, active: s2active },
+        { done: s3done, active: s3active }
+      ];
+
+      steps.forEach((s, i) => {
+        const st = document.getElementById('etm-st' + (i + 1)), sn = document.getElementById('etm-sn' + (i + 1));
+        if (!st || !sn) return;
+        if (s.done) {
+          st.className = 'step done';
+          sn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+        } else {
+          st.className = 'step' + (s.active ? ' active' : '');
+          sn.textContent = i + 1;
+        }
+      });
+    }
+
+    // Hook scroll for stepper
+    window.addEventListener('scroll', etmUpdateSteps, { passive: true });
+
+    function collectData() {
+      const data = {};
+      // MODEL, PROB_NAT, DRV_PAT come from hidden inputs (custom selects)
+      ['VIN', 'KMS', 'ENG_TM', 'ROM_ID', 'DTC', 'DLR_CD', 'DLR_NM', 'COMPLAINT', 'DLR_STD', 'DLR_OBS', 'DLR_ACT', 'RMRKS', 'PHOTO_NOTE'].forEach(id => {
+        const el = document.getElementById(id); data[id] = el ? el.value.trim() : '';
+      });
+      // MODEL, PROB_NAT, DRV_PAT from select hidden inputs
+      ['MODEL', 'PROB_NAT', 'DRV_PAT'].forEach(id => {
+        const el = document.getElementById(id); data[id] = el ? el.value.trim() : '';
+      });
+      // Date fields (manual inputs with id dm_*)
+      document.querySelectorAll('input[id^="dm_"]').forEach(el => {
+        const key = el.id.replace('dm_', ''); data[el.id] = el.value.trim();
+      });
+      // Service history rows
+      const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
+      for (let i = 1; i <= 12; i++) {
+        shCols.forEach(col => {
+          const el = document.getElementById(`sh${i}${col}`);
+          data[`${col}${i}`] = el ? el.value.trim() : '';
+        });
+      }
+      return data;
+    }
+
+    // ─────── XML ESCAPE ───────
+    function xmlEsc(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    // ─────── INJECT & GENERATE PPTX ───────
+    btnInject.addEventListener('click', async () => {
+      if (!templateBuffer) { showStatus('Template not loaded.', 'error'); return; }
+      btnInject.disabled = true; btnInject.textContent = 'Generating…'; clearStatus();
+      try {
+        const data = collectData();
+
+        // Validate mandatory fields
+        const errors = [];
+        if (!data.VIN) {
+          errors.push('VIN Number');
+          const el = document.getElementById('VIN');
+          if (el) { el.style.borderColor = 'var(--danger-color)'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
+        } else {
+          const el = document.getElementById('VIN');
+          if (el) { el.style.borderColor = ''; el.style.boxShadow = ''; }
+        }
+        if (!data.MODEL) {
+          errors.push('Vehicle Model');
+          const trig = document.getElementById('cst_MODEL');
+          if (trig) { trig.style.borderColor = 'var(--danger-color)'; trig.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
+        } else {
+          const trig = document.getElementById('cst_MODEL');
+          if (trig) { trig.style.borderColor = ''; trig.style.boxShadow = ''; }
+        }
+        if (errors.length > 0) {
+          showStatus('⚠ Please fill in required fields: ' + errors.join(', '), 'error');
+          // Scroll to show error near button
+          document.getElementById('status').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          btnInject.disabled = false; btnInject.textContent = 'Generate PPTX'; return;
+        }
+
+        const zip = await JSZip.loadAsync(templateBuffer);
+
+        // ── Replace text placeholders in all slide XMLs ──
+        const replaceFn = xml => {
+          return xml.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
+            const v = data[key];
+            return xmlEsc((v === undefined || v === null || v === '') ? '' : v);
+          });
+        };
+
+        const slideFiles = Object.keys(zip.files).filter(p => p.match(/ppt\/slides\/slide\d+\.xml$/i));
+        for (const sf of slideFiles) {
+          let xml = await zip.files[sf].async('string');
+          if (xml.includes('{{')) xml = replaceFn(xml);
+          // Replace noAutofit with spAutoFit so text boxes expand to fit injected content
+          xml = xml.replace(/<a:noAutofit\/>/g, '<a:spAutoFit/>');
+          zip.file(sf, xml);
+        }
+
+        // ── Inject photos: overwrite existing media bytes — shape stretch/fill preserved ──
+        const photoMap = {
+          photo1: { mediaPath: 'ppt/media/image2.jpeg' },
+          photo2: { mediaPath: 'ppt/media/image3.jpeg' }
+        };
+
+        for (const [slotId, { mediaPath }] of Object.entries(photoMap)) {
+          const photo = PHOTOS[slotId];
+          if (!photo || !photo.dataUrl) continue;
+          // Convert dataUrl to Uint8Array
+          const b64 = photo.dataUrl.split(',')[1];
+          const bin = atob(b64);
+          const arr = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++)arr[i] = bin.charCodeAt(i);
+          // Detect mime and determine actual extension for Content_Types if needed
+          const mime = photo.dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+          // Overwrite the existing placeholder image file directly
+          zip.file(mediaPath, arr);
+          // If user uploaded a PNG/webp, also update content_types for that extension
+          if (mime !== 'image/jpeg' && mime !== 'image/jpg') {
+            const ext = mime === 'image/png' ? 'png' : mime === 'image/webp' ? 'webp' : 'jpg';
+            const ctPath = '[Content_Types].xml';
+            let ct = await zip.files[ctPath].async('string');
+            const ctStr = `Extension="${ext}" ContentType="${mime}"`;
+            if (!ct.includes(ctStr)) {
+              ct = ct.replace('</Types>', `<Default ${ctStr}/></Types>`);
+              zip.file(ctPath, ct);
+            }
+          }
+        }
+
+        // ── Generate output ──
+        const outBuf = await zip.generateAsync({
+          type: 'arraybuffer',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 6 }
+        });
+        const blob = new Blob([outBuf], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
+        const vinClean = (data.VIN || 'NOVIN').replace(/[^a-zA-Z0-9]/g, '');
+        const dcClean = (data.DLR_CD || 'N3235').replace(/[^a-zA-Z0-9]/g, '');
+        const fname = `${vinClean}_${dcClean}_ETM.pptx`;
+        saveAs(blob, fname);
+        showStatus('✓ Downloaded: ' + fname, 'success');
+        saveHistory(data);
+      } catch (err) { showStatus('Error: ' + err.message, 'error'); console.error(err); }
+      finally { btnInject.disabled = false; btnInject.textContent = 'Generate PPTX'; }
+    });
+
+    // ─────── HISTORY ───────
+    function saveHistory(entry) {
+      const key = entry.VIN; if (key) HISTORY = HISTORY.filter(h => h.VIN !== key);
+      HISTORY.unshift(entry); if (HISTORY.length > 50) HISTORY = HISTORY.slice(0, 50);
+      try { localStorage.setItem(HIST_KEY, JSON.stringify(HISTORY)); } catch (e) { }
+      renderHistory(historySearch.value);
+    }
+
+    async function deleteHistory(idx) {
+      HISTORY.splice(idx, 1);
+      try { localStorage.setItem(HIST_KEY, JSON.stringify(HISTORY)); } catch (e) { }
+      renderHistory(historySearch.value);
+    }
+
+    document.getElementById('btnHistoryClearAll').addEventListener('click', async () => {
+      if (!(await customConfirm('Clear all saved entries?', 'Yes, Clear All'))) return;
+      HISTORY = []; try { localStorage.removeItem(HIST_KEY); } catch (e) { } historySearch.value = ''; renderHistory();
+    });
+    historySearch.addEventListener('input', () => renderHistory(historySearch.value));
+
+    function renderHistory(filter = '') {
+      if (!HISTORY.length) { histList.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:10px;">No saved entries.</div>'; return; }
+      histList.innerHTML = '';
+      const q = filter.toLowerCase().trim();
+      let any = false;
+      HISTORY.forEach((entry, idx) => {
+        const primary = entry.VIN || 'Unknown';
+        const sub = [entry.MODEL, entry.DLR_CD].filter(Boolean).join(' · ');
+        if (q && !`${primary} ${sub}`.toLowerCase().includes(q)) return;
+        any = true;
+        const item = document.createElement('div'); item.className = 'hist-item'; item.setAttribute('tabindex', '0');
+        item.innerHTML = `<div class="hi-info"><div class="hi-name">${escHtml(primary)}</div><div class="hi-meta">${escHtml(sub)}</div></div><button type="button" class="hi-del" tabindex="0" title="Delete">${icons.close}</button>`;
+        const delBtn = item.querySelector('.hi-del');
+        const delA = async e => { e.stopPropagation(); if (!(await customConfirm('Delete this entry?', 'Delete'))) return; deleteHistory(idx); };
+        delBtn.addEventListener('click', delA); handleKeyClick(delBtn, delA);
+        const itemA = () => fillFromHistory(entry);
+        item.addEventListener('click', e => { if (e.target.closest('.hi-del')) return; itemA(); });
+        handleKeyClick(item, itemA);
+        histList.appendChild(item);
+      });
+      if (!any) histList.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:10px;">No matching entries.</div>';
+    }
+
+    function fillFromHistory(entry) {
+      setMode('form');
+      setTimeout(() => {
+        // Plain text fields
+        ['VIN', 'KMS', 'ENG_TM', 'ROM_ID', 'DTC', 'DLR_CD', 'DLR_NM', 'COMPLAINT', 'DLR_STD', 'DLR_OBS', 'DLR_ACT', 'RMRKS', 'PHOTO_NOTE'].forEach(id => {
           const el = document.getElementById(id);
-          if (el && entry.shared[id] !== undefined) {
-            el.value = entry.shared[id];
-            // Sync calendar for date field
-            if (id === 'kc-date' && entry.shared[id]) {
-              const parts = entry.shared[id].split('-');
-              if (parts.length === 3) {
-                const d = new Date(+parts[2], +parts[1] - 1, +parts[0]);
-                if (!isNaN(d)) {
-                  if (!_KC_CAL[id]) _KC_CAL[id] = {};
-                  Object.assign(_KC_CAL[id], { date: d, year: d.getFullYear(), month: d.getMonth(), view: 'days' });
-                  const di = document.getElementById('di_' + id);
-                  const dv = document.getElementById('dv_' + id);
-                  if (di) di.value = entry.shared[id];
-                  if (dv) { dv.textContent = entry.shared[id]; dv.classList.remove('empty'); }
-                }
-              }
+          if (el && entry[id] !== undefined) { el.value = entry[id]; el.classList.remove('pre'); }
+        });
+        // Restore PROB_NAT and DRV_PAT dropdowns
+        ['PROB_NAT', 'DRV_PAT'].forEach(id => {
+          if (!entry[id]) return;
+          const hidEl = document.getElementById(id); if (hidEl) hidEl.value = entry[id];
+          const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = entry[id]; lbl.classList.remove('empty'); }
+        });
+        // Restore MODEL select
+        if (entry.MODEL) {
+          const hidEl = document.getElementById('MODEL'); if (hidEl) hidEl.value = entry.MODEL;
+          const lbl = document.getElementById('csv_MODEL'); if (lbl) { lbl.textContent = entry.MODEL; lbl.classList.remove('empty'); }
+        }
+        // Service history
+        const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
+        for (let i = 1; i <= 12; i++) {
+          shCols.forEach(col => {
+            const el = document.getElementById(`sh${i}${col}`);
+            if (el && entry[`${col}${i}`] !== undefined) el.value = entry[`${col}${i}`];
+          });
+        }
+        // Restore date fields (manual inputs)
+        Object.keys(entry).filter(k => k.startsWith('dm_')).forEach(k => {
+          const el = document.getElementById(k);
+          if (el && entry[k] !== undefined) {
+            el.value = entry[k];
+            // Sync CAL state
+            const calId = k.replace('dm_', '');
+            if (entry[k] && entry[k].length === 10) {
+              const [dd, mm, yyyy] = entry[k].split('-').map(Number);
+              const d = new Date(yyyy, mm - 1, dd);
+              if (!isNaN(d) && CAL[calId]) { CAL[calId].date = d; CAL[calId].year = d.getFullYear(); CAL[calId].month = d.getMonth(); }
             }
           }
         });
-      }
-      kcSetMode('form');
-      setTimeout(() => {
-        // Restore rows
-        if (entry.rows && entry.rows.length) {
-          kcRows = entry.rows.map(r => ({ ...r }));
-          kcRenderRows();
-        }
-        kcScheduleSave();
-        toast('Entry loaded', 'ok');
+        closeAllPopups(); clearStatus();
       }, 100);
     }
 
-    async function kcClearAllHistory() {
-      if (!(await kcConfirm('Clear all saved entries?', 'Yes, Clear All'))) return;
-      KC_HISTORY = [];
-      try { localStorage.removeItem(KC_HIST_KEY); } catch (e) { }
-      kcRenderHistory();
-    }
+    function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function showStatus(m, t) { statusEl.textContent = m; statusEl.className = 'status' + (t ? ' ' + t : ''); }
+    function clearStatus() { statusEl.textContent = ''; statusEl.className = 'status'; }
 
-    function kcSetMode(mode) {
-      const panel = document.getElementById('kc-histPanel');
-      const formWrap = document.getElementById('kc-formWrap');
-      const actionsBar = document.getElementById('kc-actionsBar');
-      const valMsg = document.getElementById('kc-valMsg');
-      const isHistory = mode === 'history';
-      panel.classList.toggle('show', isHistory);
-      if (formWrap) formWrap.style.display = isHistory ? 'none' : 'block';
-      if (actionsBar) actionsBar.style.display = isHistory ? 'none' : 'flex';
-      if (valMsg) valMsg.style.display = isHistory ? 'none' : '';
-      document.getElementById('kc-modeForm')?.classList.toggle('active', mode === 'form');
-      document.getElementById('kc-modeHistory')?.classList.toggle('active', isHistory);
-      if (isHistory) {
-        kcRenderHistory(document.getElementById('kc-histSearch')?.value || '');
-        // Mobile pe keyboard na khule isliye autofocus nahi
+    // ─────── THEME + BACKUP/RESTORE ───────
+    window.addEventListener('message', event => {
+      if (event.data?.type === 'theme')
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      if (event.data?.type === 'backup-request') {
+        const payload = {};
+        try { const v = localStorage.getItem(HIST_KEY); if (v) payload[HIST_KEY] = v; } catch (e) { }
+        event.source.postMessage({ type: 'backup-response', tool: 'etm', data: payload }, '*');
       }
-    }
-    function kcSaveEntry() {
-      kcSaveHistory();
-      const btn = document.getElementById('kc-modeSave');
-      if (btn) { btn.classList.add('active'); setTimeout(() => btn.classList.remove('active'), 900); }
-      toast('Entry saved', 'ok');
-    }
-    function kcToggleHistory() { kcSetMode(document.getElementById('kc-histPanel').classList.contains('show') ? 'form' : 'history'); }
-    function kcUpdateSteps() {
-      const rname = document.getElementById('kc-rname')?.value?.trim();
-      const date = document.getElementById('kc-date')?.value?.trim();
-      const hasShared = !!(rname && date);
-      const hasVins = kcRows && kcRows.some(r => r.vin?.trim());
-      const ready = hasShared && hasVins;
-      const steps = [{ done: hasShared }, { done: hasVins }, { done: ready }];
-      steps.forEach((s, i) => {
-        const st = document.getElementById('kc-st' + (i + 1)), sn = document.getElementById('kc-sn' + (i + 1));
-        if (!st || !sn) return;
-        st.className = 'step ' + (s.done ? 'done' : i === 0 ? 'active' : '');
-        sn.innerHTML = s.done ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : (i + 1);
-      });
-    }
-    function _kcEsc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const srch = document.getElementById('kc-histSearch');
-      if (srch) srch.addEventListener('input', () => kcRenderHistory(srch.value));
+      if (event.data?.type === 'restore-data' && event.data.tool === 'etm' && event.data.data) {
+        Object.entries(event.data.data).forEach(([k, v]) => { try { localStorage.setItem(k, v); } catch (e) { } });
+        try { HISTORY = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { }
+        renderHistory();
+      }
     });
-    // ── End Saved Entries History ──
-    let kcRows = [];
-
-    const hyundaiModels = [
-      'Hyundai Creta Electric', 'Hyundai Alcazar', 'Hyundai Creta', 'Hyundai Exter',
-      'Hyundai Verna', 'Hyundai Ioniq 5', 'Hyundai Tucson', 'Hyundai i20 N Line',
-      'Hyundai i20', 'Hyundai Venue N Line', 'Hyundai Venue', 'Hyundai Aura',
-      'Hyundai Grand i10 NIOS', 'Hyundai Grand i10', 'Hyundai i10', 'Hyundai Xcent',
-      'Hyundai Elite i20', 'Hyundai Active i20', 'Hyundai Santro', 'Hyundai Santro Xing',
-      'Hyundai Eon', 'Hyundai Accent', 'Hyundai Elantra', 'Hyundai Sonata', 'Hyundai Santa Fe'
-    ];
-
-    function kcRowHTML(i, row = {}) {
-      const modelVal = row.model || '';
-      const modelLabel = modelVal || 'Select Model…';
-      const modelEmpty = !modelVal;
-      const opts = hyundaiModels.map(m => `<div class="cs-opt" data-val="${m}" tabindex="0">${m}</div>`).join('');
-      return `<div class="vrow" id="kcrow-${i}">
-    <div class="vrow-num">VEHICLE ${i + 1}</div>
-    <button class="vrow-rm" onclick="kcRemoveRow(${i})" title="Remove">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="fg c3">
-      <div class="field s2"><label>Model</label>
-        <div class="cs-wrap">
-          <button type="button" class="cs-trigger kr-model-btn" tabindex="0">
-            <span class="cs-val${modelEmpty ? ' empty' : ''}">${_kcEsc(modelLabel)}</span>
-            <span class="cs-arr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
-          </button>
-          <div class="cs-opts">${opts}</div>
-          <input type="hidden" class="kr-model" value="${_kcEsc(modelVal)}">
-        </div>
-      </div>
-      <div class="field"><label>Mileage (km)</label><input type="number" class="kr-mileage" placeholder="e.g. 76620" value="${row.mileage || ''}"></div>
-      <div class="field s2"><label>VIN <span class="req">*</span></label><input type="text" class="kr-vin" placeholder="17-char VIN" style="font-family:var(--mono);font-size:12.5px;" value="${row.vin || ''}"></div>
-      <div class="field"><label>RO No.</label><input type="text" class="kr-ro" placeholder="e.g. R202400947" value="${row.ro || ''}"></div>
-      <div class="field s3"><label>Key Pin Code / Key Number</label><input type="text" class="kr-keycode" placeholder="Enter key pin code or key number" style="font-family:var(--mono);letter-spacing:.5px;" value="${row.keycode || ''}"></div>
-    </div>
-  </div>`;
-    }
-
-    function kcRenderRows() {
-      const c = document.getElementById('kc-rows');
-      if (!c) return;
-      c.innerHTML = kcRows.map((r, i) => kcRowHTML(i, r)).join('');
-      c.querySelectorAll('input:not([type=hidden])').forEach(el => el.addEventListener('input', () => { kcReadRows(); kcScheduleSave(); }));
-      // Init custom model selects
-      c.querySelectorAll('.cs-wrap').forEach(wrap => {
-        const btn = wrap.querySelector('.cs-trigger');
-        const opts = wrap.querySelector('.cs-opts');
-        const val = wrap.querySelector('.kr-model');
-        const lbl = wrap.querySelector('.cs-val');
-        const toggle = e => {
-          e.stopPropagation();
-          const isOpen = opts.classList.contains('open');
-          document.querySelectorAll('.cs-opts.open').forEach(o => o.classList.remove('open'));
-          document.querySelectorAll('.cs-trigger.open').forEach(o => o.classList.remove('open'));
-          if (!isOpen) { opts.classList.add('open'); btn.classList.add('open'); }
-        };
-        btn.addEventListener('click', toggle);
-        btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(e); } });
-        opts.querySelectorAll('.cs-opt').forEach(opt => {
-          const pick = e => {
-            e.stopPropagation();
-            const v = opt.getAttribute('data-val');
-            lbl.textContent = v; lbl.classList.remove('empty');
-            val.value = v;
-            opts.classList.remove('open'); btn.classList.remove('open');
-            kcReadRows(); kcScheduleSave();
-          };
-          opt.addEventListener('click', pick);
-          opt.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(e); } });
-        });
-      });
-    }
-
-    function kcReadRows() {
-      const rows = document.querySelectorAll('#kc-rows .vrow');
-      kcRows = Array.from(rows).map(row => ({
-        model: row.querySelector('.kr-model')?.value.trim() || '',
-        vin: row.querySelector('.kr-vin')?.value.trim() || '',
-        mileage: row.querySelector('.kr-mileage')?.value.trim() || '',
-        ro: row.querySelector('.kr-ro')?.value.trim() || '',
-        keycode: row.querySelector('.kr-keycode')?.value.trim() || ''
-      }));
-    }
-
-    function kcAddRow() {
-      kcReadRows();
-      kcRows.push({ model: '', vin: '', mileage: '', ro: '', keycode: '' });
-      kcRenderRows();
-      kcScheduleSave();
-      const rows = document.querySelectorAll('#kc-rows .vrow');
-      rows[rows.length - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    async function kcRemoveRow(i) {
-      kcReadRows();
-      if (kcRows.length <= 1) { toast('At least one vehicle required', 'info'); return; }
-      if (!(await kcConfirm('Remove this vehicle?', 'Remove'))) return;
-      kcRows.splice(i, 1);
-      kcRenderRows();
-      kcScheduleSave();
-    }
-
-    let kcSaveTimer;
-    function kcScheduleSave() {
-      clearTimeout(kcSaveTimer);
-      kcSaveTimer = setTimeout(() => { kcSaveData(); kcUpdateSteps(); }, 600);
-      kcUpdateSteps();
-    }
-
-    function kcSaveData() {
-      kcReadRows();
-      const shared = {};
-      KC_SHARED_IDS.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) shared[id] = el.value;
-      });
-      try {
-        localStorage.setItem(KC_SAVE_KEY, JSON.stringify({ shared, rows: kcRows }));
-      } catch (e) { }
-      const el = document.getElementById('kc-save-status');
-      if (el) el.textContent = 'Saved ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function kcRestoreData() {
-      try {
-        const raw = localStorage.getItem(KC_SAVE_KEY);
-        if (!raw) return false;
-        const data = JSON.parse(raw);
-        if (data.shared) KC_SHARED_IDS.forEach(id => {
-          const el = document.getElementById(id);
-          if (el && data.shared[id] !== undefined) {
-            el.value = data.shared[id];
-            // Sync calendar display if it's the date field
-            if (id === 'kc-date' && data.shared[id]) {
-              const parts = data.shared[id].split('-');
-              if (parts.length === 3) {
-                const d = new Date(+parts[2], +parts[1] - 1, +parts[0]);
-                if (!isNaN(d)) {
-                  if (!_KC_CAL['kc-date']) _KC_CAL['kc-date'] = { date: null, view: 'days', year: d.getFullYear(), month: d.getMonth() };
-                  _KC_CAL['kc-date'].date = d; _KC_CAL['kc-date'].year = d.getFullYear(); _KC_CAL['kc-date'].month = d.getMonth();
-                  const di = document.getElementById('di_kc-date');
-                  const dv = document.getElementById('dv_kc-date');
-                  if (di) di.value = data.shared[id];
-                  if (dv) { dv.textContent = data.shared[id]; dv.classList.remove('empty'); }
-                }
-              }
-            }
-          }
-        });
-        if (data.rows && data.rows.length) kcRows = data.rows;
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    async function clearKcSaved() {
-      if (!(await kcConfirm('Clear all form data?', 'Yes, Clear'))) return;
-      try { localStorage.removeItem(KC_SAVE_KEY); } catch (e) { }
-      // Reset shared fields to defaults
-      const defaults = { 'kc-dcode': 'N3235', 'kc-dname': 'KHANNA AUTOMART PVT. LTD.', 'kc-rname': 'NARENDRA KUMAR', 'kc-rcontact': '8979040022', 'kc-tpsm': '' };
-      KC_SHARED_IDS.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = defaults[id] || '';
-      });
-      // Reset date
-      const t = new Date();
-      _KC_CAL['kc-date'] = { date: t, view: 'days', year: t.getFullYear(), month: t.getMonth() };
-      const val = _kcFmt(t);
-      const di = document.getElementById('di_kc-date');
-      const hidDate = document.getElementById('kc-date');
-      if (di) di.value = val;
-      if (hidDate) hidDate.value = val;
-      // Reset rows
-      kcRows = [{ model: '', vin: '', mileage: '', ro: '', keycode: '' }];
-      kcRenderRows();
-      kcUpdateSteps();
-      const subEl = document.getElementById('kc-emailSubject');
-      const bodyEl = document.getElementById('kc-emailBody');
-      if (subEl) subEl.value = '';
-      if (bodyEl) bodyEl.innerHTML = '';
-      const sendBtn = document.getElementById('kc-sendEmailBtn');
-      if (sendBtn) sendBtn.disabled = true;
-      const el = document.getElementById('kc-save-status');
-      if (el) { el.textContent = 'Cleared'; setTimeout(() => { el.textContent = ''; }, 2000); }
-      toast('Form cleared', 'info');
-    }
-
-    // ── Custom Calendar Logic ──
-    const _KC_CAL = {};
-    const _KC_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const _kcPad = n => String(n).padStart(2, '0');
-    const _kcFmt = d => _kcPad(d.getDate()) + '-' + _kcPad(d.getMonth() + 1) + '-' + d.getFullYear();
-    const _kcIcons = {
-      left: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>`,
-      right: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`
-    };
-    // Keyboard helper: fire action on Enter or Space (just like a click)
-    function _kcHandleKey(el, action) {
-      el.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(e); }
-      });
-    }
-
-    function _kcCloseAllCals() {
-      document.querySelectorAll('.cal-pop.open').forEach(p => p.classList.remove('open'));
-      document.querySelectorAll('.date-trigger.active').forEach(t => t.classList.remove('active'));
-    }
-    function _kcRenderCal(id) {
-      const st = _KC_CAL[id], pop = document.getElementById('cp_' + id);
-      if (!pop || !st) return;
-      const y = st.year, m = st.month, now = new Date();
-      if (st.view === 'years') {
-        const sy = y - 7;
-        let h = `<div class="cal-nav"><button type="button" data-cid="${id}" data-dir="-15">${_kcIcons.left}</button><span class="mnth">Select Year</span><button type="button" data-cid="${id}" data-dir="15">${_kcIcons.right}</button></div><div class="cal-grid years">`;
-        for (let i = 0; i < 15; i++) h += `<div class="cd${sy + i === y ? ' sel' : ''}" data-cid="${id}" data-y="${sy + i}" tabindex="0">${sy + i}</div>`;
-        h += '</div>'; pop.innerHTML = h;
-        pop.querySelectorAll('button[data-cid]').forEach(b => {
-          const act = e => { e.stopPropagation(); _KC_CAL[b.dataset.cid].year += parseInt(b.dataset.dir); _kcRenderCal(b.dataset.cid); };
-          b.addEventListener('click', act);
-          _kcHandleKey(b, act);
-        });
-        pop.querySelectorAll('.cd[data-y]').forEach(el => {
-          const act = e => { e.stopPropagation(); _KC_CAL[el.dataset.cid].year = parseInt(el.dataset.y); _KC_CAL[el.dataset.cid].view = 'days'; _kcRenderCal(el.dataset.cid); };
-          el.addEventListener('click', act);
-          _kcHandleKey(el, act);
-        });
-      } else {
-        const fd = new Date(y, m, 1).getDay(), dim = new Date(y, m + 1, 0).getDate(), prev = new Date(y, m, 0).getDate();
-        let h = `<div class="cal-nav"><button type="button" data-cid="${id}" data-dir="-1">${_kcIcons.left}</button><span class="mnth ts" data-cid="${id}" tabindex="0">${_KC_MONTHS[m]} ${y}</span><button type="button" data-cid="${id}" data-dir="1">${_kcIcons.right}</button></div><div class="cal-grid">${['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(x => `<div class="dn">${x}</div>`).join('')}`;
-        for (let i = 0; i < fd; i++) h += `<div class="cd om">${prev - fd + 1 + i}</div>`;
-        for (let d = 1; d <= dim; d++) {
-          const iT = d === now.getDate() && m === now.getMonth() && y === now.getFullYear();
-          const iS = st.date && d === st.date.getDate() && m === st.date.getMonth() && y === st.date.getFullYear();
-          h += `<div class="cd${iT ? ' today' : ''}${iS ? ' sel' : ''}" data-cid="${id}" data-d="${d}" tabindex="0">${d}</div>`;
-        }
-        h += '</div>'; pop.innerHTML = h;
-        pop.querySelectorAll('button[data-cid]').forEach(b => {
-          const act = e => { e.stopPropagation(); const s = _KC_CAL[b.dataset.cid], dir = parseInt(b.dataset.dir); s.month += dir; if (s.month < 0) { s.month = 11; s.year--; } if (s.month > 11) { s.month = 0; s.year++; } _kcRenderCal(b.dataset.cid); };
-          b.addEventListener('click', act);
-          _kcHandleKey(b, act);
-        });
-        const ts = pop.querySelector('.ts');
-        if (ts) {
-          const tsAct = e => { e.stopPropagation(); _KC_CAL[ts.dataset.cid].view = 'years'; _kcRenderCal(ts.dataset.cid); };
-          ts.addEventListener('click', tsAct);
-          _kcHandleKey(ts, tsAct);
-        }
-        pop.querySelectorAll('.cd:not(.om)').forEach(el => {
-          const act = e => {
-            e.stopPropagation();
-            const s = _KC_CAL[el.dataset.cid]; s.date = new Date(s.year, s.month, parseInt(el.dataset.d));
-            const di = document.getElementById('di_' + el.dataset.cid);
-            const dv = document.getElementById('dv_' + el.dataset.cid);
-            const hid = document.getElementById(el.dataset.cid);
-            const val = _kcFmt(s.date);
-            if (di) di.value = val;
-            if (dv) { dv.textContent = val; dv.classList.remove('empty'); }
-            if (hid) { hid.value = val; hid.dispatchEvent(new Event('change')); }
-            _kcCloseAllCals(); _kcRenderCal(el.dataset.cid);
-          };
-          el.addEventListener('click', act);
-          _kcHandleKey(el, act);
-        });
-        let wt; pop.addEventListener('wheel', e => { e.preventDefault(); if (wt) return; wt = setTimeout(() => { wt = null; }, 150); const s = _KC_CAL[id]; s.month += e.deltaY > 0 ? 1 : -1; if (s.month > 11) { s.month = 0; s.year++; } else if (s.month < 0) { s.month = 11; s.year--; } _kcRenderCal(id); }, { passive: false });
-      }
-    }
-    function _kcOpenCal(id) {
-      _kcCloseAllCals();
-      if (!_KC_CAL[id]) _KC_CAL[id] = { date: null, view: 'days', year: new Date().getFullYear(), month: new Date().getMonth() };
-      const ref = _KC_CAL[id].date || new Date();
-      _KC_CAL[id].year = ref.getFullYear(); _KC_CAL[id].month = ref.getMonth(); _KC_CAL[id].view = 'days';
-      _kcRenderCal(id);
-      const pop = document.getElementById('cp_' + id);
-      const dt = document.getElementById('dt_' + id);
-      if (pop && dt) {
-        const rect = dt.getBoundingClientRect();
-        pop.style.top = (rect.bottom + 6) + 'px';
-        pop.style.left = rect.left + 'px';
-      }
-      pop?.classList.add('open');
-      dt?.classList.add('active');
-    }
-    function _kcInitCal(id) {
-      _KC_CAL[id] = { date: null, view: 'days', year: new Date().getFullYear(), month: new Date().getMonth() };
-      const dt = document.getElementById('dt_' + id);
-      if (dt) {
-        const dtAct = e => { e.stopPropagation(); document.getElementById('cp_' + id)?.classList.contains('open') ? _kcCloseAllCals() : _kcOpenCal(id); };
-        dt.addEventListener('click', dtAct);
-        _kcHandleKey(dt, dtAct);
-      }
-    }
-    document.addEventListener('click', _kcCloseAllCals);
-    document.addEventListener('click', () => {
-      _kcCloseAllCals();
-      document.querySelectorAll('.cs-opts.open').forEach(o => o.classList.remove('open'));
-      document.querySelectorAll('.cs-trigger.open').forEach(o => o.classList.remove('open'));
-    });
-    window.addEventListener('scroll', _kcCloseAllCals, true);
-    window.addEventListener('resize', _kcCloseAllCals);
-    // ── End Calendar Logic ──
-
-    function kcSetDefaultDate() {
-      const hid = document.getElementById('kc-date');
-      const t = new Date();
-      if (!_KC_CAL['kc-date']) _KC_CAL['kc-date'] = { date: null, view: 'days', year: t.getFullYear(), month: t.getMonth() };
-      if (!_KC_CAL['kc-date'].date) {
-        _KC_CAL['kc-date'].date = t; _KC_CAL['kc-date'].year = t.getFullYear(); _KC_CAL['kc-date'].month = t.getMonth();
-        const val = _kcFmt(t);
-        const di = document.getElementById('di_kc-date');
-        if (di) di.value = val;
-        if (hid) hid.value = val;
-      }
-      // Wire manual date input
-      const dt = document.getElementById('dt_kc-date');
-      const di = document.getElementById('di_kc-date');
-      const ico = document.getElementById('dico_kc-date');
-      if (di) {
-        di.addEventListener('input', () => {
-          const v = di.value.trim();
-          if (/^\d{2}-\d{2}-\d{4}$/.test(v)) {
-            const p = v.split('-'); const d = new Date(+p[2], +p[1] - 1, +p[0]);
-            if (!isNaN(d)) {
-              if (!_KC_CAL['kc-date']) _KC_CAL['kc-date'] = {};
-              Object.assign(_KC_CAL['kc-date'], { date: d, year: d.getFullYear(), month: d.getMonth(), view: 'days' });
-              const hid = document.getElementById('kc-date');
-              if (hid) { hid.value = v; hid.dispatchEvent(new Event('change')); }
-            }
-          }
-          kcScheduleSave();
-        });
-        di.addEventListener('focus', () => { if (dt) { dt.style.borderColor = 'var(--accent)'; dt.style.boxShadow = '0 0 0 3px var(--accent-s)'; } });
-        di.addEventListener('blur', () => { if (dt) { dt.style.borderColor = ''; dt.style.boxShadow = ''; } });
-      }
-      if (ico) {
-        ico.addEventListener('click', e => {
-          e.stopPropagation();
-          const isOpen = document.getElementById('cp_kc-date')?.classList.contains('open');
-          if (isOpen) _kcCloseAllCals(); else _kcOpenCal('kc-date');
-        });
-      }
-      if (dt) {
-        dt.addEventListener('click', e => {
-          if (ico && !ico.contains(e.target) && e.target !== ico) di?.focus();
-        });
-      }
-    }
-
-    function initKcForm() {
-      if (!kcRows.length) kcRows = [{ model: '', vin: '', mileage: '', ro: '', keycode: '' }];
-      _kcInitCal('kc-date');
-      kcSetDefaultDate();
-      const restored = kcRestoreData();
-      if (!restored) kcSetDefaultDate();
-      kcRenderRows();
-      const el = document.getElementById('kc-save-status');
-      if (restored && el) el.textContent = 'Draft restored';
-      KC_SHARED_IDS.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.addEventListener('input', kcScheduleSave);
-        el.addEventListener('change', kcScheduleSave);
-      });
-    }
-
-    async function exportKeyCode() {
-      kcReadRows();
-      const validRows = kcRows.filter(r => r.vin.trim());
-      const rnameEl = document.getElementById('kc-rname');
-      const rname = rnameEl?.value.trim();
-      let hasErr = false;
-      if (!validRows.length) {
-        toast('At least one VIN is required', 'err');
-        hasErr = true;
-      }
-      if (!rname) {
-        if (rnameEl) { rnameEl.style.borderColor = '#ef4444'; rnameEl.style.boxShadow = '0 0 0 3px rgba(239,68,68,.15)'; }
-        toast('Requester Name is required', 'err');
-        hasErr = true;
-      } else {
-        if (rnameEl) { rnameEl.style.borderColor = ''; rnameEl.style.boxShadow = ''; }
-      }
-      if (hasErr) {
-        const vMsg = document.getElementById('kc-valMsg');
-        const vTxt = document.getElementById('kc-valText');
-        if (vTxt) vTxt.textContent = !validRows.length && !rname ? 'Please fill: VIN and Requester Name' : !validRows.length ? 'Please fill: At least one VIN' : 'Please fill: Requester Name';
-        if (vMsg) { vMsg.style.display = 'flex'; vMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-        return;
-      }
-      document.getElementById('kc-valMsg')?.style && (document.getElementById('kc-valMsg').style.display = 'none');
-
-      const btn = document.getElementById('kc-exportBtn');
-      btn.disabled = true;
-      showLoader(true);
-
-      try {
-        if (typeof ExcelJS === 'undefined') {
-          await new Promise((res, rej) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
-            s.onload = res;
-            s.onerror = rej;
-            document.head.appendChild(s);
-          });
-        }
-
-        const g = id => document.getElementById(id)?.value.trim() || '';
-        const date = g('kc-date'), dcode = g('kc-dcode'), dname = g('kc-dname');
-        const rcontact = g('kc-rcontact'), tpsm = g('kc-tpsm');
-
-        const HEADERS = ["S. No.", "Date", "Dealer Code", "Dealer Name", "Model", "VIN", "Mileage", "Ro No.", "Requester Name", "Requester Contact No.", "TPSM Name", "Key Pin Code or Key Number"];
-        const WIDTHS = [6, 12, 13, 28, 22, 21, 10, 14, 17, 22, 14, 26];
-
-        const wb = new ExcelJS.Workbook();
-        const sheetName = (dcode || 'KeyCode').substring(0, 31);
-        const ws = wb.addWorksheet(sheetName);
-
-        ws.columns = WIDTHS.map((w, i) => ({ header: '', key: 'c' + i, width: w }));
-
-        const hdrRow = ws.addRow(HEADERS);
-        hdrRow.height = 30;
-        hdrRow.eachCell(cell => {
-          cell.font = { bold: true, size: 11, color: { argb: 'FFFFFFFF' } };
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF00A550' } };
-          cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
-          cell.border = {
-            top: { style: 'thin', color: { argb: 'FF888888' } },
-            bottom: { style: 'thin', color: { argb: 'FF888888' } },
-            left: { style: 'thin', color: { argb: 'FF888888' } },
-            right: { style: 'thin', color: { argb: 'FF888888' } }
-          };
-        });
-
-        validRows.forEach((row, ri) => {
-          const vals = [
-            ri + 1, date, dcode, dname,
-            row.model, row.vin,
-            row.mileage ? parseInt(row.mileage) : '',
-            row.ro, rname, rcontact, tpsm, row.keycode
-          ];
-          const dataRow = ws.addRow(vals);
-          dataRow.height = 20;
-          dataRow.eachCell({ includeEmpty: true }, cell => {
-            cell.font = { size: 11 };
-            cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
-            cell.border = {
-              top: { style: 'thin', color: { argb: 'FFCCCCCC' } },
-              bottom: { style: 'thin', color: { argb: 'FFCCCCCC' } },
-              left: { style: 'thin', color: { argb: 'FFCCCCCC' } },
-              right: { style: 'thin', color: { argb: 'FFCCCCCC' } }
-            };
-          });
-        });
-
-        const buf = await wb.xlsx.writeBuffer();
-        const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const vinList = validRows.map(r => r.vin).join(',');
-        a.download = `${vinList}_${dcode || 'DEALER'}.xlsx`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        toast(`Excel downloaded — ${validRows.length} vehicle(s)`, 'ok');
-        kcSaveHistory();
-
-        // Populate Email Card fields
-        const emailVinList = validRows.map(r => r.vin).join(', ');
-        const emailSubject = `Request for Key Teaching Code – Vehicle No. ${emailVinList} | Dealer Code: ${dcode}`;
-        const emailBody = `<b>Dear Madam,</b>
-
-Kindly provide the Key Teaching Code for the following vehicle:
-
-<b>Dealer Code:</b> ${dcode}
-<b>VIN:</b> ${emailVinList}
-
-Your prompt assistance in this matter would be highly appreciated. Please find attached filled format.
-
-Thank you.
-
-<b>Kind Regards,
-${rname}
-Mob: ${rcontact}
-${dname} – ${dcode}
-Manglore Road, Near Godavari Hotel,
-Roorkee – 247667
-Email: service@ukhyundai.in</b>`;
-
-        const subEl = document.getElementById('kc-emailSubject');
-        const bodyEl = document.getElementById('kc-emailBody');
-        const cardEl = document.getElementById('kc-emailCard');
-        if (subEl) subEl.value = emailSubject;
-        if (bodyEl) bodyEl.innerHTML = emailBody.replace(/\n/g, '<br>');
-        if (cardEl) cardEl.style.display = 'block';
-        const sendBtn = document.getElementById('kc-sendEmailBtn');
-        if (sendBtn) sendBtn.disabled = false;
-      } catch (err) {
-        toast('Export error: ' + err.message, 'err');
-        console.error(err);
-      } finally {
-        showLoader(false);
-        btn.disabled = false;
-      }
-    }
-
-    function kcSendEmail() {
-      const recipient = "cro2service@hmil.net";
-      const subject = document.getElementById('kc-emailSubject').value;
-      const bodyEl = document.getElementById('kc-emailBody');
-      const bodyText = bodyEl.innerText || bodyEl.textContent;
-      window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
-    }
-
-    function kcCopySubject() {
-      const el = document.getElementById('kc-emailSubject');
-      if (el) {
-        el.select();
-        navigator.clipboard.writeText(el.value);
-        toast('Subject copied', 'ok');
-      }
-    }
-    function kcCopyEmail() {
-      const el = document.getElementById('kc-emailBody');
-      if (el) {
-        const plainText = el.innerText || el.textContent;
-        const htmlText = el.innerHTML;
-
-        const blobPlain = new Blob([plainText], { type: 'text/plain' });
-        const blobHtml = new Blob([htmlText], { type: 'text/html' });
-
-        try {
-          const data = [new ClipboardItem({
-            'text/plain': blobPlain,
-            'text/html': blobHtml
-          })];
-          navigator.clipboard.write(data).then(() => {
-            toast('Email body copied with formatting', 'ok');
-          }).catch(err => {
-            navigator.clipboard.writeText(plainText);
-            toast('Email body copied', 'ok');
-          });
-        } catch (e) {
-          navigator.clipboard.writeText(plainText);
-          toast('Email body copied', 'ok');
-        }
-      }
-    }
-
-    let tt;
-    function toast(msg, type) {
-      const icons = {
-        ok: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
-        err: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
-        info: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+    // ─────── PAGE JUMPERS ───────
+    (() => {
+      const pjTop = document.getElementById('pjTop');
+      const pjBot = document.getElementById('pjBot');
+      let hideTimer = null;
+      const showJumpers = () => {
+        const sh = document.documentElement.scrollHeight, wh = window.innerHeight;
+        const scrollable = sh > wh + 20;
+        if (!scrollable) { pjTop.classList.remove('vis'); pjBot.classList.remove('vis'); return; }
+        const st = window.scrollY;
+        const nearTop = st < 60;
+        const nearBottom = st + wh > sh - 60;
+        pjTop.classList.toggle('vis', !nearTop);
+        pjBot.classList.toggle('vis', !nearBottom);
       };
-      const el = document.getElementById("toast");
-      el.className = "show " + (type || "info");
-      el.innerHTML = (icons[type] || icons.info) + msg;
-      clearTimeout(tt);
-      tt = setTimeout(() => { el.className = ""; }, 3500);
-    }
-
-    function showLoader(s) {
-      document.getElementById("loader").className = s ? "show" : "";
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      initKcForm();
-      // ── Page Jumpers (AGM pattern) ──
-      (function () {
-        const jumperHTML = `<div class="page-jumper" id="pageJumper">
-          <button class="pj-btn hidden" id="pjTop" title="Go to top" tabindex="0" aria-label="Scroll to top">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-          </button>
-          <button class="pj-btn hidden" id="pjBottom" title="Go to bottom" tabindex="0" aria-label="Scroll to bottom">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>`;
-        document.body.insertAdjacentHTML('beforeend', jumperHTML);
-        const topBtn = document.getElementById('pjTop');
-        const botBtn = document.getElementById('pjBottom');
-        let hideTimer = null;
-        function showJumpers() {
-          const scrollTop = window.scrollY || document.documentElement.scrollTop;
-          const scrollHeight = document.documentElement.scrollHeight;
-          const clientHeight = window.innerHeight;
-          const isScrollable = scrollHeight > clientHeight + 50;
-          const nearTop = scrollTop < 120;
-          const nearBottom = scrollTop + clientHeight > scrollHeight - 120;
-          topBtn.classList.toggle('hidden', nearTop || !isScrollable);
-          botBtn.classList.toggle('hidden', nearBottom || !isScrollable);
+      const scheduleHide = () => {
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => { pjTop.classList.remove('vis'); pjBot.classList.remove('vis'); }, 2000);
+      };
+      window.addEventListener('scroll', () => { showJumpers(); scheduleHide(); }, { passive: true });
+      window.addEventListener('load', showJumpers);
+      function fastScrollTo(targetY) {
+        const startY = window.scrollY || document.documentElement.scrollTop;
+        const distance = targetY - startY;
+        if (Math.abs(distance) < 2) {
+          window.scrollTo(0, targetY);
+          return;
         }
-        function scheduleHide() {
-          clearTimeout(hideTimer);
-          hideTimer = setTimeout(() => { topBtn.classList.add('hidden'); botBtn.classList.add('hidden'); }, 2000);
-        }
-        function onScroll() { showJumpers(); scheduleHide(); }
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', () => { showJumpers(); }, { passive: true });
-        setTimeout(showJumpers, 300);
-        function fastScrollTo(targetY) {
-          const startY = window.scrollY || document.documentElement.scrollTop;
-          const distance = targetY - startY;
-          if (Math.abs(distance) < 2) {
+        const duration = 100;
+        let startTime = null;
+        function animate(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const progress = timestamp - startTime;
+          const t = Math.min(progress / duration, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          window.scrollTo(0, startY + distance * ease);
+          if (progress < duration) {
+            requestAnimationFrame(animate);
+          } else {
             window.scrollTo(0, targetY);
-            return;
           }
-          const duration = 100;
-          let startTime = null;
-          function animate(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = timestamp - startTime;
-            const t = Math.min(progress / duration, 1);
-            const ease = 1 - Math.pow(1 - t, 3);
-            window.scrollTo(0, startY + distance * ease);
-            if (progress < duration) {
-              requestAnimationFrame(animate);
-            } else {
-              window.scrollTo(0, targetY);
-            }
-          }
-          requestAnimationFrame(animate);
         }
-        topBtn.addEventListener('click', () => {
-          const target = Math.max(0, (window.scrollY || document.documentElement.scrollTop) - window.innerHeight * 0.85);
-          fastScrollTo(target);
-        });
-        botBtn.addEventListener('click', () => {
-          const target = Math.min(document.documentElement.scrollHeight, (window.scrollY || document.documentElement.scrollTop) + window.innerHeight * 0.85);
-          fastScrollTo(target);
-        });
-        [topBtn, botBtn].forEach(b => b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } }));
-      })();
-    });
+        requestAnimationFrame(animate);
+      }
+      pjTop.addEventListener('click', () => {
+        const target = Math.max(0, (window.scrollY || document.documentElement.scrollTop) - window.innerHeight * 0.85);
+        fastScrollTo(target);
+      });
+      pjBot.addEventListener('click', () => {
+        const target = Math.min(document.documentElement.scrollHeight, (window.scrollY || document.documentElement.scrollTop) + window.innerHeight * 0.85);
+        fastScrollTo(target);
+      });
+    })();
+
+    window.parent.postMessage({ type: 'requestTheme' }, '*');
   </script>
 </body>
 
