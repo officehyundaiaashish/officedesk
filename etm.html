@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AGM Form</title>
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <title>PWA Regular</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
@@ -59,7 +60,7 @@
     }
 
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg-page);
       color: var(--text-main);
       min-height: 100vh;
@@ -134,6 +135,7 @@
 
     .step.active {
       border-color: var(--accent-bg);
+      box-shadow: 0 0 0 2px var(--focus-ring);
     }
 
     .step-n {
@@ -150,7 +152,11 @@
       flex-shrink: 0;
     }
 
-    .step.done .step-n,
+    .step.done .step-n {
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
     .step.active .step-n {
       background: var(--accent-bg);
       color: var(--accent-text);
@@ -202,10 +208,6 @@
       cursor: pointer;
       transition: all .18s;
       outline: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
 
     .mode-btn:focus {
@@ -395,7 +397,7 @@
       transition: all .2s;
       width: 100%;
       outline: none;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
     .field-col input {
@@ -592,6 +594,13 @@
       pointer-events: all;
     }
 
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
     .mnth {
       font-size: 13px;
       font-weight: 600;
@@ -605,13 +614,6 @@
     .mnth:hover,
     .mnth:focus {
       background: var(--bg-hover);
-    }
-
-    .cal-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
     }
 
     .cal-nav button {
@@ -701,6 +703,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 12.5px;
+      user-select: none;
     }
 
     .pwa-table th {
@@ -720,6 +723,7 @@
       border: 1px solid var(--border-light);
       padding: 0;
       vertical-align: middle;
+      position: relative;
     }
 
     .pwa-table td.num {
@@ -754,7 +758,7 @@
       background: transparent;
       color: var(--text-main);
       font-size: 12.5px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       padding: 0 8px;
       outline: none;
       transition: background .15s;
@@ -768,8 +772,16 @@
       color: var(--text-placeholder);
     }
 
-    .pwa-table td input.pre {
-      color: var(--text-muted);
+    /* Excel-like Selection Styles & Frozen Tags */
+    .pwa-table td input.cell-selected {
+      background-color: var(--focus-ring);
+      box-shadow: inset 0 0 0 1.5px var(--border-focus);
+    }
+
+    .frozen-tag {
+      background: var(--bg-hover) !important;
+      color: var(--text-muted) !important;
+      cursor: not-allowed;
     }
 
     .pwa-table tr.total-row td {
@@ -790,22 +802,9 @@
 
     .photo-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin-top: 4px;
-    }
-
-    .photo-grid.g2 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .photo-grid.g4 {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .photo-grid.g1 {
-      grid-template-columns: 1fr;
-      max-width: 340px;
     }
 
     .photo-slot {
@@ -915,27 +914,6 @@
       display: flex;
     }
 
-    .sub-lbl {
-      font-size: 10.5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      letter-spacing: .05em;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border-light);
-      grid-column: 1/-1;
-    }
-
-    .photo-sub-lbl {
-      font-size: 10.5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      letter-spacing: .04em;
-      margin-bottom: 5px;
-      margin-top: 12px;
-    }
 
     .status {
       margin: 14px 20px 0;
@@ -958,10 +936,6 @@
       color: #15803d;
       border: 1px solid rgba(34, 197, 94, .2);
       display: block;
-    }
-
-    [data-theme=dark] .status.success {
-      color: #4ade80;
     }
 
     .actions {
@@ -995,7 +969,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       outline: none;
     }
 
@@ -1047,71 +1021,18 @@
       background: rgba(248, 113, 113, .2);
     }
 
-    /* ─── PAGE JUMPERS ─── */
-    .page-jumper {
-      position: fixed;
-      right: 16px;
-      z-index: 9000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: opacity .3s ease, transform .3s ease;
-    }
-
-    .page-jumper {
-      bottom: 80px;
-    }
-
-    .pj-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
-      transition: all .25s cubic-bezier(.4, 0, .2, 1);
-      outline: none;
-      background: var(--accent-bg);
-      color: var(--accent-text);
-    }
-
-    .pj-btn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
-    }
-
-    .pj-btn:active {
-      transform: scale(.95);
-    }
-
-    .pj-btn:focus {
-      box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 14px rgba(0, 0, 0, .2);
-    }
-
-    .pj-btn.hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(12px);
-    }
-
-    @media(max-width:640px) {
-      .pj-btn {
-        width: 38px;
-        height: 38px;
-      }
-
-      .page-jumper {
-        right: 10px;
-        bottom: 70px;
-      }
-    }
-
+    /* Modern auto-hide scrollbar */
     * {
       scrollbar-width: thin;
-      scrollbar-color: var(--bg-active) transparent;
+      scrollbar-color: transparent transparent;
+    }
+
+    *:hover {
+      scrollbar-color: rgba(0, 0, 0, .2) transparent;
+    }
+
+    [data-theme=dark] *:hover {
+      scrollbar-color: rgba(255, 255, 255, .15) transparent;
     }
 
     ::-webkit-scrollbar {
@@ -1124,12 +1045,16 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: var(--bg-active);
+      background: transparent;
       border-radius: 10px;
     }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--border-input);
+    *:hover::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, .2);
+    }
+
+    [data-theme=dark] *:hover::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .15);
     }
 
     .modal-overlay {
@@ -1192,7 +1117,7 @@
       cursor: pointer;
       transition: all .2s;
       border: none;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       outline: none;
     }
 
@@ -1218,6 +1143,91 @@
       box-shadow: 0 0 0 3px rgba(239, 68, 68, .2);
     }
 
+    /* ── Page Jumpers ── */
+    .page-jumper {
+      position: fixed;
+      right: 16px;
+      bottom: 80px;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pj {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
+      transition: all .25s cubic-bezier(.4, 0, .2, 1);
+      outline: none;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+    }
+
+    .pj:hover {
+      transform: scale(1.12);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
+    }
+
+    .pj:active {
+      transform: scale(.95);
+    }
+
+    .pj:focus {
+      box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 14px rgba(0, 0, 0, .2);
+    }
+
+    .pj.vis {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+
+    /* ── Manual date input ── */
+    .date-manual {
+      height: 36px;
+      border: 1px solid var(--border-input);
+      border-radius: 7px;
+      padding: 0 10px;
+      font-size: 13px;
+      color: var(--text-main);
+      background: var(--bg-input);
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: all .2s;
+      width: 100%;
+    }
+
+    .date-manual:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+
+    .date-manual::placeholder {
+      color: var(--text-placeholder);
+    }
+
+    .date-field-wrap {
+      display: flex;
+      gap: 5px;
+    }
+
+    .date-field-wrap .date-trigger {
+      flex: 0 0 36px;
+      padding: 0;
+      justify-content: center;
+    }
+
     @media(max-width:640px) {
       body {
         padding: 10px 8px 70px;
@@ -1239,6 +1249,7 @@
 
       .actions {
         padding: 12px 14px;
+        flex-direction: row;
       }
 
       .btn-inject {
@@ -1246,25 +1257,23 @@
       }
 
       .photo-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .photo-grid.g4 {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .photo-grid.g1 {
-        max-width: 100%;
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .stepper {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      .page-jumper {
+        right: 10px;
+        bottom: 70px;
       }
     }
   </style>
 </head>
 
 <body>
+
   <div class="modal-overlay" id="customModal">
     <div class="modal-box">
       <div class="modal-msg" id="modalMsg">Are you sure?</div>
@@ -1274,43 +1283,59 @@
       </div>
     </div>
   </div>
+
+  <div class="page-jumper" id="pageJumper">
+    <button id="pjTop" class="pj" title="Back to top" aria-label="Scroll to top"><svg width="14" height="14"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15" />
+      </svg></button>
+    <button id="pjBot" class="pj" title="Go to bottom" aria-label="Scroll to bottom"><svg width="14" height="14"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg></button>
+  </div>
+
   <div class="card">
     <div class="card-header">
-      <h1>AGM Form</h1>
-      <p>AGM Battery Defect Report — Khanna Automart (N3235)</p>
+      <h1>PWA Regular</h1>
+      <p>Prior Work Approval — fill form then generate Excel report.</p>
     </div>
+
     <div class="stepper-container" id="stepperContainer" style="display:none;">
       <div class="stepper">
-        <div class="step active" id="agm-st1">
-          <div class="step-n" id="agm-sn1">1</div>
+        <div class="step" id="pw-st1" data-step="1">
+          <div class="step-n" id="pw-sn1">1</div>
           <div>
-            <div class="step-t">Battery Data</div>
-            <div class="step-s">Vehicle &amp; battery info</div>
+            <div class="step-t">Vehicle</div>
+            <div class="step-s">Dealer, VIN, model</div>
           </div>
         </div>
-        <div class="step" id="agm-st2">
-          <div class="step-n" id="agm-sn2">2</div>
+        <div class="step" id="pw-st2" data-step="2">
+          <div class="step-n" id="pw-sn2">2</div>
+          <div>
+            <div class="step-t">Parts</div>
+            <div class="step-s">Part info, history</div>
+          </div>
+        </div>
+        <div class="step" id="pw-st3" data-step="3">
+          <div class="step-n" id="pw-sn3">3</div>
+          <div>
+            <div class="step-t">Labour</div>
+            <div class="step-s">Estimate, contacts</div>
+          </div>
+        </div>
+        <div class="step" id="pw-st4" data-step="4">
+          <div class="step-n" id="pw-sn4">4</div>
           <div>
             <div class="step-t">Photos</div>
-            <div class="step-s">Defective concern</div>
-          </div>
-        </div>
-        <div class="step" id="agm-st3">
-          <div class="step-n" id="agm-sn3">3</div>
-          <div>
-            <div class="step-t">Invoice &amp; PWA</div>
-            <div class="step-s">Estimation &amp; screen</div>
-          </div>
-        </div>
-        <div class="step" id="agm-st4">
-          <div class="step-n" id="agm-sn4">4</div>
-          <div>
-            <div class="step-t">NDMS &amp; History</div>
-            <div class="step-s">Sharing &amp; vehicle log</div>
+            <div class="step-s">Upload images</div>
           </div>
         </div>
       </div>
     </div>
+
     <div class="mode-wrap" id="modeWrap">
       <div class="mode-lbl">Navigation</div>
       <div class="mode-btns">
@@ -1332,15 +1357,20 @@
         </button>
       </div>
     </div>
+
     <div class="history-wrap" id="histWrap">
-      <div class="hist-header"><span class="hist-title">Saved Records</span><button class="hist-clr"
-          id="btnHistoryClearAll" tabindex="0">Clear all</button></div>
-      <input type="text" id="historySearch" class="search-input" placeholder="Search by VIN…" autocomplete="off"
-        tabindex="0">
+      <div class="hist-header">
+        <span class="hist-title">Saved Records</span>
+        <button class="hist-clr" id="btnHistoryClearAll" tabindex="0">Clear all</button>
+      </div>
+      <input type="text" id="historySearch" class="search-input" placeholder="Search by VIN or Reg. No…"
+        autocomplete="off" tabindex="0">
       <div class="hist-list" id="histList"></div>
     </div>
+
     <div class="status" id="status"></div>
     <div id="formWrap"></div>
+
     <div class="actions" id="actionsBar" style="display:none">
       <button class="btn btn-clear" id="btnClear" tabindex="0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1360,6 +1390,7 @@
       </button>
     </div>
   </div>
+
   <script>
     const icons = {
       calendar: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
@@ -1381,50 +1412,30 @@
       });
     }
 
+    // ── Dropdown Options Lists ──
+    const fuelTypes = ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"];
+    const ynOpts = ["Y", "N"];
+    const roadOpts = ["General Road", "Highway", "Off-Road", "Wet Road", "City Traffic", "Speed Breakers", "Potholes/Rough", "Uphill/Incline", "Downhill", "Dusty/Sandy"];
+    const causeCodeOpts = ["Material Defect", "Manufacturing Defect", "Wear & Tear", "Software Glitch", "Fluid Leakage", "Electrical Short", "Corrosion/Rust", "Physical Damage", "Improper Assembly", "Calibration Issue", "Sensor Failure", "Unknown/Pending"];
+    const occurrenceOpts = ["Always", "Intermittent", "Right after starting", "When engine is cold", "When engine is hot", "While accelerating", "While braking", "While turning", "At high speeds", "At low speeds", "Over bumps/rough roads", "Randomly"];
+    const natureCodeOpts = ["Noise/Rattle", "Vibration", "Leakage", "Warning Light ON", "Overheating", "Hard Shifting", "Loss of Power", "Poor Mileage", "Starting Trouble", "Smoke Output", "Smell/Odor", "Stalling"];
+    const timePeriodOpts = ["All times", "Morning/Cold Start", "After warming up", "During rain/wet", "In hot weather", "In cold weather", "After long drive", "Short trips only", "Idling", "Under heavy load"];
+    const speedRangeOpts = ["Idle (0 km/h)", "Low Speed (1-30 km/h)", "Medium Speed (30-60 km/h)", "High Speed (60-100 km/h)", "Over 100 km/h", "While accelerating", "While decelerating", "Varies", "NA"];
+    const problemConditionOpts = occurrenceOpts; // Exact sync with occurrence
+
+    const ALL_SELECTS = ['fuelType', 'ew', 'mailYN', 'roadCondition', 'causeCode', 'occurrence', 'natureCode', 'timePeriod', 'speedRange', 'problemCondition'];
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const batterySpecOpts = ['50 AH', '60 AH', '65 AH'];
-    const supplierOpts = ['Delkor', 'Solite', 'Clarios'];
-    const dealerActionOpts = ['Recharge', 'Replaced'];
-    const batteryAvailabilityOpts = ['Exide', 'Amaron', 'Other'];
-    const hyundaiModels = [
-      'Hyundai Creta Electric',
-      'Hyundai Alcazar',
-      'Hyundai Creta',
-      'Hyundai Exter',
-      'Hyundai Verna',
-      'Hyundai Ioniq 5',
-      'Hyundai Tucson',
-      'Hyundai i20 N Line',
-      'Hyundai i20',
-      'Hyundai Venue N Line',
-      'Hyundai Venue',
-      'Hyundai Aura',
-      'Hyundai Grand i10 NIOS',
-      'Hyundai Grand i10',
-      'Hyundai i10',
-      'Hyundai Xcent',
-      'Hyundai Elite i20',
-      'Hyundai Active i20',
-      'Hyundai Santro',
-      'Hyundai Santro Xing',
-      'Hyundai Eon',
-      'Hyundai Accent',
-      'Hyundai Elantra',
-      'Hyundai Sonata',
-      'Hyundai Santa Fe',
-    ];
 
     let templateBuffer = null, currentMode = 'form';
     const CAL = {}, PHOTOS = {};
     window.PHOTOS = PHOTOS;
     let HISTORY = [];
-
-    try { HISTORY = JSON.parse(localStorage.getItem('agm_hist') || '[]'); } catch (e) { }
+    try { HISTORY = JSON.parse(localStorage.getItem('pwa_hist') || '[]'); } catch (e) { }
 
     const pad = n => String(n).padStart(2, '0');
     const fmtDash = d => pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear();
-    const handleKeyClick = (el, fn) => el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } });
-    const escHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const handleKeyClick = (el, action) => el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(e); } });
+
     const formWrap = document.getElementById('formWrap');
     const actionsBar = document.getElementById('actionsBar');
     const statusEl = document.getElementById('status');
@@ -1433,31 +1444,42 @@
     const histList = document.getElementById('histList');
     const historySearch = document.getElementById('historySearch');
 
+    // GLOBAL INPUT LISTENER FOR REAL-TIME STEPPER
+    document.addEventListener('input', () => { if (currentMode === 'form') updateStepper(); });
+
     window.addEventListener('DOMContentLoaded', async () => {
-      formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Fetching template (agm.xlsx)…</div>';
+      formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Fetching template (pwareg.xlsx)…</div>';
       try {
-        const r = await fetch('agm.xlsx');
-        if (!r.ok) throw new Error('Template not found');
+        const r = await fetch('pwareg.xlsx');
+        if (!r.ok) throw new Error('not found');
         templateBuffer = await r.arrayBuffer();
         modeWrap.classList.add('show'); setMode('form'); clearStatus();
       } catch (e) {
-        showStatus('Error: Could not load agm.xlsx — place it in the same folder.', 'error');
-        formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Template missing. Please place agm.xlsx in the same folder.</div>';
+        showStatus('Error: Could not load pwareg.xlsx', 'error');
+        formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Template missing. Please upload pwareg.xlsx.</div>';
       }
     });
 
     function setMode(mode) {
       currentMode = mode;
-      const sc = document.getElementById('stepperContainer');
+      const stepperContainer = document.getElementById('stepperContainer');
       document.getElementById('modeForm').classList.toggle('active', mode === 'form');
       document.getElementById('modeHistory').classList.toggle('active', mode === 'history');
       if (mode === 'history') {
-        formWrap.style.display = 'none'; actionsBar.style.display = 'none';
-        histWrap.classList.add('show'); if (sc) sc.style.display = 'none'; renderHistory();
+        formWrap.style.display = 'none';
+        actionsBar.style.display = 'none';
+        histWrap.classList.add('show');
+        if (stepperContainer) stepperContainer.style.display = 'none';
+        renderHistory();
       } else {
-        histWrap.classList.remove('show'); formWrap.style.display = 'block';
-        if (sc) sc.style.display = 'block';
-        if (templateBuffer) { actionsBar.style.display = 'flex'; buildForm(); setTimeout(updateStepper, 100); }
+        histWrap.classList.remove('show');
+        formWrap.style.display = 'block';
+        if (stepperContainer) stepperContainer.style.display = 'block';
+        if (templateBuffer) {
+          actionsBar.style.display = 'flex';
+          buildForm();
+          setTimeout(updateStepper, 100);
+        }
       }
     }
 
@@ -1469,7 +1491,6 @@
     }
     document.addEventListener('click', closeAllPopups);
 
-    // ─── CALENDAR ───
     function renderCal(id) {
       const st = CAL[id], pop = document.getElementById('cp_' + id);
       if (!pop || !st) return;
@@ -1477,59 +1498,69 @@
       if (st.view === 'years') {
         const sy = y - 7;
         let h = `<div class="cal-nav"><button type="button" class="cpb-y" data-id="${id}" data-dir="-15" tabindex="0">${icons.chevronLeft}</button><span class="mnth" tabindex="0">Year</span><button type="button" class="cpb-y" data-id="${id}" data-dir="15" tabindex="0">${icons.chevronRight}</button></div><div class="cal-grid years">`;
-        for (let i = 0; i < 15; i++)h += `<div class="cd ${sy + i === y ? 'sel' : ''}" data-id="${id}" data-y="${sy + i}" tabindex="0">${sy + i}</div>`;
+        for (let i = 0; i < 15; i++) h += `<div class="cd ${sy + i === y ? 'sel' : ''}" data-id="${id}" data-y="${sy + i}" tabindex="0">${sy + i}</div>`;
         h += '</div>'; pop.innerHTML = h;
         pop.querySelectorAll('.cpb-y').forEach(b => { const a = e => { e.stopPropagation(); CAL[b.dataset.id].year += parseInt(b.dataset.dir); renderCal(b.dataset.id); }; b.addEventListener('click', a); handleKeyClick(b, a); });
         pop.querySelectorAll('.cd').forEach(el => { const a = e => { e.stopPropagation(); CAL[el.dataset.id].year = parseInt(el.dataset.y); CAL[el.dataset.id].view = 'days'; renderCal(el.dataset.id); }; el.addEventListener('click', a); handleKeyClick(el, a); });
       } else {
         const fd = new Date(y, m, 1).getDay(), dim = new Date(y, m + 1, 0).getDate(), prev = new Date(y, m, 0).getDate();
         let h = `<div class="cal-nav"><button type="button" class="cpb" data-id="${id}" data-dir="-1" tabindex="0">${icons.chevronLeft}</button><span class="mnth ts" data-id="${id}" tabindex="0">${MONTHS[m]} ${y}</span><button type="button" class="cpb" data-id="${id}" data-dir="1" tabindex="0">${icons.chevronRight}</button></div><div class="cal-grid">${['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(x => `<div class="dn">${x}</div>`).join('')}`;
-        for (let i = 0; i < fd; i++)h += `<div class="cd om">${prev - fd + 1 + i}</div>`;
+        for (let i = 0; i < fd; i++) h += `<div class="cd om">${prev - fd + 1 + i}</div>`;
         for (let d = 1; d <= dim; d++) { const iT = d === now.getDate() && m === now.getMonth() && y === now.getFullYear(); const iS = st.date && d === st.date.getDate() && m === st.date.getMonth() && y === st.date.getFullYear(); h += `<div class="cd${iT ? ' today' : ''}${iS ? ' sel' : ''}" data-id="${id}" data-d="${d}" tabindex="0">${d}</div>`; }
         h += '</div>'; pop.innerHTML = h;
         pop.querySelectorAll('.cpb').forEach(b => { const a = e => { e.stopPropagation(); const s = CAL[b.dataset.id], dir = parseInt(b.dataset.dir); s.month += dir; if (s.month < 0) { s.month = 11; s.year--; } if (s.month > 11) { s.month = 0; s.year++; } renderCal(b.dataset.id); }; b.addEventListener('click', a); handleKeyClick(b, a); });
         const ts = pop.querySelector('.ts'); const tsA = e => { e.stopPropagation(); CAL[e.target.dataset.id].view = 'years'; renderCal(e.target.dataset.id); }; ts.addEventListener('click', tsA); handleKeyClick(ts, tsA);
-        pop.querySelectorAll('.cd:not(.om)').forEach(el => { const a = e => { e.stopPropagation(); const s = CAL[el.dataset.id]; s.date = new Date(s.year, s.month, parseInt(el.dataset.d)); const dv = document.getElementById('dv_' + el.dataset.id); if (dv) { dv.textContent = fmtDash(s.date); dv.classList.remove('empty'); } const di = document.getElementById('di_' + el.dataset.id); if (di) di.value = fmtDash(s.date); closeAllPopups(); renderCal(el.dataset.id); }; el.addEventListener('click', a); handleKeyClick(el, a); });
+        pop.querySelectorAll('.cd:not(.om)').forEach(el => { const a = e => { e.stopPropagation(); const s = CAL[el.dataset.id]; s.date = new Date(s.year, s.month, parseInt(el.dataset.d)); const fmt = fmtDash(s.date); const dv = document.getElementById('dv_' + el.dataset.id); if (dv) { dv.textContent = fmt; dv.classList.remove('empty'); } const manEl = document.getElementById('dm_' + el.dataset.id); if (manEl) manEl.value = fmt; closeAllPopups(); renderCal(el.dataset.id); setTimeout(updateStepper, 50); }; el.addEventListener('click', a); handleKeyClick(el, a); });
       }
     }
+
     function openCal(id) {
       closeAllPopups();
       if (!CAL[id]) CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
       const ref = CAL[id].date || new Date(); CAL[id].year = ref.getFullYear(); CAL[id].month = ref.getMonth(); CAL[id].view = 'days';
       renderCal(id); document.getElementById('cp_' + id)?.classList.add('open'); document.getElementById('dt_' + id)?.classList.add('active');
     }
-    function makeDateField(id, label, full = false) {
+
+    function makeDateField(id, label) {
       if (!CAL[id]) CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
-      const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
-      wrap.innerHTML = `<label>${label}</label><div style="position:relative;">
-    <div class="date-trigger" id="dt_${id}" tabindex="0" style="cursor:text;">
-      <input type="text" id="di_${id}" placeholder="DD-MM-YYYY or pick →" style="flex:1;border:none;background:transparent;font-size:13px;color:var(--text-main);outline:none;font-family:'DM Sans',sans-serif;width:100%;cursor:text;" tabindex="-1">
-      <span class="date-icon" id="dico_${id}" style="cursor:pointer;flex-shrink:0;">${icons.calendar}</span>
+      const wrap = document.createElement('div'); wrap.className = 'field-col';
+      wrap.innerHTML = `<label>${label}</label>
+  <div style="position:relative;">
+    <div class="date-field-wrap">
+      <input type="text" id="dm_${id}" class="date-manual" placeholder="DD-MM-YYYY" maxlength="10" tabindex="0">
+      <div class="date-trigger" id="dt_${id}" tabindex="0" title="Open calendar"><span class="date-icon">${icons.calendar}</span></div>
     </div>
-    <div class="cal-pop" id="cp_${id}"></div></div>`;
+    <div class="cal-pop" id="cp_${id}"></div>
+  </div>`;
+      const pop = wrap.querySelector('.cal-pop');
+      let wt; pop.addEventListener('wheel', e => { e.preventDefault(); if (wt) return; wt = setTimeout(() => { wt = null; }, 150); const st = CAL[id]; if (st.view === 'years') { st.year += e.deltaY > 0 ? 15 : -15; } else { st.month += e.deltaY > 0 ? 1 : -1; if (st.month > 11) { st.month = 0; st.year++; } else if (st.month < 0) { st.month = 11; st.year--; } } renderCal(id); }, { passive: false });
       requestAnimationFrame(() => {
         const dt = document.getElementById('dt_' + id);
-        const di = document.getElementById('di_' + id);
-        const ico = document.getElementById('dico_' + id);
-        // Typing in the embedded input
-        di.addEventListener('input', () => {
-          const v = di.value.trim();
-          if (/^\d{2}-\d{2}-\d{4}$/.test(v)) {
-            const p = v.split('-'); const d = new Date(+p[2], +p[1] - 1, +p[0]);
-            if (!isNaN(d)) { if (!CAL[id]) CAL[id] = {}; Object.assign(CAL[id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' }); }
+        const manEl = document.getElementById('dm_' + id);
+        const a = e => { e.stopPropagation(); const isOpen = document.getElementById('cp_' + id)?.classList.contains('open'); if (isOpen) closeAllPopups(); else openCal(id); };
+        dt?.addEventListener('click', a); handleKeyClick(dt, a);
+        // Auto-format DD-MM-YYYY as user types
+        manEl?.addEventListener('input', () => {
+          let v = manEl.value.replace(/[^0-9]/g, '');
+          if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
+          if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+          if (v.length > 10) v = v.slice(0, 10);
+          manEl.value = v;
+          if (v.length === 10) {
+            const [dd, mm, yyyy] = v.split('-').map(Number);
+            const d = new Date(yyyy, mm - 1, dd);
+            if (!isNaN(d) && d.getFullYear() === yyyy) {
+              if (!CAL[id]) CAL[id] = {};
+              Object.assign(CAL[id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' });
+              const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = v; dv.classList.remove('empty'); }
+            }
           }
+          setTimeout(updateStepper, 50);
         });
-        di.addEventListener('focus', () => { dt.style.borderColor = 'var(--border-focus)'; dt.style.boxShadow = '0 0 0 3px var(--focus-ring)'; });
-        di.addEventListener('blur', () => { dt.style.borderColor = ''; dt.style.boxShadow = ''; });
-        // Calendar icon click opens calendar
-        ico.addEventListener('click', e => { e.stopPropagation(); const isOpen = document.getElementById('cp_' + id)?.classList.contains('open'); if (isOpen) closeAllPopups(); else openCal(id); });
-        // Click on the trigger bar (not icon) focuses the text input
-        dt.addEventListener('click', e => { if (e.target !== ico && !ico.contains(e.target)) di.focus(); });
-        const pop = wrap.querySelector('.cal-pop');
-        let wt; pop.addEventListener('wheel', e => { e.preventDefault(); if (wt) return; wt = setTimeout(() => { wt = null; }, 150); const st = CAL[id]; if (st.view === 'years') { st.year += e.deltaY > 0 ? 15 : -15; } else { st.month += e.deltaY > 0 ? 1 : -1; if (st.month > 11) { st.month = 0; st.year++; } else if (st.month < 0) { st.month = 11; st.year--; } } renderCal(id); }, { passive: false });
       });
       return wrap;
     }
+
     function makeSelect(id, label, options, full = false) {
       const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
       wrap.innerHTML = `<label>${label}</label><div class="custom-select-wrap"><div class="custom-select-trigger" id="cst_${id}" tabindex="0"><span class="cs-val empty" id="csv_${id}">Select…</span><span class="cs-arr">${icons.chevronDown}</span></div><div class="custom-select-opts" id="cso_${id}">${options.map(o => `<div class="cs-opt" data-val="${o}" tabindex="0">${o}</div>`).join('')}</div><input type="hidden" id="${id}" value=""></div>`;
@@ -1538,10 +1569,11 @@
         if (!trig) return;
         const trigA = e => { e.stopPropagation(); const isOpen = opts.classList.contains('open'); closeAllPopups(); if (!isOpen) { opts.classList.add('open'); trig.classList.add('active'); } };
         trig.addEventListener('click', trigA); handleKeyClick(trig, trigA);
-        opts.querySelectorAll('.cs-opt').forEach(opt => { const a = e => { e.stopPropagation(); valEl.textContent = opt.getAttribute('data-val'); valEl.classList.remove('empty'); hidInp.value = opt.getAttribute('data-val'); closeAllPopups(); }; opt.addEventListener('click', a); handleKeyClick(opt, a); });
+        opts.querySelectorAll('.cs-opt').forEach(opt => { const a = e => { e.stopPropagation(); valEl.textContent = opt.getAttribute('data-val'); valEl.classList.remove('empty'); hidInp.value = opt.getAttribute('data-val'); closeAllPopups(); setTimeout(updateStepper, 50); }; opt.addEventListener('click', a); handleKeyClick(opt, a); });
       });
       return wrap;
     }
+
     function makeInput(id, label, placeholder, defVal = '', full = false) {
       const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
       const lbl = document.createElement('label'); lbl.textContent = label;
@@ -1550,364 +1582,143 @@
       else inp.placeholder = placeholder || 'Enter value…';
       wrap.appendChild(lbl); wrap.appendChild(inp); return wrap;
     }
+
+    function makeTextarea(id, label, placeholder, defVal = '') {
+      const wrap = document.createElement('div'); wrap.className = 'field-col full';
+      const lbl = document.createElement('label'); lbl.textContent = label;
+      const ta = document.createElement('textarea');
+      ta.id = id; ta.placeholder = placeholder || ''; ta.tabIndex = 0;
+      if (defVal) { ta.value = defVal; ta.classList.add('pre'); ta.addEventListener('focus', () => ta.classList.remove('pre')); }
+      wrap.appendChild(lbl); wrap.appendChild(ta);
+      return wrap;
+    }
+
+    // ─────── BUILD FORM ───────
+    function buildForm() {
+      formWrap.innerHTML = '';
+      buildEstimateSection();
+      buildServiceHistorySection();
+
+      // Dealer & Vehicle
+      let sec = mkSec('Dealer & Vehicle Information');
+      const dvGrid = document.createElement('div'); dvGrid.className = 'grid-wrap';
+      dvGrid.appendChild(makeInput('dealerCode', 'Dealer Code', '', 'N3235'));
+      dvGrid.appendChild(makeInput('dealerName', 'Dealer Name', 'e.g. KHANNA AUTOMART…', 'Khanna Automart Pvt Ltd'));
+      dvGrid.appendChild(makeInput('model', 'Vehicle Model', 'e.g. Hyundai Verna…'));
+      dvGrid.appendChild(makeSelect('fuelType', 'Fuel Type', fuelTypes));
+      dvGrid.appendChild(makeInput('tmType', 'T/M Type', 'e.g. VERNA 1.5 Turbo GDi…'));
+      dvGrid.appendChild(makeInput('vin', 'VIN', 'Enter VIN number…'));
+      dvGrid.appendChild(makeInput('engineNo', 'Engine Number', 'Enter engine number…'));
+      dvGrid.appendChild(makeInput('tmNumber', 'T/M Number', 'Enter T/M number…', 'NA'));
+      dvGrid.appendChild(makeInput('mileage', 'Mileage', 'Enter mileage…'));
+      dvGrid.appendChild(makeSelect('ew', 'EW (Warranty)', ynOpts));
+      dvGrid.appendChild(makeInput('numVehicles', 'Vehicles Affected', 'e.g. 1…', '1'));
+      dvGrid.appendChild(makeSelect('mailYN', 'Mail Y/N', ynOpts));
+      dvGrid.appendChild(makeDateField('productionDate', 'Production Date'));
+      dvGrid.appendChild(makeDateField('deliveryDate', 'Delivery Date'));
+      dvGrid.appendChild(makeDateField('reportDate', 'Report Date'));
+      dvGrid.appendChild(makeDateField('repairDate', 'Repair Date'));
+      sec.appendChild(dvGrid); formWrap.appendChild(sec);
+
+      // Part Info
+      sec = mkSec('Part Information');
+      const piGrid = document.createElement('div'); piGrid.className = 'grid-wrap';
+      piGrid.appendChild(makeInput('causalPartNo', 'Causal Part No', 'Enter part number…'));
+      piGrid.appendChild(makeInput('partName', 'Part Name', 'Enter part name…'));
+      piGrid.appendChild(makeInput('affectedPart', 'Affected Part', 'Enter affected part…'));
+      piGrid.appendChild(makeInput('dtc', 'DTC', '', 'NA'));
+      piGrid.appendChild(makeInput('partSupplier', 'Part Supplier', '', 'HMIL'));
+      piGrid.appendChild(makeInput('partLotNo', 'Part Lot No', 'Enter lot number…', 'NA'));
+      sec.appendChild(piGrid); formWrap.appendChild(sec);
+
+      // Problem Nature
+      sec = mkSec('Problem Nature');
+      const pnGrid = document.createElement('div'); pnGrid.className = 'grid-wrap';
+      pnGrid.appendChild(makeSelect('causeCode', 'Cause Code', causeCodeOpts));
+      pnGrid.appendChild(makeSelect('occurrence', 'Occurrence', occurrenceOpts));
+      pnGrid.appendChild(makeSelect('natureCode', 'Nature Code', natureCodeOpts));
+      pnGrid.appendChild(makeSelect('timePeriod', 'Time Period', timePeriodOpts));
+      pnGrid.appendChild(makeSelect('roadCondition', 'Road Condition', roadOpts));
+      pnGrid.appendChild(makeSelect('speedRange', 'Speed Range', speedRangeOpts));
+      pnGrid.appendChild(makeSelect('problemCondition', 'Problem Occurrence Condition', problemConditionOpts, true));
+      sec.appendChild(pnGrid); formWrap.appendChild(sec);
+
+      // Narrative
+      sec = mkSec('Narrative / Report Text');
+      const naGrid = document.createElement('div'); naGrid.className = 'grid-wrap';
+      const subjWrap = document.createElement('div'); subjWrap.className = 'field-col full'; subjWrap.innerHTML = `<label>Subject</label><input type="text" id="subject" placeholder="Enter subject line…" tabindex="0">`;
+      naGrid.appendChild(subjWrap);
+      naGrid.appendChild(makeTextarea('introduction', '(1) Introduction – Reason for Reporting', 'Describe the reason for reporting…'));
+      naGrid.appendChild(makeTextarea('detailedSymptom', '(2) Detailed Symptom & Condition', 'Describe detailed symptom…'));
+      naGrid.appendChild(makeTextarea('investigationResult', '(3) Investigation Result & Possible Cause', 'Describe investigation findings…'));
+      naGrid.appendChild(makeTextarea('correctiveAction', '(4) Corrective Action & Result', 'Describe corrective action…'));
+      naGrid.appendChild(makeTextarea('comment', '(5) Comment', 'Any additional comments…', 'Please review and do needful regarding concern.'));
+      sec.appendChild(naGrid); formWrap.appendChild(sec);
+
+      // Staff
+      sec = mkSec('Staff Sign-off');
+      const stGrid = document.createElement('div'); stGrid.className = 'grid-wrap';
+      stGrid.appendChild(makeInput('serviceManager', 'Service Manager', '', 'NARENDRA KUMAR'));
+      stGrid.appendChild(makeInput('warrantyManager', 'Warranty Manager', '', 'AASHISH GIRI'));
+      stGrid.appendChild(makeInput('partsManager', 'Parts Manager', '', 'MANOJ'));
+      stGrid.appendChild(makeInput('serviceAdvisor', 'Service Advisor', '', 'SHUBHAM'));
+      sec.appendChild(stGrid); formWrap.appendChild(sec);
+
+      buildPhotographsSection();
+
+      // Attach Table Drag-Select Logic
+      requestAnimationFrame(() => {
+        setupTableDragSelect();
+      });
+    }
+
     function mkSec(title) {
       const sec = document.createElement('div'); sec.className = 'form-section';
       const lbl = document.createElement('div'); lbl.className = 'sec-lbl'; lbl.textContent = title;
       sec.appendChild(lbl); return sec;
     }
-    function makePhotoSlot(id, label) {
-      const div = document.createElement('div'); div.className = 'photo-slot'; div.id = 'ps_' + id;
-      div.innerHTML = `<input type="file" accept="image/*" id="pf_${id}"><div class="slot-placeholder">${icons.photo}<span>Upload</span></div><img id="pi_${id}" alt="${label}"><div class="slot-label">${label}</div><button type="button" class="remove-btn" id="prm_${id}">✕</button>`;
-      requestAnimationFrame(() => {
-        document.getElementById('pf_' + id)?.addEventListener('change', e => {
-          const file = e.target.files[0]; if (!file) return;
-          const reader = new FileReader();
-          reader.onload = ev => { PHOTOS[id] = { dataUrl: ev.target.result, filename: file.name }; document.getElementById('pi_' + id).src = ev.target.result; document.getElementById('ps_' + id).classList.add('filled'); updateStepper(); };
-          reader.readAsDataURL(file);
-        });
-        document.getElementById('prm_' + id)?.addEventListener('click', e => {
-          e.stopPropagation(); delete PHOTOS[id];
-          document.getElementById('pi_' + id).src = ''; document.getElementById('pf_' + id).value = ''; document.getElementById('ps_' + id).classList.remove('filled'); updateStepper();
-        });
-      });
-      return div;
-    }
 
-    // ─── BUILD FORM ───
-    function buildForm() {
-      formWrap.innerHTML = '';
-      buildBatteryDataSection();
-      buildPhotosSection();
-      buildInvoiceSection();
-      buildPWASection();
-      buildNDMSSection();
-      buildVehHistorySection();
-    }
-
-    // SECTION 1: Failure Battery Data Details
-    function buildBatteryDataSection() {
-      const sec = mkSec('Failure Battery Data Details');
-      const g = document.createElement('div'); g.className = 'grid-wrap';
-      g.appendChild(makeSelect('model', 'Model', hyundaiModels));
-      g.appendChild(makeInput('vin_number', 'VIN Number', 'Enter VIN…'));
-      g.appendChild(makeDateField('sale_date', 'Sale Date'));
-      g.appendChild(makeDateField('repair_date', 'Repair Date'));
-      g.appendChild(makeInput('mileage_km', 'Mileage (KM)', 'Enter mileage…'));
-      g.appendChild(makeSelect('battery_spec_ah', 'Battery Spec (AH)', batterySpecOpts));
-      g.appendChild(makeSelect('agm_supplier_name', 'AGM Supplier Name', supplierOpts));
-      g.appendChild(makeDateField('battery_production_date', 'Battery Production Date'));
-      g.appendChild(makeDateField('vehicle_received_date', 'Vehicle Received Date @ Dealer'));
-
-      const pdiDiv = document.createElement('div'); pdiDiv.className = 'sub-lbl'; pdiDiv.textContent = 'Dealer PDI Inspection Result'; g.appendChild(pdiDiv);
-      g.appendChild(makeDateField('pdi_inspection_result', 'Inspection Date'));
-      g.appendChild(makeInput('pdi_voltage', 'Voltage (Received Time)', 'e.g. 12.6V…', 'NA'));
-      g.appendChild(makeInput('pdi_cca', 'CCA', 'Enter CCA…', 'NA'));
-      g.appendChild(makeInput('pdi_soc', 'SOC', 'Enter SOC…', 'NA'));
-
-      const analDiv = document.createElement('div'); analDiv.className = 'sub-lbl'; analDiv.textContent = 'Battery Analyser Result'; g.appendChild(analDiv);
-      g.appendChild(makeInput('analyser_voltage', 'Voltage', 'e.g. 12.4V…'));
-      g.appendChild(makeInput('analyser_cca', 'CCA', 'Enter CCA…'));
-      g.appendChild(makeInput('analyser_soc', 'SOC', 'Enter SOC…'));
-      g.appendChild(makeSelect('analyser_result', 'Result', ['Replace', 'Recharge', 'Found Ok', 'No Problem', 'Battery Dead']));
-      g.appendChild(makeInput('result_slip', 'Result Slip', 'Enter result slip no…'));
-
-      const daDiv = document.createElement('div'); daDiv.className = 'sub-lbl'; daDiv.textContent = 'Dealer Action'; g.appendChild(daDiv);
-      g.appendChild(makeSelect('dealer_action', 'Recharge / Replaced', dealerActionOpts));
-      g.appendChild(makeSelect('battery_availability', 'Battery Availability @ Dealer End', batteryAvailabilityOpts));
-
-      sec.appendChild(g); formWrap.appendChild(sec);
-      // Hook all inputs in this section to update stepper
-      requestAnimationFrame(() => {
-        formWrap.addEventListener('input', updateStepper);
-        // analyser_result dropdown triggers stepper
-        const arOpts = document.getElementById('cso_analyser_result');
-        if (arOpts) arOpts.querySelectorAll('.cs-opt').forEach(opt => opt.addEventListener('click', () => setTimeout(updateStepper, 50)));
-      });
-    }
-
-    // SECTION 2: Battery Defective Concern — Photographs (PHOTOS sheet)
-    function buildPhotosSection() {
-      const sec = mkSec('Battery Defective Concern — Photographs');
-
-      const l1 = document.createElement('div'); l1.className = 'photo-sub-lbl'; l1.style.marginTop = '2px'; l1.textContent = 'Vehicle Photos'; sec.appendChild(l1);
-      const r1 = document.createElement('div'); r1.className = 'photo-grid';
-      r1.appendChild(makePhotoSlot('photo_1', 'Registration Plate Photo'));
-      r1.appendChild(makePhotoSlot('photo_2', 'Mileage Photo'));
-      r1.appendChild(makePhotoSlot('photo_3', 'VIN Photo'));
-      sec.appendChild(r1);
-
-      const l2 = document.createElement('div'); l2.className = 'photo-sub-lbl'; l2.textContent = 'Battery Details'; sec.appendChild(l2);
-      const r2 = document.createElement('div'); r2.className = 'photo-grid g4';
-      r2.appendChild(makePhotoSlot('photo_4', 'Defective Battery Details'));
-      r2.appendChild(makePhotoSlot('photo_5', 'Defective Battery Manufacturer'));
-      r2.appendChild(makePhotoSlot('photo_6', 'Replaced Battery Details'));
-      r2.appendChild(makePhotoSlot('photo_7', 'Replaced Battery Manufacturer'));
-      sec.appendChild(r2);
-
-      const l3 = document.createElement('div'); l3.className = 'photo-sub-lbl'; l3.textContent = 'Voltage & Battery Photos'; sec.appendChild(l3);
-      const r3 = document.createElement('div'); r3.className = 'photo-grid';
-      r3.appendChild(makePhotoSlot('photo_8', 'Voltage Without Load'));
-      r3.appendChild(makePhotoSlot('photo_9', 'Voltage With Load'));
-      r3.appendChild(makePhotoSlot('photo_10', 'Both Batteries w/ Reg Plate'));
-      sec.appendChild(r3);
-
-      formWrap.appendChild(sec);
-    }
-
-    // SECTION 3: Vendor Rejection Report / Invoice / Estimation (INVOICE sheet)
-    function buildInvoiceSection() {
-      const sec = mkSec('Vendor Rejection Report / Invoice / Estimation');
-
-      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:6px;'; hint.textContent = 'Paste rows directly from Excel — click first cell then Ctrl+V'; sec.appendChild(hint);
-
-      const pl = document.createElement('div'); pl.style.cssText = 'font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;'; pl.textContent = 'Parts'; sec.appendChild(pl);
-
+    // ─────── ESTIMATE ───────
+    function buildEstimateSection() {
+      const sec = mkSec('Estimate');
       let pRows = '';
-      for (let i = 1; i <= 2; i++)pRows += `<tr><td class="num">${i}</td><td><input id="si_no_${i}" placeholder="SI…" tabindex="0"></td><td><input id="part_number_${i}" placeholder="Part No…" tabindex="0"></td><td><input id="part_description_${i}" placeholder="Description…" tabindex="0"></td><td><input id="part_list_price_${i}" placeholder="0" tabindex="0" oninput="calcPartRow(${i})"></td><td><input id="part_qty_${i}" placeholder="0" style="text-align:center" tabindex="0" oninput="calcPartRow(${i})"></td><td class="total-cell"><span id="part_amt_${i}">—</span></td><td class="total-cell"><span id="part_tax_${i}">—</span></td></tr>`;
-      const pTbl = document.createElement('div'); pTbl.className = 'tbl-wrap';
-      pTbl.innerHTML = `<table class="pwa-table"><thead><tr><th style="width:28px">#</th><th>SI No.</th><th style="min-width:90px">Part Number</th><th style="min-width:130px">Description</th><th style="min-width:75px">List Price</th><th style="min-width:45px">Qty</th><th style="min-width:75px">Amt (Ex GST)</th><th style="min-width:85px">Total (w/ 18%)</th></tr></thead><tbody>${pRows}</tbody><tfoot><tr class="total-row"><td colspan="6" style="text-align:right;padding-right:10px;font-size:11px;letter-spacing:.04em;">PARTS TOTAL</td><td class="total-cell"><span id="partAmtTotal">—</span></td><td class="total-cell"><span id="partTaxTotal">—</span></td></tr></tfoot></table>`;
-      sec.appendChild(pTbl);
-
-      const ll = document.createElement('div'); ll.style.cssText = 'font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 5px;'; ll.textContent = 'Labour'; sec.appendChild(ll);
-
+      for (let i = 1; i <= 11; i++) {
+        const tagHtml = i >= 3
+          ? `<input id="part${i}Tag" placeholder="-" style="width:65px" readonly tabindex="-1" class="frozen-tag">`
+          : `<input id="part${i}Tag" placeholder="Tag…" style="width:65px" tabindex="0">`;
+        pRows += `<tr><td class="num">${i}</td><td><input id="part${i}No" placeholder="Part No…" tabindex="0"></td><td><input id="part${i}Name" placeholder="Item name…" tabindex="0"></td><td><input id="part${i}Qty" placeholder="0" style="text-align:center" tabindex="0" oninput="calcRow(${i})"></td><td><input id="part${i}Rate" placeholder="0" tabindex="0" oninput="calcRow(${i})"></td><td class="total-cell"><span id="part${i}Total">—</span></td><td>${tagHtml}</td></tr>`;
+      }
       let lRows = '';
-      for (let i = 1; i <= 2; i++)lRows += `<tr><td class="num">${i}</td><td><input id="si_no_labour_${i}" placeholder="SI…" tabindex="0"></td><td><input id="labour_code_${i}" placeholder="Op Code…" tabindex="0"></td><td><input id="labour_description_${i}" placeholder="Description…" tabindex="0"></td><td><input id="labour_list_price_${i}" placeholder="0" tabindex="0" oninput="calcLabourRow(${i})"></td><td><input id="labour_qty_${i}" placeholder="0" style="text-align:center" tabindex="0" oninput="calcLabourRow(${i})"></td><td class="total-cell"><span id="labour_amt_${i}">—</span></td><td class="total-cell"><span id="labour_tax_${i}">—</span></td></tr>`;
-      const lTbl = document.createElement('div'); lTbl.className = 'tbl-wrap';
-      lTbl.innerHTML = `<table class="pwa-table"><thead><tr><th style="width:28px">#</th><th>SI No.</th><th style="min-width:90px">Labour Code</th><th style="min-width:130px">Description</th><th style="min-width:75px">List Price</th><th style="min-width:45px">Qty</th><th style="min-width:75px">Amt (Ex GST)</th><th style="min-width:85px">Total (w/ 18%)</th></tr></thead><tbody>${lRows}</tbody><tfoot><tr class="total-row"><td colspan="6" style="text-align:right;padding-right:10px;font-size:11px;letter-spacing:.04em;">LABOUR TOTAL</td><td class="total-cell"><span id="labourAmtTotal">—</span></td><td class="total-cell"><span id="labourTaxTotal">—</span></td></tr><tr class="gtotal-row"><td colspan="6" style="text-align:right;padding-right:10px;letter-spacing:.04em;">G. TOTAL (with Tax)</td><td colspan="2" style="padding:0 8px;font-weight:700;font-size:13px;"><span id="gTotal">—</span></td></tr></tfoot></table>`;
-      sec.appendChild(lTbl);
+      for (let i = 1; i <= 6; i++) lRows += `<tr><td class="num">${i}</td><td><input id="labour${i}OpCode" placeholder="Op Code…" tabindex="0"></td><td><input id="labour${i}Name" placeholder="Labour name…" tabindex="0"></td><td><input id="labour${i}Qty" placeholder="0" style="text-align:center" tabindex="0" oninput="calcLabourRow(${i})"></td><td><input id="labour${i}Rate" placeholder="0" tabindex="0" oninput="calcLabourRow(${i})"></td><td class="total-cell"><span id="labour${i}Total">—</span></td></tr>`;
 
-      // 2 photos for this sheet
-      const pl2 = document.createElement('div'); pl2.className = 'photo-sub-lbl'; pl2.textContent = 'Supporting Documents'; sec.appendChild(pl2);
-      const pr = document.createElement('div'); pr.className = 'photo-grid g2';
-      pr.appendChild(makePhotoSlot('invoice_pic3', 'Vendor Rejection Report'));
-      pr.appendChild(makePhotoSlot('invoice_pic4', 'Invoice'));
-      sec.appendChild(pr);
-
-      formWrap.appendChild(sec);
-    }
-
-    // SECTION 4: PWA Request Screen (INVOICE sheet — row 39)
-    function buildPWASection() {
-      const sec = mkSec('PWA Request Screen');
-      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:8px;'; hint.textContent = 'Upload a screenshot of the PWA request screen.'; sec.appendChild(hint);
-      const pr = document.createElement('div'); pr.className = 'photo-grid g1';
-      pr.appendChild(makePhotoSlot('invoice_pwa', 'PWA Request Screen Screenshot'));
-      sec.appendChild(pr);
-      formWrap.appendChild(sec);
-    }
-
-    // SECTION 5: NDMS Invoice & Cost Sharing
-    function buildNDMSSection() {
-      const sec = mkSec('NDMS Invoice & Cost Sharing');
-      const g = document.createElement('div'); g.className = 'grid-wrap';
-      g.appendChild(makeInput('part_total_cost_with_tax', 'Part — Total Cost (with Tax)', 'e.g. 5000…'));
-      g.appendChild(makeInput('labour_total_cost_with_tax', 'Labour — Total Cost (with Tax)', 'e.g. 500…'));
-
-      const ps = document.createElement('div'); ps.className = 'sub-lbl'; ps.textContent = 'Part Sharing % (Total must = 100%)'; g.appendChild(ps);
-      g.appendChild(makeInput('hmil_share_pct_part', 'HMIL Share % (Part)', 'e.g. 80'));
-      g.appendChild(makeInput('dealer_share_pct_part', 'Dealer Share % (Part)', 'e.g. 10'));
-      g.appendChild(makeInput('customer_share_pct_part', 'Customer Share % (Part)', 'e.g. 10'));
-      const partErr = document.createElement('div'); partErr.id = 'pct_err_part'; partErr.className = 'full'; partErr.style.cssText = 'grid-column:1/-1;display:none;font-size:12px;font-weight:600;color:var(--danger-color);background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:7px;padding:8px 12px;margin-top:2px;'; partErr.textContent = '⚠ Part % total exceeds 100%. The three fields must add up to exactly 100%.'; g.appendChild(partErr);
-
-      const ls = document.createElement('div'); ls.className = 'sub-lbl'; ls.textContent = 'Labour Sharing % (Total must = 100%)'; g.appendChild(ls);
-      g.appendChild(makeInput('hmil_share_pct_labour', 'HMIL Share % (Labour)', 'e.g. 80'));
-      g.appendChild(makeInput('dealer_share_pct_labour', 'Dealer Share % (Labour)', 'e.g. 10'));
-      g.appendChild(makeInput('customer_share_pct_labour', 'Customer Share % (Labour)', 'e.g. 10'));
-      const labErr = document.createElement('div'); labErr.id = 'pct_err_labour'; labErr.className = 'full'; labErr.style.cssText = 'grid-column:1/-1;display:none;font-size:12px;font-weight:600;color:var(--danger-color);background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:7px;padding:8px 12px;margin-top:2px;'; labErr.textContent = '⚠ Labour % total exceeds 100%. The three fields must add up to exactly 100%.'; g.appendChild(labErr);
-      sec.appendChild(g);
-
-      // Live sharing calculation table
-      const tblLbl = document.createElement('div'); tblLbl.style.cssText = 'font-size:10.5px;font-weight:600;text-transform:uppercase;color:var(--text-muted);letter-spacing:.05em;margin:14px 0 6px;border-top:1px solid var(--border-light);padding-top:12px;'; tblLbl.textContent = 'Live Cost Sharing Breakdown'; sec.appendChild(tblLbl);
-
-      const tblWrap = document.createElement('div'); tblWrap.className = 'tbl-wrap';
-      tblWrap.innerHTML = `<table class="pwa-table" id="ndmsSharingTable">
-    <thead><tr>
-      <th style="min-width:100px">Category</th>
-      <th style="min-width:100px">Total Amount</th>
-      <th style="min-width:80px">HMIL %</th>
-      <th style="min-width:90px">HMIL Amt</th>
-      <th style="min-width:80px">Dealer %</th>
-      <th style="min-width:90px">Dealer Amt</th>
-      <th style="min-width:80px">Customer %</th>
-      <th style="min-width:100px">Customer Amt</th>
-      <th style="min-width:80px">Check</th>
-    </tr></thead>
-    <tbody>
-      <tr>
-        <td style="padding:0 8px;font-weight:600;font-size:12px;">Parts</td>
-        <td class="total-cell"><span id="ns_part_total">—</span></td>
-        <td class="total-cell"><span id="ns_hmil_pct_part" style="color:var(--text-muted)">—</span></td>
-        <td class="total-cell" style="background:rgba(0,44,95,.05)"><span id="ns_hmil_amt_part">—</span></td>
-        <td class="total-cell"><span id="ns_dealer_pct_part" style="color:var(--text-muted)">—</span></td>
-        <td class="total-cell"><span id="ns_dealer_amt_part">—</span></td>
-        <td class="total-cell"><span id="ns_cust_pct_part" style="color:var(--text-muted)">—</span></td>
-        <td class="total-cell"><span id="ns_cust_amt_part">—</span></td>
-        <td class="total-cell"><span id="ns_check_part">—</span></td>
-      </tr>
-      <tr>
-        <td style="padding:0 8px;font-weight:600;font-size:12px;">Labour</td>
-        <td class="total-cell"><span id="ns_labour_total">—</span></td>
-        <td class="total-cell"><span id="ns_hmil_pct_labour" style="color:var(--text-muted)">—</span></td>
-        <td class="total-cell" style="background:rgba(0,44,95,.05)"><span id="ns_hmil_amt_labour">—</span></td>
-        <td class="total-cell"><span id="ns_dealer_pct_labour" style="color:var(--text-muted)">—</span></td>
-        <td class="total-cell"><span id="ns_dealer_amt_labour">—</span></td>
-        <td class="total-cell"><span id="ns_cust_pct_labour" style="color:var(--text-muted)">—</span></td>
-        <td class="total-cell"><span id="ns_cust_amt_labour">—</span></td>
-        <td class="total-cell"><span id="ns_check_labour">—</span></td>
-      </tr>
-    </tbody>
+      const hint = `<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Paste rows directly from Excel — click first cell in any column then Ctrl+V</div>`;
+      sec.innerHTML += hint + `
+  <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;">Parts</div>
+  <div class="tbl-wrap"><table class="pwa-table">
+    <thead><tr><th style="width:28px">#</th><th style="min-width:100px">Part No.</th><th style="min-width:150px">Item Name</th><th style="min-width:50px">Qty</th><th style="min-width:80px">Rate</th><th style="min-width:75px">Total</th><th style="min-width:65px">Tag</th></tr></thead>
+    <tbody>${pRows}</tbody>
+    <tfoot><tr class="total-row"><td colspan="5" style="text-align:right;padding-right:10px;font-size:11px;letter-spacing:.04em;">PARTS TOTAL</td><td class="total-cell"><span id="partsTotal">—</span></td><td></td></tr></tfoot>
+  </table></div>
+  <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 5px;">Labour</div>
+  <div class="tbl-wrap"><table class="pwa-table">
+    <thead><tr><th style="width:28px">#</th><th style="min-width:100px">Op Code</th><th style="min-width:150px">Item Name</th><th style="min-width:50px">Qty</th><th style="min-width:80px">Rate</th><th style="min-width:75px">Total</th></tr></thead>
+    <tbody>${lRows}</tbody>
     <tfoot>
-      <tr class="gtotal-row">
-        <td style="padding:8px;font-weight:700;">GRAND TOTAL</td>
-        <td style="padding:0 8px;font-weight:700;"><span id="ns_grand_total">—</span></td>
-        <td colspan="2" style="padding:0 8px;font-weight:700;text-align:center;">HMIL: <span id="ns_hmil_grand">—</span></td>
-        <td colspan="2" style="padding:0 8px;font-weight:700;text-align:center;">Dealer: <span id="ns_dealer_grand">—</span></td>
-        <td colspan="3" style="padding:0 8px;font-weight:700;text-align:center;">Customer: <span id="ns_cust_grand">—</span></td>
-      </tr>
+      <tr class="total-row"><td colspan="5" style="text-align:right;padding-right:10px;font-size:11px;letter-spacing:.04em;">LABOUR TOTAL</td><td class="total-cell"><span id="labourTotal">—</span></td></tr>
+      <tr class="gtotal-row"><td colspan="5" style="text-align:right;padding-right:10px;letter-spacing:.04em;">G. TOTAL</td><td style="padding:0 8px;font-weight:700;"><span id="gTotal">—</span></td></tr>
     </tfoot>
-  </table>`;
-      sec.appendChild(tblWrap);
-
-      const pl = document.createElement('div'); pl.className = 'photo-sub-lbl'; pl.textContent = 'NDMS Invoice Document'; sec.appendChild(pl);
-      const pr = document.createElement('div'); pr.className = 'photo-grid g1';
-      pr.appendChild(makePhotoSlot('ndms_pic1', 'NDMS Invoice'));
-      sec.appendChild(pr);
-
+  </table></div>`;
       formWrap.appendChild(sec);
 
-      // Attach live calc listeners after DOM ready
       requestAnimationFrame(() => {
-        ['part_total_cost_with_tax', 'labour_total_cost_with_tax',
-          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
-          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'
-        ].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.addEventListener('input', calcNDMS);
-        });
+        const pCols = ['No', 'Name', 'Qty', 'Rate', 'Tag'];
+        for (let i = 1; i <= 11; i++) pCols.forEach(f => { const el = document.getElementById(`part${i}${f}`); if (el) el.addEventListener('paste', e => handlePaste(e, 'part', i, f, 11, pCols)); });
+        const lCols = ['OpCode', 'Name', 'Qty', 'Rate'];
+        for (let i = 1; i <= 6; i++) lCols.forEach(f => { const el = document.getElementById(`labour${i}${f}`); if (el) el.addEventListener('paste', e => handlePaste(e, 'labour', i, f, 6, lCols)); });
       });
     }
 
-    function calcNDMS() {
-      const gv = id => { const el = document.getElementById(id); return parseFloat(el?.value) || 0; };
-      const fmt = v => v > 0 ? Math.round(v).toLocaleString('en-IN') : '—';
-      const fmtPct = v => v > 0 ? v.toFixed(1) + '%' : '—';
-      const setEl = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-
-      const partTotal = Math.round(gv('part_total_cost_with_tax'));
-      const labTotal = Math.round(gv('labour_total_cost_with_tax'));
-
-      // Part sharing
-      const hPctP = gv('hmil_share_pct_part');
-      const dPctP = gv('dealer_share_pct_part');
-      const cPctP = gv('customer_share_pct_part');
-      const hAmtP = Math.round(partTotal * (hPctP / 100));
-      const dAmtP = Math.round(partTotal * (dPctP / 100));
-      const cAmtP = Math.round(partTotal * (cPctP / 100));
-      const checkP = hPctP + dPctP + cPctP;
-
-      // Labour sharing
-      const hPctL = gv('hmil_share_pct_labour');
-      const dPctL = gv('dealer_share_pct_labour');
-      const cPctL = gv('customer_share_pct_labour');
-      const hAmtL = Math.round(labTotal * (hPctL / 100));
-      const dAmtL = Math.round(labTotal * (dPctL / 100));
-      const cAmtL = Math.round(labTotal * (cPctL / 100));
-      const checkL = hPctL + dPctL + cPctL;
-
-      // ── Percentage over-100 validation ──
-      const partOver = checkP > 100.001;
-      const labOver = checkL > 100.001;
-      const partIds = ['hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part'];
-      const labIds = ['hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'];
-      partIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (partOver) { el.style.borderColor = 'var(--danger-color)'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
-        else { el.style.borderColor = ''; el.style.boxShadow = ''; }
-      });
-      labIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (labOver) { el.style.borderColor = 'var(--danger-color)'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
-        else { el.style.borderColor = ''; el.style.boxShadow = ''; }
-      });
-      // Show/hide inline error messages
-      const partErrEl = document.getElementById('pct_err_part');
-      const labErrEl = document.getElementById('pct_err_labour');
-      if (partErrEl) partErrEl.style.display = partOver ? 'block' : 'none';
-      if (labErrEl) labErrEl.style.display = labOver ? 'block' : 'none';
-
-      // Update table
-      setEl('ns_part_total', fmt(partTotal));
-      setEl('ns_hmil_pct_part', fmtPct(hPctP));
-      setEl('ns_hmil_amt_part', fmt(hAmtP));
-      setEl('ns_dealer_pct_part', fmtPct(dPctP));
-      setEl('ns_dealer_amt_part', fmt(dAmtP));
-      setEl('ns_cust_pct_part', fmtPct(cPctP));
-      setEl('ns_cust_amt_part', fmt(cAmtP));
-
-      setEl('ns_labour_total', fmt(labTotal));
-      setEl('ns_hmil_pct_labour', fmtPct(hPctL));
-      setEl('ns_hmil_amt_labour', fmt(hAmtL));
-      setEl('ns_dealer_pct_labour', fmtPct(dPctL));
-      setEl('ns_dealer_amt_labour', fmt(dAmtL));
-      setEl('ns_cust_pct_labour', fmtPct(cPctL));
-      setEl('ns_cust_amt_labour', fmt(cAmtL));
-
-      // Check column
-      const checkEl_p = document.getElementById('ns_check_part');
-      const checkEl_l = document.getElementById('ns_check_labour');
-      if (checkEl_p) {
-        if (partTotal > 0 && checkP > 0) { checkEl_p.textContent = Math.abs(checkP - 100) < 0.01 ? '✓ 100%' : '⚠ ' + checkP.toFixed(1) + '%'; checkEl_p.style.color = Math.abs(checkP - 100) < 0.01 ? '#22c55e' : '#ef4444'; checkEl_p.style.fontWeight = '700'; }
-        else checkEl_p.textContent = '—';
-      }
-      if (checkEl_l) {
-        if (labTotal > 0 && checkL > 0) { checkEl_l.textContent = Math.abs(checkL - 100) < 0.01 ? '✓ 100%' : '⚠ ' + checkL.toFixed(1) + '%'; checkEl_l.style.color = Math.abs(checkL - 100) < 0.01 ? '#22c55e' : '#ef4444'; checkEl_l.style.fontWeight = '700'; }
-        else checkEl_l.textContent = '—';
-      }
-
-      // Grand totals
-      setEl('ns_grand_total', fmt(partTotal + labTotal));
-      setEl('ns_hmil_grand', fmt(hAmtP + hAmtL));
-      setEl('ns_dealer_grand', fmt(dAmtP + dAmtL));
-      setEl('ns_cust_grand', fmt(cAmtP + cAmtL));
-    }
-
-    // SECTION 6: Vehicle History
-    function buildVehHistorySection() {
-      const sec = mkSec('Vehicle History');
-      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:6px;'; hint.textContent = 'Paste rows directly from Excel — click first cell then Ctrl+V'; sec.appendChild(hint);
-
-      const pasteCols = ['dealer_no', 'ro_no', 'ro_date', 'vin', 'mileage', 'work_type', 'reg_no', 'remarks'];
-      let rows = '';
-      for (let i = 1; i <= 20; i++) {
-        rows += `<tr><td class="num">${i}</td>
-      <td><input id="sh${i}_dealer_no" value="N3235" class="pre" tabindex="0" onfocus="this.classList.remove('pre')"></td>
-      <td><input id="sh${i}_ro_no" placeholder="RO No…" tabindex="0"></td>
-      <td><input id="sh${i}_ro_date" placeholder="DD-MM-YYYY" tabindex="0"></td>
-      <td><input id="sh${i}_vin" placeholder="VIN…" tabindex="0"></td>
-      <td><input id="sh${i}_mileage" placeholder="KMs…" tabindex="0"></td>
-      <td><input id="sh${i}_work_type" placeholder="Work type…" tabindex="0"></td>
-      <td><input id="sh${i}_reg_no" placeholder="Reg No…" tabindex="0"></td>
-      <td><input id="sh${i}_remarks" placeholder="Remarks…" tabindex="0"></td>
-    </tr>`;
-      }
-      const tbl = document.createElement('div'); tbl.className = 'tbl-wrap';
-      tbl.innerHTML = `<table class="pwa-table"><thead><tr><th style="width:28px">#</th><th style="min-width:65px">Dealer No</th><th style="min-width:85px">R/O No</th><th style="min-width:85px">R/O Date</th><th style="min-width:90px">VIN</th><th style="min-width:60px">Mileage</th><th style="min-width:90px">Work Type</th><th style="min-width:75px">Reg. No</th><th style="min-width:90px">Remarks</th></tr></thead><tbody>${rows}</tbody></table>`;
-      sec.appendChild(tbl);
-
-      requestAnimationFrame(() => {
-        for (let i = 1; i <= 20; i++) {
-          pasteCols.forEach(col => {
-            const el = document.getElementById(`sh${i}_${col}`);
-            if (el) el.addEventListener('paste', e => handleShPaste(e, i, col, pasteCols));
-          });
-        }
-      });
-      formWrap.appendChild(sec);
-    }
-
-    function handleShPaste(e, rowIdx, colKey, cols) {
+    function handlePaste(e, prefix, rowIdx, colKey, maxRows, cols) {
       const text = e.clipboardData.getData('text');
       if (!text.includes('\t') && !text.includes('\n')) return;
       e.preventDefault();
@@ -1917,183 +1728,516 @@
         const cells = row.split('\t');
         cells.forEach((val, ci) => {
           const r = rowIdx + ri, c = colStart + ci;
-          if (r > 20 || c >= cols.length) return;
-          const el = document.getElementById(`sh${r}_${cols[c]}`);
+          if (r > maxRows || c >= cols.length) return;
+          const el = document.getElementById(`${prefix}${r}${cols[c]}`);
           if (el) el.value = val.trim();
+        });
+      });
+      for (let i = 1; i <= 11; i++) calcRow(i);
+      for (let i = 1; i <= 6; i++) calcLabourRow(i);
+      setTimeout(updateStepper, 50);
+    }
+
+    function calcRow(i) { const qty = parseFloat(document.getElementById(`part${i}Qty`)?.value) || 0, rate = parseFloat(document.getElementById(`part${i}Rate`)?.value) || 0, el = document.getElementById(`part${i}Total`); if (el) el.textContent = (qty || rate) ? (qty * rate).toLocaleString('en-IN') : '—'; updateTotals(); }
+    function calcLabourRow(i) { const qty = parseFloat(document.getElementById(`labour${i}Qty`)?.value) || 0, rate = parseFloat(document.getElementById(`labour${i}Rate`)?.value) || 0, el = document.getElementById(`labour${i}Total`); if (el) el.textContent = (qty || rate) ? (qty * rate).toLocaleString('en-IN') : '—'; updateTotals(); }
+    function updateTotals() {
+      let pt = 0; for (let i = 1; i <= 11; i++)pt += (parseFloat(document.getElementById(`part${i}Qty`)?.value) || 0) * (parseFloat(document.getElementById(`part${i}Rate`)?.value) || 0);
+      let lt = 0; for (let i = 1; i <= 6; i++)lt += (parseFloat(document.getElementById(`labour${i}Qty`)?.value) || 0) * (parseFloat(document.getElementById(`labour${i}Rate`)?.value) || 0);
+      const ptEl = document.getElementById('partsTotal'); if (ptEl) ptEl.textContent = pt > 0 ? pt.toLocaleString('en-IN') : '—';
+      const ltEl = document.getElementById('labourTotal'); if (ltEl) ltEl.textContent = lt > 0 ? lt.toLocaleString('en-IN') : '—';
+      const gtEl = document.getElementById('gTotal'); if (gtEl) gtEl.textContent = (pt + lt) > 0 ? (pt + lt).toLocaleString('en-IN') : '—';
+    }
+
+    // ─────── SERVICE HISTORY (plain inputs, paste-friendly) ───────
+    function buildServiceHistorySection() {
+      const sec = mkSec('Service History');
+      sec.innerHTML += `<div class="sec-lbl" style="margin-top:0"></div>
+  <div class="grid-wrap" style="margin-bottom:10px;">
+    <div class="field-col"><label>Repair Order No.</label><input type="text" id="repairOrderNo" placeholder="e.g. R202601463…" tabindex="0"></div>
+    <div class="field-col"><label>Reg. No.</label><input type="text" id="regNo" placeholder="e.g. HP98P9211…" tabindex="0"></div>
+    <div class="field-col"><label>VIN No.</label><input type="text" id="vinNo" placeholder="Enter VIN…" tabindex="0"></div>
+  </div>
+  <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Paste Date, KMs and Type directly from Excel — click first Date cell then Ctrl+V</div>
+  <div class="tbl-wrap"><table class="pwa-table">
+    <thead><tr><th style="width:28px">#</th><th style="min-width:100px">Date</th><th style="min-width:80px">KMs</th><th style="min-width:140px">Type of Job</th><th style="min-width:90px">Status</th></tr></thead>
+    <tbody id="shBody"></tbody>
+  </table></div>`;
+      formWrap.appendChild(sec);
+      const tbody = document.getElementById('shBody');
+      const shCols = ['Date', 'Kms', 'JobType', 'Status'];
+      for (let i = 1; i <= 17; i++) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="num">${i}</td><td><input id="sh${i}Date" placeholder="DD-MM-YYYY" tabindex="0"></td><td><input id="sh${i}Kms" placeholder="KMs…" tabindex="0"></td><td><input id="sh${i}JobType" placeholder="Type…" tabindex="0"></td><td><input id="sh${i}Status" ${i === 1 ? 'value="CURRENT"' : ''} placeholder="${i === 1 ? 'CURRENT' : ''}" tabindex="0"></td>`;
+        tbody.appendChild(tr);
+      }
+      requestAnimationFrame(() => {
+        for (let i = 1; i <= 17; i++) shCols.forEach(col => { const el = document.getElementById(`sh${i}${col}`); if (el) el.addEventListener('paste', e => handlePaste(e, 'sh', i, col, 17, shCols)); });
+      });
+    }
+
+    // ─────── PHOTOGRAPHS ───────
+    function buildPhotographsSection() {
+      const slots = [{ id: 'vinPhoto', label: 'VIN Photo' }, { id: 'meterPhoto', label: 'Meter' }, { id: 'part1Photo', label: 'Part 1' }, { id: 'part2Photo', label: 'Part 2' }, { id: 'part3Photo', label: 'Part 3' }, { id: 'part4Photo', label: 'Part 4' }, { id: 'part5Photo', label: 'Part 5' }, { id: 'part6Photo', label: 'Part 6' }, { id: 'part7Photo', label: 'Part 7' }, { id: 'part8Photo', label: 'Part 8' }, { id: 'part9Photo', label: 'Part 9' }];
+      const sec = mkSec('Photographs');
+      const grid = document.createElement('div'); grid.className = 'photo-grid';
+      slots.forEach(slot => {
+        const div = document.createElement('div'); div.className = 'photo-slot'; div.id = 'ps_' + slot.id;
+        div.innerHTML = `<input type="file" accept="image/*" id="pf_${slot.id}"><div class="slot-placeholder">${icons.photo}<span>Upload</span></div><img id="pi_${slot.id}" alt="${slot.label}"><div class="slot-label">${slot.label}</div><button type="button" class="remove-btn" id="prm_${slot.id}">✕</button>`;
+        grid.appendChild(div);
+        requestAnimationFrame(() => {
+          document.getElementById('pf_' + slot.id)?.addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = ev => { PHOTOS[slot.id] = { dataUrl: ev.target.result, filename: file.name }; document.getElementById('pi_' + slot.id).src = ev.target.result; document.getElementById('ps_' + slot.id).classList.add('filled'); setTimeout(updateStepper, 50); }; reader.readAsDataURL(file); });
+          document.getElementById('prm_' + slot.id)?.addEventListener('click', e => { e.stopPropagation(); delete PHOTOS[slot.id]; document.getElementById('pi_' + slot.id).src = ''; document.getElementById('pf_' + slot.id).value = ''; document.getElementById('ps_' + slot.id).classList.remove('filled'); setTimeout(updateStepper, 50); });
+        });
+      });
+      sec.appendChild(grid); formWrap.appendChild(sec);
+    }
+
+    // ─────── TABLE DRAG & SELECT LOGIC (Excel-like) ───────
+    let isDragging = false, startCell = null, selectedCells = new Set();
+
+    function clearSelection() {
+      selectedCells.forEach(i => i.classList.remove('cell-selected'));
+      selectedCells.clear();
+    }
+
+    function getCellPos(inp) {
+      const td = inp.closest('td'), tr = td ? td.closest('tr') : null, tb = tr ? tr.closest('tbody') : null;
+      if (!tb) return null;
+      return { tb, r: Array.from(tb.children).indexOf(tr), c: Array.from(tr.children).indexOf(td) };
+    }
+
+    function selectBox(start, end) {
+      clearSelection();
+      const s = getCellPos(start), e = getCellPos(end);
+      if (!s || !e || s.tb !== e.tb) { selectedCells.add(start); start.classList.add('cell-selected'); return; }
+      const r1 = Math.min(s.r, e.r), r2 = Math.max(s.r, e.r), c1 = Math.min(s.c, e.c), c2 = Math.max(s.c, e.c);
+      const rows = s.tb.children;
+      for (let i = r1; i <= r2; i++) {
+        const tds = rows[i].children;
+        for (let j = c1; j <= c2; j++) {
+          const inp = tds[j].querySelector('input');
+          if (inp) { selectedCells.add(inp); inp.classList.add('cell-selected'); }
+        }
+      }
+    }
+
+    function setupTableDragSelect() {
+      const inps = document.querySelectorAll('.pwa-table td input');
+      inps.forEach(inp => {
+        inp.addEventListener('mousedown', e => {
+          isDragging = true; startCell = inp; clearSelection();
+          selectedCells.add(inp); inp.classList.add('cell-selected');
+        });
+        inp.addEventListener('mouseenter', e => {
+          if (isDragging && startCell) {
+            selectBox(startCell, inp);
+            inp.blur(); startCell.blur(); // Focus hata do taaki native selection disturb na kare
+          }
         });
       });
     }
 
-    // ─── CALC ───
-    function calcPartRow(i) {
-      const p = parseFloat(document.getElementById(`part_list_price_${i}`)?.value) || 0;
-      const q = parseFloat(document.getElementById(`part_qty_${i}`)?.value) || 0;
-      const a = p * q, t = Math.round(a * 1.18);
-      const ae = document.getElementById(`part_amt_${i}`), te = document.getElementById(`part_tax_${i}`);
-      if (ae) ae.textContent = (a || p || q) ? Math.round(a).toLocaleString('en-IN') : '—';
-      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN') : '—';
-      updateInvoiceTotals();
-    }
-    function calcLabourRow(i) {
-      const p = parseFloat(document.getElementById(`labour_list_price_${i}`)?.value) || 0;
-      const q = parseFloat(document.getElementById(`labour_qty_${i}`)?.value) || 0;
-      const a = p * q, t = Math.round(a * 1.18);
-      const ae = document.getElementById(`labour_amt_${i}`), te = document.getElementById(`labour_tax_${i}`);
-      if (ae) ae.textContent = (a || p || q) ? Math.round(a).toLocaleString('en-IN') : '—';
-      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN') : '—';
-      updateInvoiceTotals();
-    }
-    function updateInvoiceTotals() {
-      let pa = 0, la = 0;
-      let hasPartInput = false;
-      let hasLabourInput = false;
-      for (let i = 1; i <= 2; i++) {
-        const pVal = document.getElementById(`part_list_price_${i}`)?.value;
-        const qVal = document.getElementById(`part_qty_${i}`)?.value;
-        if (pVal || qVal) {
-          hasPartInput = true;
+    // Global Document listeners for Drag & Select
+    document.addEventListener('mouseup', () => { isDragging = false; });
+    document.addEventListener('mousedown', e => {
+      if (!e.target.closest('.pwa-table') && !e.target.closest('.hist-item')) {
+        clearSelection();
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (selectedCells.size > 0) {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+          if (selectedCells.size > 1) e.preventDefault(); // allow backspace standard editing in single cell
+          selectedCells.forEach(inp => {
+            // Check if input is readonly before deleting
+            if (!inp.hasAttribute('readonly')) {
+              inp.value = '';
+              inp.dispatchEvent(new Event('input')); // Trigger calculation auto-update
+            }
+          });
+          setTimeout(updateStepper, 50);
+        } else if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+          if (selectedCells.size > 1) {
+            e.preventDefault();
+            let map = new Map();
+            selectedCells.forEach(inp => {
+              const p = getCellPos(inp); if (!p) return;
+              if (!map.has(p.r)) map.set(p.r, new Map());
+              map.get(p.r).set(p.c, inp.value);
+            });
+            let rows = Array.from(map.keys()).sort((a, b) => a - b);
+            let text = rows.map(r => {
+              let cols = Array.from(map.get(r).keys()).sort((a, b) => a - b);
+              return cols.map(c => map.get(r).get(c)).join('\t');
+            }).join('\n');
+            navigator.clipboard.writeText(text).catch(() => { });
+          }
         }
-        const lpVal = document.getElementById(`labour_list_price_${i}`)?.value;
-        const lqVal = document.getElementById(`labour_qty_${i}`)?.value;
-        if (lpVal || lqVal) {
-          hasLabourInput = true;
-        }
-        pa += (parseFloat(pVal) || 0) * (parseFloat(qVal) || 0);
-        la += (parseFloat(lpVal) || 0) * (parseFloat(lqVal) || 0);
       }
-      const pt = Math.round(pa * 1.18), lt = Math.round(la * 1.18), gt = Math.round(pt + lt);
-      const f = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v > 0 ? Math.round(v).toLocaleString('en-IN') : '—'; };
-      f('partAmtTotal', pa); f('partTaxTotal', pt); f('labourAmtTotal', la); f('labourTaxTotal', lt); f('gTotal', gt);
+    });
 
-      const pCostEl = document.getElementById('part_total_cost_with_tax');
-      if (pCostEl && (pt > 0 || hasPartInput)) {
-        pCostEl.value = pt > 0 ? pt.toString() : '';
-        pCostEl.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-      const lCostEl = document.getElementById('labour_total_cost_with_tax');
-      if (lCostEl && (lt > 0 || hasLabourInput)) {
-        lCostEl.value = lt > 0 ? lt.toString() : '';
-        lCostEl.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-      calcNDMS();
-    }
-
-    // ─── STEPPER ───
-    let stepperScrollTimeout;
-    window.addEventListener('scroll', () => {
-      if (currentMode !== 'form') return;
-      clearTimeout(stepperScrollTimeout);
-      stepperScrollTimeout = setTimeout(updateStepper, 50);
-    }, { passive: true });
-
+    // ─────── STEPPER REAL-TIME LOGIC ───────
     function updateStepper() {
-      const sc = document.getElementById('stepperContainer');
-      if (!sc || currentMode !== 'form') return;
+      const stepperContainer = document.getElementById('stepperContainer');
+      if (!stepperContainer || currentMode !== 'form') return;
+
       const sections = Array.from(document.querySelectorAll('.form-section'));
       if (sections.length < 4) return;
 
-      // ── Smart completion checks ──
-      // Step 1 done: all battery data section fields filled
-      const s1fields = ['vin_number', 'model', 'pdi_voltage', 'pdi_cca', 'pdi_soc', 'analyser_voltage', 'analyser_cca', 'analyser_soc', 'analyser_result', 'result_slip'];
-      const s1done = s1fields.every(id => {
-        const el = document.getElementById(id);
-        return el && el.value.trim() !== '';
-      });
+      // 1. Determine Active Step purely by visual scroll position
+      // DOM indices: 0=Est, 1=SH, 2=Veh, 3=Part, 4=Prob, 5=Narr, 6=Staff, 7=Photos
+      const sectionMap = [
+        { idx: 0, step: 3 }, { idx: 1, step: 2 }, { idx: 2, step: 1 }, { idx: 3, step: 2 },
+        { idx: 4, step: 2 }, { idx: 5, step: 2 }, { idx: 6, step: 2 }, { idx: 7, step: 4 }
+      ];
 
-      // Step 2 done: at least 2 photos uploaded
-      const photoCount = Object.keys(PHOTOS).length;
-      const s2done = photoCount >= 2;
-
-      // Step 3 done: at least 1 invoice table row filled (parts or labour)
-      let tableHasRow = false;
-      outer: for (let i = 1; i <= 2; i++) {
-        for (const fld of ['si_no', 'part_number', 'part_description', 'si_no_labour', 'labour_code', 'labour_description']) {
-          const el = document.getElementById(`${fld}_${i}`);
-          if (el && el.value.trim()) { tableHasRow = true; break outer; }
-        }
-      }
-      const s3done = tableHasRow;
-
-      // Step 4 done: s1+s2+s3 all done
-      const s4done = s1done && s2done && s3done;
-
-      const doneMap = [s1done, s2done, s3done, s4done];
-
-      // Scroll-based active step
-      const vpm = window.innerHeight / 2;
-      const sectionMap = [{ end: 1, step: 1 }, { end: 2, step: 2 }, { end: 3, step: 3 }, { end: 5, step: 4 }];
+      const viewportMiddle = window.innerHeight / 2;
       let activeStep = 1;
       sections.forEach((section, idx) => {
         const rect = section.getBoundingClientRect();
-        if (rect.top < vpm && rect.bottom > 0) {
-          for (const map of sectionMap) { if (idx <= map.end) { activeStep = map.step; break; } }
+        if (rect.top < viewportMiddle && rect.bottom > 0) {
+          const m = sectionMap.find(x => x.idx === idx);
+          if (m) activeStep = m.step;
         }
       });
 
+      // 2. Helper to check if a single field has value (handles text, hidden selects, and manual date input)
+      const getAnyVal = id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim() !== '') return true;
+        const man = document.getElementById('dm_' + id);
+        if (man && man.value.trim() !== '') return true;
+        if (CAL[id] && CAL[id].date) return true;
+        return false;
+      };
+
+      // Step 1: Vehicle -> Dealer & Vehicle Information (all fields)
+      const s1Done = ['dealerCode', 'dealerName', 'model', 'fuelType', 'tmType', 'vin', 'engineNo', 'tmNumber', 'mileage', 'ew', 'numVehicles', 'mailYN', 'productionDate', 'deliveryDate', 'reportDate', 'repairDate'].every(getAnyVal);
+
+      // Step 2: Parts -> Part Info, Problem Nature, Narrative, Staff (all fields) AND Service History (min 1 field)
+      const partsFieldsOk = ['causalPartNo', 'partName', 'affectedPart', 'dtc', 'partSupplier', 'partLotNo', 'causeCode', 'occurrence', 'natureCode', 'timePeriod', 'roadCondition', 'speedRange', 'problemCondition', 'subject', 'introduction', 'detailedSymptom', 'investigationResult', 'correctiveAction', 'comment', 'serviceManager', 'warrantyManager', 'partsManager', 'serviceAdvisor'].every(getAnyVal);
+      let shOk = false;
+      for (let i = 1; i <= 17; i++) {
+        if (getAnyVal(`sh${i}Date`) || getAnyVal(`sh${i}Kms`) || getAnyVal(`sh${i}JobType`)) { shOk = true; break; }
+      }
+      const s2Done = partsFieldsOk && shOk;
+
+      // Step 3: Labour -> Estimate (at least one part AND one labour filled)
+      let pOk = false, lOk = false;
+      for (let i = 1; i <= 11; i++) {
+        if (getAnyVal(`part${i}No`) || getAnyVal(`part${i}Name`) || getAnyVal(`part${i}Qty`) || getAnyVal(`part${i}Rate`)) { pOk = true; break; }
+      }
+      for (let i = 1; i <= 6; i++) {
+        if (getAnyVal(`labour${i}OpCode`) || getAnyVal(`labour${i}Name`) || getAnyVal(`labour${i}Qty`) || getAnyVal(`labour${i}Rate`)) { lOk = true; break; }
+      }
+      const s3Done = pOk && lOk;
+
+      // Step 4: Photos -> min 3 photos
+      const s4Done = Object.keys(PHOTOS).length >= 3;
+
+      const doneMap = { 1: s1Done, 2: s2Done, 3: s3Done, 4: s4Done };
+
+      // 3. Update Stepper UI (Decouple 'done' from 'active')
       for (let i = 1; i <= 4; i++) {
-        const st = document.getElementById('agm-st' + i), sn = document.getElementById('agm-sn' + i);
+        const st = document.getElementById('pw-st' + i);
+        const sn = document.getElementById('pw-sn' + i);
         if (!st || !sn) continue;
-        if (doneMap[i - 1]) {
-          st.className = 'step done';
-          sn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-        } else {
-          st.className = 'step' + (i === activeStep ? ' active' : '');
-          sn.textContent = i;
-        }
+        const isDone = doneMap[i];
+        const isActive = (i === activeStep);
+
+        st.className = 'step ' + (isDone ? 'done ' : '') + (isActive ? 'active' : '');
+        sn.innerHTML = isDone
+          ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+          : i;
       }
     }
 
-    // ─── CLEAR ───
+
+    // ─────── CLEAR ───────
     document.getElementById('btnClear').addEventListener('click', async () => {
       if (!(await customConfirm('Clear all form data?', 'Yes, Clear'))) return;
-      // Clear ALL inputs (text, no-type, number) except hidden and file
-      formWrap.querySelectorAll('input:not([type=hidden]):not([type=file])').forEach(el => {
-        if (el.id && el.id.includes('_dealer_no')) { el.value = 'N3235'; el.classList.add('pre'); }
-        else { el.value = ''; el.classList.remove('pre'); }
+      formWrap.querySelectorAll('input[type=text]:not([readonly]),textarea').forEach(el => {
+        const defs = { serviceManager: 'NARENDRA KUMAR', warrantyManager: 'AASHISH GIRI', partsManager: 'MANOJ', serviceAdvisor: 'SHUBHAM', dtc: 'NA', partSupplier: 'HMIL', dealerCode: 'N3235', sh1Status: 'CURRENT', dealerName: 'Khanna Automart Pvt Ltd', tmNumber: 'NA', numVehicles: '1', partLotNo: 'NA', comment: 'Please review and do needful regarding concern.' };
+        el.value = defs[el.id] || '';
+        if (defs[el.id]) el.classList.add('pre'); else el.classList.remove('pre');
       });
       formWrap.querySelectorAll('input[type=hidden]').forEach(el => el.value = '');
-      // Clear custom dropdowns
-      ['battery_spec_ah', 'agm_supplier_name', 'dealer_action', 'model', 'battery_availability', 'analyser_result'].forEach(id => {
-        const v = document.getElementById(id); if (v) v.value = '';
-        const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = 'Select…'; lbl.classList.add('empty'); }
-      });
-      // Clear date pickers
-      const calIds = ['sale_date', 'repair_date', 'battery_production_date', 'vehicle_received_date', 'pdi_inspection_result'];
-      calIds.forEach(id => {
-        CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
-        const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = 'Pick date'; dv.classList.add('empty'); }
-        const di = document.getElementById('di_' + id); if (di) di.value = '';
-      });
-      // Clear photos
+      ALL_SELECTS.forEach(id => { const v = document.getElementById(id); if (v) v.value = ''; const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = 'Select…'; lbl.classList.add('empty'); } });
+      Object.keys(CAL).forEach(id => { CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' }; const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = 'Pick date'; dv.classList.add('empty'); } const manEl = document.getElementById('dm_' + id); if (manEl) manEl.value = ''; });
       Object.keys(PHOTOS).forEach(k => delete PHOTOS[k]);
-      document.querySelectorAll('.photo-slot').forEach(sl => {
-        sl.classList.remove('filled');
-        const img = sl.querySelector('img'); if (img) img.src = '';
-        const inp = sl.querySelector('input[type=file]'); if (inp) inp.value = '';
-      });
-      // Recalculate all live totals
-      for (let i = 1; i <= 2; i++) { calcPartRow(i); calcLabourRow(i); }
-      calcNDMS();
-      closeAllPopups(); clearStatus();
+      document.querySelectorAll('.photo-slot').forEach(sl => { sl.classList.remove('filled'); const img = sl.querySelector('img'); if (img) img.src = ''; const inp = sl.querySelector('input[type=file]'); if (inp) inp.value = ''; });
+      for (let i = 1; i <= 11; i++) { const el = document.getElementById(`part${i}Total`); if (el) el.textContent = '—'; }
+      for (let i = 1; i <= 6; i++) { const el = document.getElementById(`labour${i}Total`); if (el) el.textContent = '—'; }
+      ['partsTotal', 'labourTotal', 'gTotal'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '—'; });
+      closeAllPopups(); clearStatus(); clearSelection();
+      setTimeout(updateStepper, 50);
     });
 
-    // ─── HISTORY ───
+    // ─────── GENERATE XLSX (pure value injection — formatting 100% preserved) ───────
+    document.getElementById('btnInject').addEventListener('click', async () => {
+      if (!templateBuffer) { showStatus('Template not loaded.', 'error'); return; }
+      const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+      // ZERO INJECTION FIX: Ensure empty Quantity or Rate strictly injects "0" instead of empty string
+      const getNum = id => { const el = document.getElementById(id); const v = el ? el.value.trim() : ''; return v === '' ? '0' : v; };
+
+      const getDate = id => { const st = CAL[id]; if (st && st.date) return fmtDash(st.date); const manEl = document.getElementById('dm_' + id); return manEl ? manEl.value.trim() : ''; };
+      // Also capture dm_ values for history
+      const dmIds = ['productionDate', 'deliveryDate', 'reportDate', 'repairDate']; const data = {};
+
+      ['dealerCode', 'dealerName', 'model', 'tmType', 'vin', 'engineNo', 'tmNumber', 'mileage', 'numVehicles', 'causalPartNo', 'partName', 'affectedPart', 'dtc', 'partSupplier', 'partLotNo', 'subject', 'introduction', 'detailedSymptom', 'investigationResult', 'correctiveAction', 'comment', 'serviceManager', 'warrantyManager', 'partsManager', 'serviceAdvisor', 'repairOrderNo', 'regNo', 'vinNo'].forEach(id => data[id] = get(id));
+
+      ALL_SELECTS.forEach(id => data[id] = get(id));
+
+      ['productionDate', 'deliveryDate', 'reportDate', 'repairDate'].forEach(id => data[id] = getDate(id));
+      for (let i = 1; i <= 17; i++) ['Date', 'Kms', 'JobType', 'Status'].forEach(f => data[`sh${i}${f}`] = get(`sh${i}${f}`));
+
+      for (let i = 1; i <= 11; i++) {
+        ['No', 'Name', 'Tag'].forEach(f => data[`part${i}${f}`] = get(`part${i}${f}`));
+        ['Qty', 'Rate'].forEach(f => data[`part${i}${f}`] = getNum(`part${i}${f}`));
+      }
+      for (let i = 1; i <= 6; i++) {
+        ['OpCode', 'Name'].forEach(f => data[`labour${i}${f}`] = get(`labour${i}${f}`));
+        ['Qty', 'Rate'].forEach(f => data[`labour${i}${f}`] = getNum(`labour${i}${f}`));
+      }
+
+      // Collect photo dataURLs from PHOTOS store
+      const photoKeys = ['vinPhoto', 'meterPhoto', 'part1Photo', 'part2Photo', 'part3Photo', 'part4Photo', 'part5Photo', 'part6Photo', 'part7Photo', 'part8Photo', 'part9Photo'];
+
+      const btnInject = document.getElementById('btnInject');
+      btnInject.disabled = true; btnInject.textContent = 'Processing…'; clearStatus();
+      try {
+        // ── Pure XML injection via JSZip — never touches styles, borders, merges ──
+        const JSZip = window.JSZip || (typeof require !== 'undefined' ? require('jszip') : null);
+        if (!JSZip) throw new Error('JSZip not available');
+
+        const zip = await JSZip.loadAsync(templateBuffer);
+
+        // Escape value for XML text content (only escapes user input, not existing XML)
+        const xmlEsc = s => String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&apos;');
+
+        // Replace {key} placeholders inside XML.
+        // IMPORTANT: only replace inside <t>...</t> text nodes to avoid touching existing XML entities.
+        const replacePlaceholders = xml => {
+          // Replace {key} only when it appears inside a <t> tag value
+          // This prevents double-escaping existing &amp; &lt; etc in the XML structure
+          return xml.replace(/<t([^>]*)>([^<]*\{[^<]*)<\/t>/g, (match, attrs, content) => {
+            const replaced = content.replace(/\{([^}]+)\}/g, (_, key) => {
+              const v = data[key];
+              return xmlEsc((v === undefined || v === null) ? '' : v);
+            });
+            return `<t${attrs}>${replaced}</t>`;
+          });
+        };
+
+        // Process sharedStrings.xml — this is where cell text values live
+        const ssPath = Object.keys(zip.files).find(p => p.match(/sharedStrings\.xml$/i));
+        if (ssPath) {
+          let ssXml = await zip.files[ssPath].async('string');
+          ssXml = replacePlaceholders(ssXml);
+          zip.file(ssPath, ssXml);
+        }
+
+        // Also process each worksheet XML for inline strings
+        const sheetPaths = Object.keys(zip.files).filter(p => p.match(/xl\/worksheets\/sheet\d+\.xml$/i));
+
+        // Get replaced sharedString values for height calculation
+        const ssPathForHt = Object.keys(zip.files).find(p => p.match(/sharedStrings\.xml$/i));
+        const ssXmlForHt = ssPathForHt ? await zip.files[ssPathForHt].async('string') : '';
+        const ssValuesForHt = [];
+        ssXmlForHt.replace(/<t[^>]*>([^<]*)<\/t>/g, (_, v) => { ssValuesForHt.push(v); });
+
+        for (const sp of sheetPaths) {
+          let shXml = await zip.files[sp].async('string');
+          if (shXml.includes('{')) {
+            shXml = replacePlaceholders(shXml);
+          }
+          // Auto-fit row heights on text sheets (skip photo sheet4)
+          if (!sp.match(/sheet4\.xml$/i)) {
+            // For every row, find longest shared-string value referenced in that row
+            // then set ht = lines * lineHeight, removing customHeight lock
+            shXml = shXml.replace(/<row\s([^>]*?)>/g, (rowTag, attrs) => {
+              const rNum = (attrs.match(/r="(\d+)"/) || [])[1];
+              if (!rNum) return rowTag;
+              // Find all shared string indices used by cells in this row
+              const cellRe = new RegExp(`<c r="[A-Z]+${rNum}"[^>]*t="s"><v>(\\d+)<\\/v><\\/c>`, 'g');
+              let maxLen = 0, m;
+              while ((m = cellRe.exec(shXml)) !== null) {
+                const idx = +m[1];
+                if (idx < ssValuesForHt.length) maxLen = Math.max(maxLen, ssValuesForHt[idx].length);
+              }
+              // Strip old ht and customHeight
+              let a = attrs.replace(/\s+ht="[^"]*"/g, '').replace(/\s+customHeight="[^"]*"/g, '');
+              if (maxLen > 60) {
+                // ~55 chars per line at typical col width, 15pt per line
+                const lines = Math.ceil(maxLen / 55);
+                a += ` ht="${lines * 15}" customHeight="1"`;
+              }
+              return `<row ${a}>`;
+            });
+          }
+          zip.file(sp, shXml);
+        }
+
+        // ── Inject photos into Photographs sheet ──
+        const photoSlotMap = [
+          { key: 'vinPhoto', col: 0, row: 4 },
+          { key: 'meterPhoto', col: 6, row: 4 },
+          { key: 'part1Photo', col: 12, row: 4 },
+          { key: 'part2Photo', col: 18, row: 4 },
+          { key: 'part3Photo', col: 24, row: 4 },
+          { key: 'part4Photo', col: 12, row: 12 },
+          { key: 'part5Photo', col: 18, row: 12 },
+          { key: 'part6Photo', col: 24, row: 12 },
+          { key: 'part7Photo', col: 12, row: 20 },
+          { key: 'part8Photo', col: 18, row: 20 },
+          { key: 'part9Photo', col: 24, row: 20 },
+        ];
+
+        function dataUrlToBytes(dataUrl) {
+          const b64 = dataUrl.split(',')[1];
+          const bin = atob(b64);
+          const arr = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+          return arr;
+        }
+        function mimeFromDataUrl(dataUrl) {
+          return dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+        }
+        function extFromMime(mime) {
+          if (mime === 'image/png') return 'png';
+          if (mime === 'image/gif') return 'gif';
+          if (mime === 'image/webp') return 'webp';
+          return 'jpg';
+        }
+
+        const photoEntries = [];
+        for (const { key, col, row } of photoSlotMap) {
+          const photo = PHOTOS[key];
+          if (!photo || !photo.dataUrl) continue;
+          const mime = mimeFromDataUrl(photo.dataUrl);
+          const ext = extFromMime(mime);
+          const bytes = dataUrlToBytes(photo.dataUrl);
+          const idx = photoEntries.length + 1;
+          const mediaName = `image${idx}.${ext}`;
+          zip.file(`xl/media/${mediaName}`, bytes);
+          photoEntries.push({ idx, mediaName, mime, colIdx: col, rowIdx: row - 1 });
+        }
+
+        if (photoEntries.length > 0) {
+          // Build drawing XML
+          const NS_XDR = 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing';
+          const NS_A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
+          const NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+          let drawingXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><xdr:wsDr xmlns:xdr="${NS_XDR}" xmlns:a="${NS_A}" xmlns:r="${NS_R}">`;
+          const drawingRels = [];
+
+          photoEntries.forEach(({ idx, mediaName, mime, colIdx, rowIdx }, i) => {
+            const rId = `rId${i + 1}`;
+            const toCol = colIdx + 5;
+            const toRow = rowIdx + 7;
+            // colOff/rowOff=0 so image fully fills the merged cell area
+            drawingXml +=
+              `<xdr:twoCellAnchor editAs="twoCell">` +
+              `<xdr:from><xdr:col>${colIdx}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${rowIdx}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>` +
+              `<xdr:to><xdr:col>${toCol}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${toRow}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>` +
+              `<xdr:pic>` +
+              `<xdr:nvPicPr>` +
+              `<xdr:cNvPr id="${i + 2}" name="Photo${idx}"/>` +
+              `<xdr:cNvPicPr><a:picLocks noChangeAspect="1"/></xdr:cNvPicPr>` +
+              `</xdr:nvPicPr>` +
+              `<xdr:blipFill>` +
+              `<a:blip r:embed="${rId}"/>` +
+              `<a:stretch><a:fillRect/></a:stretch>` +
+              `</xdr:blipFill>` +
+              `<xdr:spPr>` +
+              `<a:xfrm><a:off x="0" y="0"/><a:ext cx="914400" cy="685800"/></a:xfrm>` +
+              `<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>` +
+              `</xdr:spPr>` +
+              `</xdr:pic>` +
+              `<xdr:clientData/>` +
+              `</xdr:twoCellAnchor>`;
+            drawingRels.push({ rId, target: `../media/${mediaName}`, mime });
+          });
+          drawingXml += `</xdr:wsDr>`;
+
+          // Drawing rels
+          let drawingRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">`;
+          drawingRels.forEach(({ rId, target }) => {
+            drawingRelsXml += `<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="${target}"/>`;
+          });
+          drawingRelsXml += `</Relationships>`;
+
+          zip.file('xl/drawings/drawing1.xml', drawingXml);
+          zip.file('xl/drawings/_rels/drawing1.xml.rels', drawingRelsXml);
+
+          // Patch sheet4.xml — it already has xmlns:r so DO NOT add it again, just add <drawing> tag
+          const sh4Path = Object.keys(zip.files).find(p => p.match(/xl\/worksheets\/sheet4\.xml$/i));
+          if (sh4Path) {
+            let sh4 = await zip.files[sh4Path].async('string');
+            if (!sh4.includes('<drawing ')) {
+              // Insert <drawing> just before </worksheet>
+              sh4 = sh4.replace('</worksheet>', '<drawing r:id="rId_drawing1"/></worksheet>');
+              zip.file(sh4Path, sh4);
+            }
+            // Sheet4 rels — always write fresh (template has none)
+            const sh4RelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId_drawing1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing1.xml"/></Relationships>`;
+            zip.file('xl/worksheets/_rels/sheet4.xml.rels', sh4RelsXml);
+          }
+
+          // Patch [Content_Types].xml
+          const ctPath = '[Content_Types].xml';
+          let ct = await zip.files[ctPath].async('string');
+          if (!ct.includes('drawing1.xml')) {
+            ct = ct.replace('</Types>', '<Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/></Types>');
+          }
+          const mimesSeen = new Set();
+          drawingRels.forEach(({ mime }) => {
+            if (mimesSeen.has(mime)) return; mimesSeen.add(mime);
+            const ext = extFromMime(mime);
+            const ctStr = `Extension="${ext}"`;
+            if (!ct.includes(ctStr)) {
+              ct = ct.replace('</Types>', `<Default Extension="${ext}" ContentType="${mime}"/></Types>`);
+            }
+          });
+          zip.file(ctPath, ct);
+        }
+
+        // Generate output preserving everything else (styles, themes, drawings, etc.)
+        const outBuf = await zip.generateAsync({
+          type: 'arraybuffer',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 6 }
+        });
+
+        const blob = new Blob([outBuf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const vinClean = (data.vin || 'NOVIN').replace(/[^a-zA-Z0-9]/g, '');
+        const dcClean = (data.dealerCode || 'N3235').replace(/[^a-zA-Z0-9]/g, '');
+        const fname = `${vinClean}_${dcClean}_OfficialFormat.xlsx`;
+        dmIds.forEach(id => { const manEl = document.getElementById('dm_' + id); if (manEl && manEl.value.trim()) data['dm_' + id] = manEl.value.trim(); });
+        saveAs(blob, fname);
+        showStatus('✓ Downloaded: ' + fname, 'success');
+        saveHistory(data);
+      } catch (err) { showStatus('Error: ' + err.message, 'error'); console.error(err); }
+      finally { btnInject.disabled = false; btnInject.textContent = 'Generate XLSX'; }
+    });
+
     function saveHistory(entry) {
-      const key = entry.vin_number;
-      if (key) HISTORY = HISTORY.filter(h => h.vin_number !== key);
-      HISTORY.unshift(entry);
-      if (HISTORY.length > 50) HISTORY = HISTORY.slice(0, 50);
-      try { localStorage.setItem('agm_hist', JSON.stringify(HISTORY)); } catch (e) { }
+      const key = entry.vin || entry.regNo; if (key) HISTORY = HISTORY.filter(h => (h.vin || h.regNo) !== key);
+      HISTORY.unshift(entry); if (HISTORY.length > 50) HISTORY = HISTORY.slice(0, 50);
+      try { localStorage.setItem('pwa_hist', JSON.stringify(HISTORY)); } catch (e) { }
       renderHistory(historySearch.value);
     }
-    async function deleteHistory(idx) {
-      HISTORY.splice(idx, 1);
-      try { localStorage.setItem('agm_hist', JSON.stringify(HISTORY)); } catch (e) { }
-      renderHistory(historySearch.value);
-    }
+    async function deleteHistory(idx) { HISTORY.splice(idx, 1); try { localStorage.setItem('pwa_hist', JSON.stringify(HISTORY)); } catch (e) { } renderHistory(historySearch.value); }
+
     document.getElementById('btnHistoryClearAll').addEventListener('click', async () => {
       if (!(await customConfirm('Clear all saved entries?', 'Yes, Clear All'))) return;
-      HISTORY = []; try { localStorage.removeItem('agm_hist'); } catch (e) { } historySearch.value = ''; renderHistory();
+      HISTORY = []; try { localStorage.removeItem('pwa_hist'); } catch (e) { } historySearch.value = ''; renderHistory();
     });
     historySearch.addEventListener('input', () => renderHistory(historySearch.value));
 
@@ -2102,7 +2246,7 @@
       histList.innerHTML = '';
       const q = filter.toLowerCase().trim();
       HISTORY.forEach((entry, idx) => {
-        const primary = entry.vin_number || 'Unknown'; const sub = entry.repair_date || entry.model || '';
+        const primary = entry.vin || entry.regNo || 'Unknown'; const sub = entry.repairDate || entry.dealerCode || '';
         if (q && !`${primary} ${sub}`.toLowerCase().includes(q)) return;
         const item = document.createElement('div'); item.className = 'hist-item'; item.setAttribute('tabindex', '0');
         item.innerHTML = `<div class="hi-info"><div class="hi-name">${escHtml(primary)}</div><div class="hi-meta">${escHtml(sub)}</div></div><button type="button" class="hi-del" tabindex="0">${icons.close}</button>`;
@@ -2112,624 +2256,53 @@
         const itemA = () => fillFromHistory(entry); item.addEventListener('click', itemA); handleKeyClick(item, itemA);
         histList.appendChild(item);
       });
-      if (!histList.children.length) histList.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:10px;">No matching entries.</div>';
+      if (!histList.innerHTML) histList.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:10px;">No matching entries.</div>';
     }
 
     function fillFromHistory(entry) {
       setMode('form');
       setTimeout(() => {
-        // Restore all plain input fields
-        Object.keys(entry).forEach(id => { const el = document.getElementById(id); if (el && el.type !== 'hidden') { el.value = entry[id]; if (entry[id]) el.classList.remove('pre'); } });
-        // Restore custom dropdowns
-        ['battery_spec_ah', 'agm_supplier_name', 'dealer_action', 'model', 'battery_availability', 'analyser_result'].forEach(id => {
-          if (!entry[id]) return;
-          const h = document.getElementById(id); if (h) h.value = entry[id];
-          const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = entry[id]; lbl.classList.remove('empty'); }
-        });
-        // Restore date pickers
-        ['sale_date', 'repair_date', 'battery_production_date', 'vehicle_received_date', 'pdi_inspection_result'].forEach(id => {
-          const val = entry[id]; if (!val) return;
-          const p = val.split('-'); const d = new Date(+p[2], +p[1] - 1, +p[0]); if (isNaN(d)) return;
-          if (!CAL[id]) CAL[id] = {};
-          Object.assign(CAL[id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' });
-          const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = val; dv.classList.remove('empty'); }
-          const di = document.getElementById('di_' + id); if (di) di.value = val;
-        });
-        // Restore Invoice rows (plain inputs already handled above, just recalc)
-        for (let i = 1; i <= 2; i++) { calcPartRow(i); calcLabourRow(i); }
-        // Restore NDMS (plain inputs already handled above, just recalc live table)
-        calcNDMS();
-        // Restore Vehicle History dealer_no styling
-        for (let i = 1; i <= 20; i++) {
-          const el = document.getElementById(`sh${i}_dealer_no`);
-          if (el && el.value && el.value !== 'N3235') el.classList.remove('pre');
-        }
+        Object.keys(entry).forEach(id => { const el = document.getElementById(id); if (el && el.type !== 'hidden') { el.value = entry[id]; el.classList.remove('pre'); } });
+        ALL_SELECTS.forEach(id => { if (!entry[id]) return; const hidEl = document.getElementById(id); if (hidEl) hidEl.value = entry[id]; const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = entry[id]; lbl.classList.remove('empty'); } });
+        ['productionDate', 'deliveryDate', 'reportDate', 'repairDate'].forEach(id => { const val = entry[id]; if (!val) return; const p = val.split('-'); const d = new Date(+p[2], +p[1] - 1, +p[0]); if (isNaN(d)) return; if (!CAL[id]) CAL[id] = {}; Object.assign(CAL[id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' }); const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = val; dv.classList.remove('empty'); } const manEl = document.getElementById('dm_' + id); if (manEl) manEl.value = entry['dm_' + id] || val; });
+        for (let i = 1; i <= 11; i++)calcRow(i); for (let i = 1; i <= 6; i++)calcLabourRow(i);
         closeAllPopups(); clearStatus();
+        setTimeout(updateStepper, 50);
       }, 100);
     }
 
-    // ─── HELPERS ───
+    function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function showStatus(m, t) { statusEl.textContent = m; statusEl.className = 'status ' + t; }
     function clearStatus() { statusEl.textContent = ''; statusEl.className = 'status'; }
-    function dataUrlToBytes(dataUrl) { const b64 = dataUrl.split(',')[1]; const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++)arr[i] = bin.charCodeAt(i); return arr; }
-    function mimeFromDataUrl(dataUrl) { return dataUrl.split(';')[0].split(':')[1] || 'image/jpeg'; }
-    function extFromMime(mime) { if (mime === 'image/png') return 'png'; if (mime === 'image/gif') return 'gif'; if (mime === 'image/webp') return 'webp'; return 'jpg'; }
 
-    // ─── GENERATE XLSX ───
-    document.getElementById('btnInject').addEventListener('click', async () => {
-      if (!templateBuffer) { showStatus('Template not loaded.', 'error'); return; }
-      const btnInject = document.getElementById('btnInject');
-      // Validate % totals before proceeding
-      const gv = id => { const el = document.getElementById(id); return parseFloat(el?.value) || 0; };
-      const checkP = gv('hmil_share_pct_part') + gv('dealer_share_pct_part') + gv('customer_share_pct_part');
-      const checkL = gv('hmil_share_pct_labour') + gv('dealer_share_pct_labour') + gv('customer_share_pct_labour');
-      if (checkP > 100.001) {
-        showStatus('⚠ Part sharing % total is ' + checkP.toFixed(1) + '% — must be exactly 100%. Please fix before generating.', 'error');
-        document.getElementById('hmil_share_pct_part')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      if (checkL > 100.001) {
-        showStatus('⚠ Labour sharing % total is ' + checkL.toFixed(1) + '% — must be exactly 100%. Please fix before generating.', 'error');
-        document.getElementById('hmil_share_pct_labour')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      btnInject.disabled = true; btnInject.textContent = 'Processing…'; clearStatus();
-      try {
-        const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-        const getDate = id => { const st = CAL[id]; if (st && st.date) return fmtDash(st.date); const di = document.getElementById("di_" + id); if (di && di.value.trim()) return di.value.trim(); return ""; };
+    // ─────── STEPPER SCROLL HANDLER ───────
+    let stepperScrollTimeout;
+    window.addEventListener('scroll', () => {
+      if (currentMode !== 'form') return;
+      clearTimeout(stepperScrollTimeout);
+      stepperScrollTimeout = setTimeout(updateStepper, 50);
+    }, { passive: true });
 
-        const data = {};
-        // Battery Data
-        ['model', 'vin_number', 'mileage_km', 'battery_spec_ah', 'agm_supplier_name',
-          'pdi_voltage', 'pdi_cca', 'pdi_soc',
-          'analyser_voltage', 'analyser_cca', 'analyser_soc', 'analyser_result', 'result_slip',
-          'dealer_action', 'battery_availability'].forEach(id => data[id] = get(id));
-        data.sale_date = getDate('sale_date');
-        data.repair_date = getDate('repair_date');
-        data.battery_production_date = getDate('battery_production_date');
-        data.vehicle_received_date = getDate('vehicle_received_date');
-        data.pdi_inspection_result = getDate('pdi_inspection_result');
-
-        // Invoice
-        for (let i = 1; i <= 2; i++) {
-          data[`si_no_${i}`] = get(`si_no_${i}`);
-          data[`part_number_${i}`] = get(`part_number_${i}`);
-          data[`part_description_${i}`] = get(`part_description_${i}`);
-          data[`part_list_price_${i}`] = get(`part_list_price_${i}`);
-          data[`part_qty_${i}`] = get(`part_qty_${i}`);
-          const pp = parseFloat(get(`part_list_price_${i}`)) || 0, pq = parseFloat(get(`part_qty_${i}`)) || 0;
-          data[`part_amount_${i}`] = Math.round(pp * pq).toString();
-
-          data[`si_no_labour_${i}`] = get(`si_no_labour_${i}`);
-          data[`labour_code_${i}`] = get(`labour_code_${i}`);
-          data[`labour_description_${i}`] = get(`labour_description_${i}`);
-          data[`labour_list_price_${i}`] = get(`labour_list_price_${i}`);
-          data[`labour_qty_${i}`] = get(`labour_qty_${i}`);
-          const lp = parseFloat(get(`labour_list_price_${i}`)) || 0, lq = parseFloat(get(`labour_qty_${i}`)) || 0;
-          data[`labour_amount_${i}`] = Math.round(lp * lq).toString();
-        }
-
-        // NDMS — collect user inputs
-        ['part_total_cost_with_tax', 'labour_total_cost_with_tax',
-          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
-          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'].forEach(id => data[id] = get(id));
-
-        // NDMS — pre-calculate sharing amounts; use null so blank inputs produce blank cells
-        {
-          const pTotalRaw = data.part_total_cost_with_tax;
-          const lTotalRaw = data.labour_total_cost_with_tax;
-          const pTotal = Math.round(parseFloat(pTotalRaw)) || 0;
-          const lTotal = Math.round(parseFloat(lTotalRaw)) || 0;
-          const hasP = !!(pTotalRaw && pTotal);
-          const hasL = !!(lTotalRaw && lTotal);
-          const hPctP = parseFloat(data.hmil_share_pct_part) || 0;
-          const dPctP = parseFloat(data.dealer_share_pct_part) || 0;
-          const cPctP = parseFloat(data.customer_share_pct_part) || 0;
-          const hPctL = parseFloat(data.hmil_share_pct_labour) || 0;
-          const dPctL = parseFloat(data.dealer_share_pct_labour) || 0;
-          const cPctL = parseFloat(data.customer_share_pct_labour) || 0;
-          // Part sharing amounts — null if no part total entered
-          data.ndms_hmil_amt_part = hasP ? Math.round((pTotal * hPctP) / 100) : null;
-          data.ndms_dealer_amt_part = hasP ? Math.round((pTotal * dPctP) / 100) : null;
-          data.ndms_cust_amt_part = hasP ? Math.round((pTotal * cPctP) / 100) : null;
-          // Labour sharing amounts — null if no labour total entered
-          data.ndms_hmil_amt_labour = hasL ? Math.round((lTotal * hPctL) / 100) : null;
-          data.ndms_dealer_amt_labour = hasL ? Math.round((lTotal * dPctL) / 100) : null;
-          data.ndms_cust_amt_labour = hasL ? Math.round((lTotal * cPctL) / 100) : null;
-          // Grand totals — null if neither part nor labour entered
-          data.ndms_grand_total = (hasP || hasL) ? Math.round(pTotal + lTotal) : null;
-          data.ndms_grand_hmil_amt = (hasP || hasL) ? Math.round(((pTotal * hPctP) + (lTotal * hPctL)) / 100) : null;
-          data.ndms_grand_dealer_amt = (hasP || hasL) ? Math.round(((pTotal * dPctP) + (lTotal * dPctL)) / 100) : null;
-          data.ndms_grand_cust_amt = (hasP || hasL) ? Math.round(((pTotal * cPctP) + (lTotal * cPctL)) / 100) : null;
-        }
-
-        // Veh History — per row — keys must match replaceVehHistoryXml lookup format sh${i}_*
-        for (let i = 1; i <= 20; i++) {
-          data[`sl_no_${i}`] = String(i);
-          data[`sh${i}_dealer_no`] = get(`sh${i}_dealer_no`) || 'N3235';
-          data[`sh${i}_ro_no`] = get(`sh${i}_ro_no`);
-          data[`sh${i}_ro_date`] = get(`sh${i}_ro_date`);
-          data[`sh${i}_vin`] = get(`sh${i}_vin`);
-          data[`sh${i}_mileage`] = get(`sh${i}_mileage`);
-          data[`sh${i}_work_type`] = get(`sh${i}_work_type`);
-          data[`sh${i}_reg_no`] = get(`sh${i}_reg_no`);
-          data[`sh${i}_remarks`] = get(`sh${i}_remarks`);
-        }
-
-        const zip = await JSZip.loadAsync(templateBuffer);
-        // Remove calcChain to prevent "unreadable content" error — Excel will recalculate fresh
-        zip.remove('xl/calcChain.xml');
-
-        const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-
-        // Numeric fields - these should inject as numbers, not text
-        const numericFields = new Set([
-          'mileage_km', 'pdi_cca', 'pdi_soc', 'analyser_cca', 'analyser_soc',
-          'part_list_price_1', 'part_list_price_2', 'part_qty_1', 'part_qty_2',
-          'part_amount_1', 'part_amount_2',
-          'labour_list_price_1', 'labour_list_price_2', 'labour_qty_1', 'labour_qty_2',
-          'labour_amount_1', 'labour_amount_2',
-          'part_total_cost_with_tax', 'labour_total_cost_with_tax',
-          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
-          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour',
-          // NDMS calculated amounts (injected directly into formula cells)
-          'ndms_hmil_amt_part', 'ndms_dealer_amt_part', 'ndms_cust_amt_part',
-          'ndms_hmil_amt_labour', 'ndms_dealer_amt_labour', 'ndms_cust_amt_labour',
-          'ndms_grand_total', 'ndms_grand_hmil_amt', 'ndms_grand_dealer_amt', 'ndms_grand_cust_amt'
-        ]);
-
-        // Replace in shared strings (text cells)
-        const replacePlaceholders = xml => {
-          // Replace in <t> tags (shared strings / text cells)
-          xml = xml.replace(/<t([^>]*)>([^<]*\{[^<]*)<\/t>/g, (match, attrs, content) => {
-            const replaced = content.replace(/\{([^}]+)\}/g, (_, key) => {
-              return xmlEsc((data[key] === undefined || data[key] === null) ? '' : data[key]);
-            });
-            return `<t${attrs}>${replaced}</t>`;
-          });
-          // Replace in <v> tags for numeric cells — remove t="s" attr and set raw number
-          xml = xml.replace(/<c([^>]*)\sr="([^"]+)"([^>]*)>\s*<v>\{([^}]+)\}<\/v>/g, (match, pre, ref, post, key) => {
-            const val = data[key];
-            if (val === undefined || val === null || val === '') return `<c${pre} r="${ref}"${post}><v></v>`;
-            const numVal = parseFloat(String(val).replace(/,/g, ''));
-            if (!isNaN(numVal) && numericFields.has(key)) {
-              // Remove t="s" to make it a numeric cell
-              const attrs = (pre + post).replace(/\s*t="s"/g, '');
-              return `<c${attrs} r="${ref}"><v>${numVal}</v>`;
-            }
-            return match;
-          });
-
-          // ── FIX: Handle numeric fields stored as inlineStr or sharedStr in sheet XML ──
-          // After sharedStrings substitution, cells with numeric placeholders may still be t="s"
-          // pointing to a now-replaced text value. Re-scan sheet XML for cells whose shared
-          // string value resolved to a numeric field and convert them to proper number cells.
-          // This is done per-sheet after sharedStrings pass (see sheet loop below).
-          return xml;
-        };
-
-        // Extra pass: scan sheet XML and convert numeric-field cells from text→number
-        const convertNumericCellsInSheet = (shXml, ssXmlAfter) => {
-          const ssMap = {};
-          let si = 0;
-          ssXmlAfter.replace(/<si>[\s\S]*?<\/si>/g, match => {
-            const tMatch = match.match(/<t[^>]*>([^<]*)<\/t>/);
-            ssMap[si] = tMatch ? tMatch[1] : '';
-            si++;
-            return match;
-          });
-          return shXml.replace(/<c\s([^>]*)t="s"([^>]*)>\s*<v>(\d+)<\/v>\s*<\/c>/g, (match, pre, post, idx) => {
-            const resolved = ssMap[parseInt(idx)];
-            // Blank cell when placeholder resolved to empty
-            if (resolved === '' || resolved === undefined || resolved === null) {
-              const attrs = (pre + post).replace(/\s*t="s"/g, '');
-              return `<c ${attrs}></c>`;
-            }
-            const numVal = parseFloat(String(resolved).replace(/,/g, ''));
-            if (!isNaN(numVal) && String(numVal) === String(resolved).trim()) {
-              const attrs = (pre + post).replace(/\s*t="s"/g, '');
-              return `<c ${attrs}><v>${numVal}</v></c>`;
-            }
-            return match;
-          });
-        };
-
-        // Process sharedStrings
-        const ssPath = Object.keys(zip.files).find(p => p.match(/sharedStrings\.xml$/i));
-        let ssXmlAfter = '';
-        if (ssPath) {
-          let ssXml = await zip.files[ssPath].async('string');
-          ssXml = replacePlaceholders(ssXml);
-          ssXmlAfter = ssXml;
-          zip.file(ssPath, ssXml);
-        }
-
-        // Process each sheet
-        const sheetPaths = Object.keys(zip.files).filter(p => p.match(/xl\/worksheets\/sheet\d+\.xml$/i));
-        for (const sp of sheetPaths) {
-          let shXml = await zip.files[sp].async('string');
-          if (sp.match(/sheet5\.xml$/i)) {
-            // Vehicle History sheet — full rebuild via inlineStr
-            shXml = replaceVehHistoryXml(shXml, data);
-          } else if (sp.match(/sheet4\.xml$/i)) {
-            // NDMS sheet — replace placeholders + inject calculated values into formula cells
-            if (shXml.includes('{')) shXml = replacePlaceholders(shXml);
-            if (ssXmlAfter) shXml = convertNumericCellsInSheet(shXml, ssXmlAfter);
-            shXml = replaceNDMSFormulaXml(shXml, data);
-          } else if (sp.match(/sheet3\.xml$/i)) {
-            // Invoice sheet — replace placeholders + inject calculated totals into formula cells
-            if (shXml.includes('{')) shXml = replacePlaceholders(shXml);
-            if (ssXmlAfter) shXml = convertNumericCellsInSheet(shXml, ssXmlAfter);
-            shXml = replaceInvoiceFormulaXml(shXml, data);
-          } else {
-            if (shXml.includes('{')) shXml = replacePlaceholders(shXml);
-            // ── FIX BUG 1: convert shared-string cells that resolved to numbers into proper numeric cells ──
-            if (ssXmlAfter) shXml = convertNumericCellsInSheet(shXml, ssXmlAfter);
-          }
-          zip.file(sp, shXml);
-        }
-
-        // ── PHOTO INJECTION + PLACEHOLDER REMOVAL ──
-        // For uploaded photos: replace media bytes in xl/media/
-        // For missing photos: remove the anchor from drawing XML + its relationship entry
-
-        const photoMap = [
-          // drawing1 — photo_1..10 → rId1..rId10 → image1..10.jpeg
-          { key: 'photo_1', file: 'image1.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId1' },
-          { key: 'photo_2', file: 'image2.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId2' },
-          { key: 'photo_3', file: 'image3.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId3' },
-          { key: 'photo_4', file: 'image4.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId4' },
-          { key: 'photo_5', file: 'image5.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId5' },
-          { key: 'photo_6', file: 'image6.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId6' },
-          { key: 'photo_7', file: 'image7.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId7' },
-          { key: 'photo_8', file: 'image8.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId8' },
-          { key: 'photo_9', file: 'image9.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId9' },
-          { key: 'photo_10', file: 'image10.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId10' },
-          // drawing2 — invoice pics
-          { key: 'invoice_pic3', file: 'image11.jpeg', drawing: 'xl/drawings/drawing2.xml', rId: 'rId1' },
-          { key: 'invoice_pic4', file: 'image12.jpeg', drawing: 'xl/drawings/drawing2.xml', rId: 'rId2' },
-          { key: 'ndms_pic1', file: 'image14.jpeg', drawing: 'xl/drawings/drawing3.xml', rId: 'rId1' },
-          // drawing3 — PWA screen
-          { key: 'invoice_pwa', file: 'image13.jpeg', drawing: 'xl/drawings/drawing2.xml', rId: 'rId3' },
-        ];
-
-        // Collect which rIds to remove per drawing (those with no uploaded photo)
-        const drawingRemovals = {}; // drawingPath → Set of rIds to remove
-        for (const { key, drawing, rId } of photoMap) {
-          const photo = PHOTOS[key];
-          if (!photo || !photo.dataUrl) {
-            if (!drawingRemovals[drawing]) drawingRemovals[drawing] = new Set();
-            drawingRemovals[drawing].add(rId);
-          }
-        }
-
-        // Inject uploaded photos
-        for (const { key, file } of photoMap) {
-          const photo = PHOTOS[key];
-          if (!photo || !photo.dataUrl) continue;
-          const bytes = dataUrlToBytes(photo.dataUrl);
-          const mime = mimeFromDataUrl(photo.dataUrl);
-          const ext = extFromMime(mime);
-          zip.file(`xl/media/${file}`, bytes);
-          if (ext !== 'jpg') {
-            const ctPath = '[Content_Types].xml';
-            let ct = await zip.files[ctPath].async('string');
-            if (!ct.includes(`Extension="${ext}"`)) {
-              ct = ct.replace('</Types>', `<Default Extension="${ext}" ContentType="${mime}"/></Types>`);
-              zip.file(ctPath, ct);
-            }
-          }
-        }
-
-        // Remove anchors for missing photos from drawing XML + their rels entries
-        for (const [drawingPath, ridsToRemove] of Object.entries(drawingRemovals)) {
-          // --- Drawing XML: strip twoCellAnchor blocks that reference any removed rId ---
-          let dXml = await zip.files[drawingPath].async('string');
-          dXml = dXml.replace(/<xdr:twoCellAnchor[\s\S]*?<\/xdr:twoCellAnchor>/g, anchor => {
-            const ridMatch = anchor.match(/r:embed="([^"]+)"/);
-            if (ridMatch && ridsToRemove.has(ridMatch[1])) return '';
-            return anchor;
-          });
-          zip.file(drawingPath, dXml);
-
-          // --- Drawing rels: strip Relationship entries for removed rIds ---
-          const relsPath = drawingPath.replace('xl/drawings/', 'xl/drawings/_rels/') + '.rels';
-          if (zip.files[relsPath]) {
-            let rXml = await zip.files[relsPath].async('string');
-            for (const rId of ridsToRemove) {
-              rXml = rXml.replace(new RegExp(`<Relationship[^>]*Id="${rId}"[^>]*/>`, 'g'), '');
-            }
-            zip.file(relsPath, rXml);
-          }
-        }
-
-        const outBuf = await zip.generateAsync({ type: 'arraybuffer', compression: 'DEFLATE', compressionOptions: { level: 6 } });
-        const vinClean = (data.vin_number || 'NOVIN').replace(/[^a-zA-Z0-9]/g, '');
-        const dealerClean = (data['sh1_dealer_no'] || 'N3235').replace(/[^a-zA-Z0-9]/g, '');
-        const fname = `${vinClean}_${dealerClean}.xlsx`;
-        saveAs(new Blob([outBuf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), fname);
-        showStatus('Downloaded: ' + fname, 'success');
-
-        // Save history — everything except photos
-        const histEntry = {};
-        // Battery Data
-        ['model', 'vin_number', 'mileage_km', 'battery_spec_ah', 'agm_supplier_name',
-          'sale_date', 'repair_date', 'battery_production_date', 'vehicle_received_date',
-          'pdi_inspection_result', 'pdi_voltage', 'pdi_cca', 'pdi_soc',
-          'analyser_voltage', 'analyser_cca', 'analyser_soc', 'analyser_result', 'result_slip',
-          'dealer_action', 'battery_availability'].forEach(k => histEntry[k] = data[k] || '');
-        // Invoice — Parts & Labour rows
-        for (let i = 1; i <= 2; i++) {
-          ['si_no', 'part_number', 'part_description', 'part_list_price', 'part_qty', 'part_amount'].forEach(f => histEntry[`${f}_${i}`] = data[`${f}_${i}`] || '');
-          ['si_no_labour', 'labour_code', 'labour_description', 'labour_list_price', 'labour_qty', 'labour_amount'].forEach(f => histEntry[`${f}_${i}`] = data[`${f}_${i}`] || '');
-        }
-        // NDMS
-        ['part_total_cost_with_tax', 'labour_total_cost_with_tax',
-          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
-          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'].forEach(k => histEntry[k] = data[k] || '');
-        // Vehicle History rows
-        for (let i = 1; i <= 20; i++) {
-          ['dealer_no', 'ro_no', 'ro_date', 'vin', 'mileage', 'work_type', 'reg_no', 'remarks'].forEach(f => histEntry[`sh${i}_${f}`] = data[`sh${i}_${f}`] || '');
-        }
-        saveHistory(histEntry);
-
-      } catch (err) { showStatus('Error: ' + err.message, 'error'); console.error(err); }
-      finally { btnInject.disabled = false; btnInject.textContent = 'Generate XLSX'; }
-    });
-
-    // ─── NDMS SHEET — INJECT VALUES + FIX % CELL FORMAT ───
-    // Excel sheet4 layout (NDMS):
-    //   Row 2: Part   — M2=part_total, N2=hmil_pct, P2=dealer_pct, R2=cust_pct  (% input cells, s="38" = numFmtId=14 date — BUG)
-    //                   O2=formula M2*N2%, Q2=formula M2*P2%, S2=formula M2*R2%
-    //   Row 3: Labour — M3=labour_total, N3..R3 same pattern
-    //   Row 4: Total  — M4=formula, O4=formula, Q4=formula, S4=formula
-    // FIX: % input cells have s="38" (numFmtId=14, date format) → storing 80 displays as a date.
-    //      Switch to s="37" (numFmtId=0, General, same font/fill/border) so 80 displays as "80".
-    //      The Excel formulas =M2*N2% treat N2 as a plain number (80 → 80/100 = 0.8) — correct math.
-    function replaceNDMSFormulaXml(shXml, data) {
-      // % input cells: swap style 38 (date) → 37 (General), then inject plain number
-      const pctCells = new Set(['N2', 'P2', 'R2', 'N3', 'P3', 'R3']);
-      // Formula result cells: replace formula with computed value; blank if no input
-      const formulaCellMap = {
-        'O2': 'ndms_hmil_amt_part', 'Q2': 'ndms_dealer_amt_part', 'S2': 'ndms_cust_amt_part',
-        'O3': 'ndms_hmil_amt_labour', 'Q3': 'ndms_dealer_amt_labour', 'S3': 'ndms_cust_amt_labour',
-        'M4': 'ndms_grand_total',
-        'O4': 'ndms_grand_hmil_amt', 'Q4': 'ndms_grand_dealer_amt', 'S4': 'ndms_grand_cust_amt',
-      };
-      // Inject % input cells with corrected style
-      shXml = shXml.replace(/<c\s+r="([^"]+)"([^>]*)>[\s\S]*?<\/c>/g, (match, ref, attrs) => {
-        if (pctCells.has(ref)) {
-          const rawKey = {
-            N2: 'hmil_share_pct_part', P2: 'dealer_share_pct_part', R2: 'customer_share_pct_part',
-            N3: 'hmil_share_pct_labour', P3: 'dealer_share_pct_labour', R3: 'customer_share_pct_labour'
-          }[ref];
-          const rawVal = data[rawKey];
-          // Fix style: replace s="38" with s="37" (General format, same visual style)
-          const fixedAttrs = attrs.replace(/s="38"/g, 's="37"');
-          if (!rawVal && rawVal !== 0) return `<c r="${ref}"${fixedAttrs}></c>`;
-          const numVal = parseFloat(rawVal);
-          if (isNaN(numVal)) return `<c r="${ref}"${fixedAttrs}></c>`;
-          return `<c r="${ref}"${fixedAttrs}><v>${numVal}</v></c>`;
-        }
-        if (ref in formulaCellMap) {
-          const val = data[formulaCellMap[ref]];
-          const sMatch = attrs.match(/\ss="(\d+)"/);
-          const sAttr = sMatch ? ` s="${sMatch[1]}"` : '';
-          if (val === undefined || val === null || val === '' || val === 0) return `<c r="${ref}"${sAttr}></c>`;
-          const numVal = parseFloat(String(val));
-          if (isNaN(numVal)) return `<c r="${ref}"${sAttr}></c>`;
-          return `<c r="${ref}"${sAttr}><v>${numVal}</v></c>`;
-        }
-        return match;
-      });
-      return shXml;
-    }
-
-    // ─── INVOICE SHEET — FULL DIRECT INJECTION ───
-    // Actual Excel layout (Estimation section, columns Q–W):
-    //   Row 2:  Part headers
-    //   Row 3:  Part row 1   — Q3..V3 data, W3=formula V3*1.18
-    //   Row 4:  Part row 2   — Q4..V4 data, W4=formula V4*1.18
-    //   Row 5:  Parts subtotal  — V5=SUM(V3:V4), W5=SUM(W3:W4)
-    //   Row 6:  Labour headers
-    //   Row 7:  Labour row 1 — Q7..V7 data, W7=formula V7*1.18
-    //   Row 8:  Labour row 2 — Q8..V8 data, W8=formula V8*1.18
-    //   Row 9:  Labour subtotal — V9=SUM(V7:V8), W9=SUM(W7:W8)
-    //   Row 10: Grand total   — W10=SUM(W5+W9)
-    function replaceInvoiceFormulaXml(shXml, data) {
-      const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-      const n = k => parseFloat(data[k] || 0);
-      // Only treat a row as having data if both price and qty are entered
-      const p1HasData = !!(data.part_list_price_1 && data.part_qty_1);
-      const p2HasData = !!(data.part_list_price_2 && data.part_qty_2);
-      const l1HasData = !!(data.labour_list_price_1 && data.labour_qty_1);
-      const l2HasData = !!(data.labour_list_price_2 && data.labour_qty_2);
-
-      const p1amt = p1HasData ? Math.round(n('part_list_price_1') * n('part_qty_1')) : null;
-      const p2amt = p2HasData ? Math.round(n('part_list_price_2') * n('part_qty_2')) : null;
-      const l1amt = l1HasData ? Math.round(n('labour_list_price_1') * n('labour_qty_1')) : null;
-      const l2amt = l2HasData ? Math.round(n('labour_list_price_2') * n('labour_qty_2')) : null;
-
-      const w3 = p1amt !== null ? Math.round(p1amt * 1.18) : null;
-      const w4 = p2amt !== null ? Math.round(p2amt * 1.18) : null;
-      const w7 = l1amt !== null ? Math.round(l1amt * 1.18) : null;
-      const w8 = l2amt !== null ? Math.round(l2amt * 1.18) : null;
-
-      const partsAmtTotal = (p1amt !== null || p2amt !== null) ? Math.round((p1amt || 0) + (p2amt || 0)) : null;
-      const partsTaxTotal = (w3 !== null || w4 !== null) ? Math.round((w3 || 0) + (w4 || 0)) : null;
-      const labourAmtTotal = (l1amt !== null || l2amt !== null) ? Math.round((l1amt || 0) + (l2amt || 0)) : null;
-      const labourTaxTotal = (w7 !== null || w8 !== null) ? Math.round((w7 || 0) + (w8 || 0)) : null;
-      const grandTotal = (partsTaxTotal !== null || labourTaxTotal !== null) ? Math.round((partsTaxTotal || 0) + (labourTaxTotal || 0)) : null;
-
-      // [value, 'str'|'num'] — null value means leave cell blank
-      const cellMap = {
-        // Part row 1
-        'Q3': [data.si_no_1 || null, 'str'],
-        'R3': [data.part_number_1 || null, 'str'],
-        'S3': [data.part_description_1 || null, 'str'],
-        'T3': [data.part_list_price_1 ? n('part_list_price_1') : null, 'num'],
-        'U3': [data.part_qty_1 ? n('part_qty_1') : null, 'num'],
-        'V3': [p1amt, 'num'],
-        'W3': [w3, 'num'],
-        // Part row 2
-        'Q4': [data.si_no_2 || null, 'str'],
-        'R4': [data.part_number_2 || null, 'str'],
-        'S4': [data.part_description_2 || null, 'str'],
-        'T4': [data.part_list_price_2 ? n('part_list_price_2') : null, 'num'],
-        'U4': [data.part_qty_2 ? n('part_qty_2') : null, 'num'],
-        'V4': [p2amt, 'num'],
-        'W4': [w4, 'num'],
-        // Parts subtotal (W/O tax & with tax)
-        'V5': [partsAmtTotal, 'num'],
-        'W5': [partsTaxTotal, 'num'],
-        // Labour row 1
-        'Q7': [data.si_no_labour_1 || null, 'str'],
-        'R7': [data.labour_code_1 || null, 'str'],
-        'S7': [data.labour_description_1 || null, 'str'],
-        'T7': [data.labour_list_price_1 ? n('labour_list_price_1') : null, 'num'],
-        'U7': [data.labour_qty_1 ? n('labour_qty_1') : null, 'num'],
-        'V7': [l1amt, 'num'],
-        'W7': [w7, 'num'],
-        // Labour row 2
-        'Q8': [data.si_no_labour_2 || null, 'str'],
-        'R8': [data.labour_code_2 || null, 'str'],
-        'S8': [data.labour_description_2 || null, 'str'],
-        'T8': [data.labour_list_price_2 ? n('labour_list_price_2') : null, 'num'],
-        'U8': [data.labour_qty_2 ? n('labour_qty_2') : null, 'num'],
-        'V8': [l2amt, 'num'],
-        'W8': [w8, 'num'],
-        // Labour subtotal (W/O tax & with tax)
-        'V9': [labourAmtTotal, 'num'],
-        'W9': [labourTaxTotal, 'num'],
-        // Grand total (parts with tax + labour with tax)
-        'W10': [grandTotal, 'num'],
-      };
-
-      return shXml.replace(/<c\s+r="([^"]+)"([^>]*)>[\s\S]*?<\/c>/g, (match, ref, attrs) => {
-        if (!(ref in cellMap)) return match;
-        const [val, type] = cellMap[ref];
-        const sMatch = attrs.match(/\ss="(\d+)"/);
-        const sAttr = sMatch ? ` s="${sMatch[1]}"` : '';
-        // Blank cell when no data entered
-        if (val === null || val === undefined || val === '') return `<c r="${ref}"${sAttr}></c>`;
-        if (type === 'str') {
-          return `<c r="${ref}"${sAttr} t="inlineStr"><is><t>${xmlEsc(String(val))}</t></is></c>`;
-        } else {
-          return `<c r="${ref}"${sAttr}><v>${+val}</v></c>`;
-        }
-      });
-    }
-
-    // ─── VEH HISTORY — ROBUST FIX ───
-    // ROOT CAUSE 1: Hardcoded sharedString indices (121-128) may not match actual Excel file.
-    // ROOT CAUSE 2: replaceVehHistoryXml only replaces cells with t="s" — but if Excel stored
-    //               placeholder cells differently the regex misses them.
-    // FIX: Dynamically discover column mapping from row 4, then rebuild ALL data rows (4-23)
-    //      by column reference (A,B,C...) regardless of original cell type.
-    function replaceVehHistoryXml(shXml, data) {
-      const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
-
-      // Column letter → field name mapping (positional — matches table header order)
-      // Columns in sheet: B=sl_no, C=dealer_no, D=ro_no, E=ro_date, F=vin, G=mileage, H=work_type, I=reg_no, J=remarks
-      // We derive this from the INPUT IDs: sh{i}_dealer_no etc.
-      // Map column letter to data key suffix
-      const colLetterToField = {
-        'B': 'sl_no',
-        'C': 'dealer_no',
-        'D': 'ro_no',
-        'E': 'ro_date',
-        'F': 'vin',
-        'G': 'mileage',
-        'H': 'work_type',
-        'I': 'reg_no',
-        'J': 'remarks'
-      };
-
-      // Helper: get column letter from cell ref (e.g. "C5" → "C", "AA5" → "AA")
-      const getCol = ref => ref.replace(/\d+/, '');
-
-      return shXml.replace(/(<row\b[^>]*r="(\d+)"[^>]*>)([\s\S]*?)(<\/row>)/g, (match, openTag, rowNum, content, closeTag) => {
-        const rn = parseInt(rowNum);
-        // Data rows: row 4 = data row 1 ... row 23 = data row 20
-        if (rn < 4 || rn > 23) return match;
-        const dataIdx = rn - 3; // 1..20
-
-        const rowVals = {
-          sl_no: String(dataIdx),
-          dealer_no: data[`sh${dataIdx}_dealer_no`] || 'N3235',
-          ro_no: data[`sh${dataIdx}_ro_no`] || '',
-          ro_date: data[`sh${dataIdx}_ro_date`] || '',
-          vin: data[`sh${dataIdx}_vin`] || '',
-          mileage: data[`sh${dataIdx}_mileage`] || '',
-          work_type: data[`sh${dataIdx}_work_type`] || '',
-          reg_no: data[`sh${dataIdx}_reg_no`] || '',
-          remarks: data[`sh${dataIdx}_remarks`] || '',
-        };
-
-        // Rebuild ALL cells in this row
-        // Replace existing cells with inlineStr values
-        const newContent = content.replace(/<c\s[^>]*r="([^"]+)"[^>]*>[\s\S]*?<\/c>/g, (cellMatch, ref) => {
-          const col = getCol(ref);
-          const fieldKey = colLetterToField[col];
-          if (!fieldKey) return cellMatch; // unknown column, leave as-is
-
-          const val = xmlEsc(rowVals[fieldKey] || '');
-          // Extract style attribute if present
-          const sMatch = cellMatch.match(/\ss="(\d+)"/);
-          const sAttr = sMatch ? ` s="${sMatch[1]}"` : '';
-          // Write as inlineStr — works regardless of original cell type
-          return `<c r="${ref}"${sAttr} t="inlineStr"><is><t>${val}</t></is></c>`;
-        });
-
-        return openTag + newContent + closeTag;
-      });
-    }
-
-    // ─── PAGE JUMPERS ───
-    (function () {
-      const jumperHTML = `<div class="page-jumper" id="pageJumper">
-    <button class="pj-btn hidden" id="pjTop" title="Go to top" tabindex="0" aria-label="Scroll to top">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
-    <button class="pj-btn hidden" id="pjBottom" title="Go to bottom" tabindex="0" aria-label="Scroll to bottom">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-  </div>`;
-      document.body.insertAdjacentHTML('beforeend', jumperHTML);
-
-      const topBtn = document.getElementById('pjTop');
-      const botBtn = document.getElementById('pjBottom');
+    // ─────── PAGE JUMPERS ───────
+    (() => {
+      const pjTop = document.getElementById('pjTop');
+      const pjBot = document.getElementById('pjBot');
       let hideTimer = null;
-
       function showJumpers() {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight;
-        const clientHeight = window.innerHeight;
-        const isScrollable = scrollHeight > clientHeight + 50;
-        const nearTop = scrollTop < 120;
-        const nearBottom = scrollTop + clientHeight > scrollHeight - 120;
-        topBtn.classList.toggle('hidden', nearTop || !isScrollable);
-        botBtn.classList.toggle('hidden', nearBottom || !isScrollable);
+        const sh = document.documentElement.scrollHeight, wh = window.innerHeight;
+        const scrollable = sh > wh + 20;
+        if (!scrollable) { pjTop.classList.remove('vis'); pjBot.classList.remove('vis'); return; }
+        const st = window.scrollY;
+        const nearBottom = st + wh > sh - 60;
+        pjTop.classList.toggle('vis', st >= 60);
+        pjBot.classList.toggle('vis', !nearBottom);
       }
-
       function scheduleHide() {
-        clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => {
-          topBtn.classList.add('hidden');
-          botBtn.classList.add('hidden');
-        }, 2000);
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => { pjTop.classList.remove('vis'); pjBot.classList.remove('vis'); }, 2000);
       }
-
-      function onScroll() {
-        showJumpers();
-        scheduleHide();
-      }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', () => { showJumpers(); }, { passive: true });
-      // Show bottom button immediately on load
-      setTimeout(showJumpers, 300);
-
+      window.addEventListener('scroll', () => { showJumpers(); scheduleHide(); }, { passive: true });
+      window.addEventListener('load', showJumpers);
       function fastScrollTo(targetY) {
         const startY = window.scrollY || document.documentElement.scrollTop;
         const distance = targetY - startY;
@@ -2753,29 +2326,29 @@
         }
         requestAnimationFrame(animate);
       }
-      topBtn.addEventListener('click', () => {
+      pjTop.addEventListener('click', () => {
         const target = Math.max(0, (window.scrollY || document.documentElement.scrollTop) - window.innerHeight * 0.85);
         fastScrollTo(target);
       });
-      botBtn.addEventListener('click', () => {
+      pjBot.addEventListener('click', () => {
         const target = Math.min(document.documentElement.scrollHeight, (window.scrollY || document.documentElement.scrollTop) + window.innerHeight * 0.85);
         fastScrollTo(target);
       });
-      [topBtn, botBtn].forEach(b => b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } }));
+      handleKeyClick(pjTop, () => {
+        const target = Math.max(0, (window.scrollY || document.documentElement.scrollTop) - window.innerHeight * 0.85);
+        fastScrollTo(target);
+      });
+      handleKeyClick(pjBot, () => {
+        const target = Math.min(document.documentElement.scrollHeight, (window.scrollY || document.documentElement.scrollTop) + window.innerHeight * 0.85);
+        fastScrollTo(target);
+      });
     })();
 
-    // ─── THEME + BACKUP ───
+    // ─────── THEME + BACKUP ───────
     window.addEventListener('message', event => {
       if (event.data?.type === 'theme') document.documentElement.setAttribute('data-theme', event.data.theme);
-      if (event.data?.type === 'backup-request') {
-        const payload = {};
-        try { const v = localStorage.getItem('agm_hist'); if (v) payload['agm_hist'] = v; } catch (e) { }
-        event.source.postMessage({ type: 'backup-response', tool: 'agm', data: payload }, '*');
-      }
-      if (event.data?.type === 'restore-data' && event.data.tool === 'agm' && event.data.data) {
-        Object.entries(event.data.data).forEach(([k, v]) => { try { localStorage.setItem(k, v); } catch (e) { } });
-        try { HISTORY = JSON.parse(localStorage.getItem('agm_hist') || '[]'); } catch (e) { } renderHistory();
-      }
+      if (event.data?.type === 'backup-request') { const payload = {}; try { const v = localStorage.getItem('pwa_hist'); if (v) payload['pwa_hist'] = v; } catch (e) { } event.source.postMessage({ type: 'backup-response', tool: 'pwareg', data: payload }, '*'); }
+      if (event.data?.type === 'restore-data' && event.data.tool === 'pwareg' && event.data.data) { Object.entries(event.data.data).forEach(([k, v]) => { try { localStorage.setItem(k, v); } catch (e) { } }); try { HISTORY = JSON.parse(localStorage.getItem('pwa_hist') || '[]'); } catch (e) { } renderHistory(); }
     });
     window.parent.postMessage({ type: 'requestTheme' }, '*');
   </script>
