@@ -66,7 +66,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 20px 12px 80px;
+      padding: 14px 18px 20px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -75,7 +75,7 @@
       background: var(--bg-card);
       border-radius: 12px;
       width: 100%;
-      max-width: 820px;
+      max-width: none;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .05);
       border: 1px solid var(--border-light);
     }
@@ -573,7 +573,7 @@
       position: absolute;
       top: calc(100% + 6px);
       left: 0;
-      z-index: 400;
+      z-index: 1200;
       background: var(--bg-card);
       border: 1px solid var(--border-input);
       border-radius: 10px;
@@ -966,28 +966,46 @@
 
     .actions {
       display: flex;
-      gap: 10px;
-      padding: 14px 20px 20px;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 20px;
       border-top: 1px solid var(--border-light);
       margin-top: 14px;
       align-items: center;
+      position: sticky;
+      bottom: 0;
+      z-index: 800;
+      background: color-mix(in srgb, var(--bg-card) 92%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.1);
     }
 
     .btn {
-      flex: 1;
       height: 42px;
-      border-radius: 7px;
+      padding: 0 20px;
+      border-radius: 8px;
       border: none;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all .2s;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
+      gap: 8px;
       font-family: 'DM Sans', sans-serif;
       outline: none;
+    }
+
+    .btn-inject {
+      flex: 1;
+      max-width: 320px;
+    }
+
+    .btn-clear {
+      flex: 0 0 auto;
     }
 
     .btn:focus {
@@ -1220,7 +1238,11 @@
       }
 
       .actions {
-        flex-wrap: wrap;
+        padding: 12px 14px;
+      }
+
+      .btn-inject {
+        max-width: none;
       }
 
       .photo-grid {
@@ -1320,14 +1342,6 @@
     <div class="status" id="status"></div>
     <div id="formWrap"></div>
     <div class="actions" id="actionsBar" style="display:none">
-      <button class="btn btn-inject" id="btnInject" tabindex="0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-        Generate XLSX
-      </button>
       <button class="btn btn-clear" id="btnClear" tabindex="0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="3 6 5 6 21 6" />
@@ -1335,6 +1349,14 @@
           <path d="M10 11v6M14 11v6" />
         </svg>
         Clear Form
+      </button>
+      <button class="btn btn-inject" id="btnInject" tabindex="0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Generate XLSX
       </button>
     </div>
   </div>
