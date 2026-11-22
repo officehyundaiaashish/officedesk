@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ETM Form</title>
+  <title>AGM Form</title>
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   <style>
@@ -50,106 +50,6 @@
       --table-head: #232321;
     }
 
-    /* ── Modern Scrollbar ── */
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: var(--bg-active) transparent;
-    }
-
-    *::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-
-    *::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    *::-webkit-scrollbar-thumb {
-      background: var(--bg-active);
-      border-radius: 99px;
-    }
-
-    *::-webkit-scrollbar-thumb:hover {
-      background: var(--border-input);
-    }
-
-    /* ── Stepper ── */
-    .stepper-container {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border-light);
-      background: var(--bg-card);
-      position: sticky;
-      top: 0;
-      z-index: 900;
-    }
-
-    .stepper {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      transition: all .18s;
-    }
-
-    .step.done {
-      background: rgba(0, 44, 95, .06);
-      border-color: var(--accent-bg);
-    }
-
-    [data-theme=dark] .step.done {
-      background: rgba(77, 143, 214, .1);
-    }
-
-    .step.active {
-      border-color: var(--accent-bg);
-      box-shadow: 0 0 0 2px var(--focus-ring);
-    }
-
-    .step-n {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--bg-hover);
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .step.done .step-n {
-      background: var(--accent-bg);
-      color: var(--accent-text);
-    }
-
-    .step.active .step-n {
-      background: var(--accent-bg);
-      color: var(--accent-text);
-    }
-
-    .step-t {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .step-s {
-      font-size: 10.5px;
-      color: var(--text-muted);
-    }
-
     *,
     *::before,
     *::after {
@@ -159,7 +59,7 @@
     }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       background: var(--bg-page);
       color: var(--text-main);
       min-height: 100vh;
@@ -197,6 +97,76 @@
       margin-top: 3px;
     }
 
+    .stepper-container {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-light);
+      background: var(--bg-card);
+      position: sticky;
+      top: 0;
+      z-index: 900;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      transition: all .18s;
+    }
+
+    .step.done {
+      background: rgba(0, 44, 95, .06);
+      border-color: var(--accent-bg);
+    }
+
+    [data-theme=dark] .step.done {
+      background: rgba(77, 143, 214, .1);
+    }
+
+    .step.active {
+      border-color: var(--accent-bg);
+    }
+
+    .step-n {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-hover);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .step.done .step-n,
+    .step.active .step-n {
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
+    .step-t {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .step-s {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
     .mode-wrap {
       margin: 14px 20px 0;
       display: none;
@@ -232,6 +202,10 @@
       cursor: pointer;
       transition: all .18s;
       outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .mode-btn:focus {
@@ -364,9 +338,7 @@
       transition: color .2s;
       display: flex;
       align-items: center;
-      padding: 4px;
       outline: none;
-      border-radius: 4px;
     }
 
     .hi-del:hover,
@@ -412,12 +384,6 @@
       color: var(--text-label);
     }
 
-    .field-col label .req {
-      color: var(--danger-color);
-      margin-left: 2px;
-      font-weight: 700;
-    }
-
     .field-col input,
     .field-col textarea {
       border: 1px solid var(--border-input);
@@ -429,7 +395,7 @@
       transition: all .2s;
       width: 100%;
       outline: none;
-      font-family: 'Inter', sans-serif;
+      font-family: 'DM Sans', sans-serif;
     }
 
     .field-col input {
@@ -438,7 +404,7 @@
 
     .field-col textarea {
       padding: 8px 11px;
-      min-height: 72px;
+      min-height: 68px;
       resize: vertical;
       line-height: 1.5;
     }
@@ -458,7 +424,6 @@
       color: var(--text-muted);
     }
 
-    /* ── Custom Select ── */
     .custom-select-wrap {
       position: relative;
       user-select: none;
@@ -561,7 +526,6 @@
       font-weight: 500;
     }
 
-    /* ── Date Trigger ── */
     .date-trigger {
       height: 36px;
       display: flex;
@@ -609,7 +573,7 @@
       position: absolute;
       top: calc(100% + 6px);
       left: 0;
-      z-index: 400;
+      z-index: 1200;
       background: var(--bg-card);
       border: 1px solid var(--border-input);
       border-radius: 10px;
@@ -628,13 +592,6 @@
       pointer-events: all;
     }
 
-    .cal-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
     .mnth {
       font-size: 13px;
       font-weight: 600;
@@ -648,6 +605,13 @@
     .mnth:hover,
     .mnth:focus {
       background: var(--bg-hover);
+    }
+
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
 
     .cal-nav button {
@@ -728,7 +692,6 @@
       pointer-events: none;
     }
 
-    /* ── Table ── */
     .tbl-wrap {
       overflow-x: auto;
       margin-top: 4px;
@@ -738,7 +701,6 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 12.5px;
-      user-select: none;
     }
 
     .pwa-table th {
@@ -771,6 +733,20 @@
       white-space: nowrap;
     }
 
+    .pwa-table td.total-cell {
+      background: var(--bg-hover);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 0 8px;
+      min-width: 70px;
+      white-space: nowrap;
+    }
+
+    .pwa-table td.total-cell span {
+      display: block;
+      padding: 8px 0;
+    }
+
     .pwa-table td input {
       width: 100%;
       height: 34px;
@@ -778,7 +754,7 @@
       background: transparent;
       color: var(--text-main);
       font-size: 12.5px;
-      font-family: 'Inter', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       padding: 0 8px;
       outline: none;
       transition: background .15s;
@@ -792,28 +768,44 @@
       color: var(--text-placeholder);
     }
 
-    .pwa-table td.cell-selected input {
-      background: rgba(0, 44, 95, 0.12);
+    .pwa-table td input.pre {
+      color: var(--text-muted);
     }
 
-    [data-theme=dark] .pwa-table td.cell-selected input {
-      background: rgba(77, 143, 214, 0.18);
+    .pwa-table tr.total-row td {
+      background: var(--bg-hover);
+      font-weight: 700;
+      font-size: 12.5px;
+      padding: 8px;
+      color: var(--text-main);
     }
 
-    .pwa-table td.cell-selected {
-      background: rgba(0, 44, 95, 0.08);
+    .pwa-table tr.gtotal-row td {
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 9px 8px;
     }
 
-    [data-theme=dark] .pwa-table td.cell-selected {
-      background: rgba(77, 143, 214, 0.12);
-    }
-
-    /* ── Photos ── */
     .photo-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
       margin-top: 4px;
+    }
+
+    .photo-grid.g2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .photo-grid.g4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .photo-grid.g1 {
+      grid-template-columns: 1fr;
+      max-width: 340px;
     }
 
     .photo-slot {
@@ -823,7 +815,7 @@
       overflow: hidden;
       cursor: pointer;
       transition: all .2s;
-      aspect-ratio: 16/10;
+      aspect-ratio: 4/3;
       background: var(--bg-hover);
     }
 
@@ -868,7 +860,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
       pointer-events: none;
       z-index: 1;
     }
@@ -878,7 +870,7 @@
     }
 
     .photo-slot .slot-placeholder span {
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--text-placeholder);
     }
 
@@ -902,10 +894,10 @@
 
     .photo-slot .remove-btn {
       position: absolute;
-      top: 5px;
-      right: 5px;
-      width: 20px;
-      height: 20px;
+      top: 4px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: rgba(0, 0, 0, .6);
       color: #fff;
@@ -915,7 +907,7 @@
       align-items: center;
       justify-content: center;
       z-index: 3;
-      font-size: 11px;
+      font-size: 10px;
       line-height: 1;
     }
 
@@ -923,7 +915,28 @@
       display: flex;
     }
 
-    /* ── Status & Actions ── */
+    .sub-lbl {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: .05em;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-light);
+      grid-column: 1/-1;
+    }
+
+    .photo-sub-lbl {
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: .04em;
+      margin-bottom: 5px;
+      margin-top: 12px;
+    }
+
     .status {
       margin: 14px 20px 0;
       font-size: 13px;
@@ -945,6 +958,10 @@
       color: #15803d;
       border: 1px solid rgba(34, 197, 94, .2);
       display: block;
+    }
+
+    [data-theme=dark] .status.success {
+      color: #4ade80;
     }
 
     .actions {
@@ -978,7 +995,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      font-family: 'Inter', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       outline: none;
     }
 
@@ -1010,27 +1027,111 @@
     }
 
     .btn-clear {
-      background: rgba(239, 68, 68, .08);
-      color: #dc2626;
-      border: 1px solid rgba(239, 68, 68, .2);
+      background: rgba(239, 68, 68, .1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, .25);
     }
 
     .btn-clear:hover {
-      background: rgba(239, 68, 68, .15);
-      border-color: rgba(239, 68, 68, .35);
+      background: rgba(239, 68, 68, .18);
+      border-color: #ef4444;
     }
 
     [data-theme=dark] .btn-clear {
-      background: rgba(248, 113, 113, .08);
+      background: rgba(248, 113, 113, .12);
       color: #f87171;
-      border: 1px solid rgba(248, 113, 113, .2);
+      border-color: rgba(248, 113, 113, .25);
     }
 
     [data-theme=dark] .btn-clear:hover {
-      background: rgba(248, 113, 113, .15);
+      background: rgba(248, 113, 113, .2);
     }
 
-    /* ── Modal ── */
+    /* ─── PAGE JUMPERS ─── */
+    .page-jumper {
+      position: fixed;
+      right: 16px;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: opacity .3s ease, transform .3s ease;
+    }
+
+    .page-jumper {
+      bottom: 80px;
+    }
+
+    .pj-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
+      transition: all .25s cubic-bezier(.4, 0, .2, 1);
+      outline: none;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
+    .pj-btn:hover {
+      transform: scale(1.12);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
+    }
+
+    .pj-btn:active {
+      transform: scale(.95);
+    }
+
+    .pj-btn:focus {
+      box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 14px rgba(0, 0, 0, .2);
+    }
+
+    .pj-btn.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+    }
+
+    @media(max-width:640px) {
+      .pj-btn {
+        width: 38px;
+        height: 38px;
+      }
+
+      .page-jumper {
+        right: 10px;
+        bottom: 70px;
+      }
+    }
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg-active) transparent;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-active);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-input);
+    }
+
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -1091,7 +1192,7 @@
       cursor: pointer;
       transition: all .2s;
       border: none;
-      font-family: 'Inter', sans-serif;
+      font-family: 'DM Sans', sans-serif;
       outline: none;
     }
 
@@ -1117,90 +1218,6 @@
       box-shadow: 0 0 0 3px rgba(239, 68, 68, .2);
     }
 
-    /* ── Page Jumpers ── */
-    .page-jumper {
-      position: fixed;
-      right: 16px;
-      bottom: 80px;
-      z-index: 9000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .pj {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, .2);
-      transition: all .25s cubic-bezier(.4, 0, .2, 1);
-      outline: none;
-      background: var(--accent-bg);
-      color: var(--accent-text);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(12px);
-    }
-
-    .pj:hover {
-      transform: scale(1.12);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
-    }
-
-    .pj:active {
-      transform: scale(.95);
-    }
-
-    .pj:focus {
-      box-shadow: 0 0 0 3px var(--focus-ring), 0 4px 14px rgba(0, 0, 0, .2);
-    }
-
-    .pj.vis {
-      opacity: 1;
-      pointer-events: all;
-      transform: translateY(0);
-    }
-
-
-    /* ── Date field with manual input ── */
-    .date-wrap {
-      display: flex;
-      gap: 5px;
-      align-items: flex-start;
-    }
-
-    .date-wrap .date-trigger {
-      flex: 1;
-    }
-
-    .date-manual {
-      flex: 1;
-      height: 36px;
-      border: 1px solid var(--border-input);
-      border-radius: 7px;
-      padding: 0 10px;
-      font-size: 13px;
-      color: var(--text-main);
-      background: var(--bg-input);
-      outline: none;
-      font-family: 'Inter', sans-serif;
-      transition: all .2s;
-    }
-
-    .date-manual:focus {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--focus-ring);
-    }
-
-    .date-manual::placeholder {
-      color: var(--text-placeholder);
-    }
-
     @media(max-width:640px) {
       body {
         padding: 10px 8px 70px;
@@ -1220,32 +1237,34 @@
         padding-right: 14px;
       }
 
-      .photo-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stepper-container {
-        padding: 10px 14px;
-      }
-
-      .stepper {
-        grid-template-columns: 1fr 1fr;
+      .actions {
+        padding: 12px 14px;
       }
 
       .btn-inject {
         max-width: none;
       }
 
-      .page-jumper {
-        right: 10px;
-        bottom: 70px;
+      .photo-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .photo-grid.g4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .photo-grid.g1 {
+        max-width: 100%;
+      }
+
+      .stepper {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
 </head>
 
 <body>
-
   <div class="modal-overlay" id="customModal">
     <div class="modal-box">
       <div class="modal-msg" id="modalMsg">Are you sure?</div>
@@ -1255,299 +1274,265 @@
       </div>
     </div>
   </div>
-
-  <div class="page-jumper" id="pageJumper">
-    <button id="pjTop" class="pj" title="Back to top" aria-label="Scroll to top"><svg width="14" height="14"
-        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-        stroke-linejoin="round">
-        <polyline points="18 15 12 9 6 15" />
-      </svg></button>
-    <button id="pjBot" class="pj" title="Go to bottom" aria-label="Scroll to bottom"><svg width="14" height="14"
-        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-        stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9" />
-      </svg></button>
-  </div>
-
   <div class="card">
     <div class="card-header">
-      <h1>ETM Form</h1>
-      <p>Engine &amp; TM Replacement — fill form then generate PPTX report.</p>
+      <h1>AGM Form</h1>
+      <p>AGM Battery Defect Report — Khanna Automart (N3235)</p>
     </div>
-
-    <div class="stepper-container">
-      <div class="stepper" id="etm-stepper">
-        <div class="step active" id="etm-st1">
-          <div class="step-n" id="etm-sn1">1</div>
+    <div class="stepper-container" id="stepperContainer" style="display:none;">
+      <div class="stepper">
+        <div class="step active" id="agm-st1">
+          <div class="step-n" id="agm-sn1">1</div>
           <div>
-            <div class="step-t">Vehicle Info</div>
-            <div class="step-s">VIN, model</div>
+            <div class="step-t">Battery Data</div>
+            <div class="step-s">Vehicle &amp; battery info</div>
           </div>
         </div>
-        <div class="step" id="etm-st2">
-          <div class="step-n" id="etm-sn2">2</div>
+        <div class="step" id="agm-st2">
+          <div class="step-n" id="agm-sn2">2</div>
           <div>
-            <div class="step-t">Details</div>
-            <div class="step-s">Dealer, parts</div>
+            <div class="step-t">Photos</div>
+            <div class="step-s">Defective concern</div>
           </div>
         </div>
-        <div class="step" id="etm-st3">
-          <div class="step-n" id="etm-sn3">3</div>
+        <div class="step" id="agm-st3">
+          <div class="step-n" id="agm-sn3">3</div>
           <div>
-            <div class="step-t">Ready</div>
-            <div class="step-s">Generate PPTX</div>
+            <div class="step-t">Invoice &amp; PWA</div>
+            <div class="step-s">Estimation &amp; screen</div>
+          </div>
+        </div>
+        <div class="step" id="agm-st4">
+          <div class="step-n" id="agm-sn4">4</div>
+          <div>
+            <div class="step-t">NDMS &amp; History</div>
+            <div class="step-s">Sharing &amp; vehicle log</div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="mode-wrap show" id="modeWrap">
+    <div class="mode-wrap" id="modeWrap">
       <div class="mode-lbl">Navigation</div>
       <div class="mode-btns">
-        <button class="mode-btn active" id="modeForm" tabindex="0">Fill Form</button>
-        <button class="mode-btn" id="modeHistory" tabindex="0">Saved Entries</button>
+        <button class="mode-btn active" id="modeForm" onclick="setMode('form')" tabindex="0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="8" y1="8" x2="16" y2="8" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+            <line x1="8" y1="16" x2="12" y2="16" />
+          </svg>
+          Fill Form
+        </button>
+        <button class="mode-btn" id="modeHistory" onclick="setMode('history')" tabindex="0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Saved Entries
+        </button>
       </div>
     </div>
-
     <div class="history-wrap" id="histWrap">
-      <div class="hist-header">
-        <span class="hist-title">Saved Records</span>
-        <button class="hist-clr" id="btnHistoryClearAll" tabindex="0">Clear all</button>
-      </div>
+      <div class="hist-header"><span class="hist-title">Saved Records</span><button class="hist-clr"
+          id="btnHistoryClearAll" tabindex="0">Clear all</button></div>
       <input type="text" id="historySearch" class="search-input" placeholder="Search by VIN…" autocomplete="off"
         tabindex="0">
       <div class="hist-list" id="histList"></div>
     </div>
-
-    <div id="formWrap"></div>
-
     <div class="status" id="status"></div>
+    <div id="formWrap"></div>
     <div class="actions" id="actionsBar" style="display:none">
-      <button class="btn btn-clear" id="btnClear" tabindex="0"><svg width="14" height="14" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-width="2">
+      <button class="btn btn-clear" id="btnClear" tabindex="0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="3 6 5 6 21 6" />
           <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
           <path d="M10 11v6M14 11v6" />
-        </svg>Clear Form</button>
-      <button class="btn btn-inject" id="btnInject" tabindex="0"><svg width="14" height="14" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-width="2.2">
+        </svg>
+        Clear Form
+      </button>
+      <button class="btn btn-inject" id="btnInject" tabindex="0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
           <polyline points="7 10 12 15 17 10" />
           <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>Generate PPTX</button>
+        </svg>
+        Generate XLSX
+      </button>
     </div>
   </div>
-
   <script>
-    // ─────── ICONS ───────
     const icons = {
       calendar: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
-      chevronDown: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
-      chevLeft: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
-      chevRight: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
-      photo: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
-      close: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
+      chevronDown: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>`,
+      chevronLeft: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`,
+      chevronRight: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`,
+      close: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+      photo: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`
     };
 
-    // ─────── DROPDOWN LISTS ───────
-    const hyundaiModels = [
-      'Hyundai Grand i10 NIOS', 'Hyundai i20', 'Hyundai i20 N Line',
-      'Hyundai Aura', 'Hyundai Verna', 'Hyundai Exter',
-      'Hyundai Venue', 'Hyundai Venue N Line', 'Hyundai Creta',
-      'Hyundai Creta N Line', 'Hyundai Alcazar', 'Hyundai Tucson',
-      'Hyundai Ioniq 5', 'Hyundai Ioniq 6', 'Hyundai Kona Electric',
-      'Hyundai Stargazer'
-    ];
-
-    // ─────── STATE ───────
-    const HIST_KEY = 'etm_hist';
-    let templateBuffer = null;
-    let HISTORY = [];
-    try { HISTORY = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { }
-    const PHOTOS = {};
-    window.PHOTOS = PHOTOS;
-    const CAL = {};
-
-    const formWrap = document.getElementById('formWrap');
-    const histWrap = document.getElementById('histWrap');
-    const histList = document.getElementById('histList');
-    const statusEl = document.getElementById('status');
-    const actionsBar = document.getElementById('actionsBar');
-    const historySearch = document.getElementById('historySearch');
-    const btnInject = document.getElementById('btnInject');
-
-    // ─────── TEMPLATE LOAD (relative path — same folder as etm.html) ───────
-    window.addEventListener('DOMContentLoaded', async () => {
-      formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Loading template (etm.pptx)…</div>';
-      try {
-        const r = await fetch('etm.pptx');
-        if (!r.ok) throw new Error('not found');
-        templateBuffer = await r.arrayBuffer();
-        document.getElementById('modeWrap').classList.add('show');
-        setMode('form');
-        clearStatus();
-      } catch (e) {
-        showStatus('Error: Could not load etm.pptx — make sure it is in the same folder.', 'error');
-        formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Template missing. Place etm.pptx in the same folder as etm.html.</div>';
-      }
-    });
-
-    // ─────── MODAL ───────
-    function customConfirm(msg, okLabel = 'Confirm') {
-      return new Promise(res => {
-        const ov = document.getElementById('customModal');
-        document.getElementById('modalMsg').textContent = msg;
-        document.getElementById('modalOk').textContent = okLabel;
-        ov.classList.add('show');
-        const ok = document.getElementById('modalOk');
-        const cancel = document.getElementById('modalCancel');
-        const cleanup = r => { ov.classList.remove('show'); ok.removeEventListener('click', onOk); cancel.removeEventListener('click', onCancel); res(r); };
-        const onOk = () => cleanup(true);
-        const onCancel = () => cleanup(false);
-        ok.addEventListener('click', onOk);
-        cancel.addEventListener('click', onCancel);
+    function customConfirm(msg, okText = 'Yes') {
+      return new Promise(resolve => {
+        const modal = document.getElementById('customModal'), msgEl = document.getElementById('modalMsg'), btnOk = document.getElementById('modalOk'), btnCancel = document.getElementById('modalCancel');
+        msgEl.textContent = msg; btnOk.textContent = okText;
+        const cleanup = () => { modal.classList.remove('show'); btnOk.removeEventListener('click', onOk); btnCancel.removeEventListener('click', onCancel); };
+        const onOk = () => { cleanup(); resolve(true); }, onCancel = () => { cleanup(); resolve(false); };
+        btnOk.addEventListener('click', onOk); btnCancel.addEventListener('click', onCancel);
+        modal.classList.add('show'); btnCancel.focus();
       });
     }
 
-    // ─────── KEYBOARD HELPER ───────
-    function handleKeyClick(el, fn) {
-      if (!el) return;
-      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } });
-    }
+    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const batterySpecOpts = ['50 AH', '60 AH', '65 AH'];
+    const supplierOpts = ['Delkor', 'Solite', 'Clarios'];
+    const dealerActionOpts = ['Recharge', 'Replaced'];
+    const batteryAvailabilityOpts = ['Exide', 'Amaron', 'Other'];
+    const hyundaiModels = [
+      'Hyundai Creta Electric',
+      'Hyundai Alcazar',
+      'Hyundai Creta',
+      'Hyundai Exter',
+      'Hyundai Verna',
+      'Hyundai Ioniq 5',
+      'Hyundai Tucson',
+      'Hyundai i20 N Line',
+      'Hyundai i20',
+      'Hyundai Venue N Line',
+      'Hyundai Venue',
+      'Hyundai Aura',
+      'Hyundai Grand i10 NIOS',
+      'Hyundai Grand i10',
+      'Hyundai i10',
+      'Hyundai Xcent',
+      'Hyundai Elite i20',
+      'Hyundai Active i20',
+      'Hyundai Santro',
+      'Hyundai Santro Xing',
+      'Hyundai Eon',
+      'Hyundai Accent',
+      'Hyundai Elantra',
+      'Hyundai Sonata',
+      'Hyundai Santa Fe',
+    ];
 
-    // ─────── MODE ───────
-    function setMode(m) {
-      document.getElementById('modeForm').classList.toggle('active', m === 'form');
-      document.getElementById('modeHistory').classList.toggle('active', m === 'history');
-      if (m === 'history') {
+    let templateBuffer = null, currentMode = 'form';
+    const CAL = {}, PHOTOS = {};
+    window.PHOTOS = PHOTOS;
+    let HISTORY = [];
+
+    try { HISTORY = JSON.parse(localStorage.getItem('agm_hist') || '[]'); } catch (e) { }
+
+    const pad = n => String(n).padStart(2, '0');
+    const fmtDash = d => pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear();
+    const handleKeyClick = (el, fn) => el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } });
+    const escHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const formWrap = document.getElementById('formWrap');
+    const actionsBar = document.getElementById('actionsBar');
+    const statusEl = document.getElementById('status');
+    const modeWrap = document.getElementById('modeWrap');
+    const histWrap = document.getElementById('histWrap');
+    const histList = document.getElementById('histList');
+    const historySearch = document.getElementById('historySearch');
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Fetching template (agm.xlsx)…</div>';
+      try {
+        const r = await fetch('agm.xlsx');
+        if (!r.ok) throw new Error('Template not found');
+        templateBuffer = await r.arrayBuffer();
+        modeWrap.classList.add('show'); setMode('form'); clearStatus();
+      } catch (e) {
+        showStatus('Error: Could not load agm.xlsx — place it in the same folder.', 'error');
+        formWrap.innerHTML = '<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:32px;">Template missing. Please place agm.xlsx in the same folder.</div>';
+      }
+    });
+
+    function setMode(mode) {
+      currentMode = mode;
+      const sc = document.getElementById('stepperContainer');
+      document.getElementById('modeForm').classList.toggle('active', mode === 'form');
+      document.getElementById('modeHistory').classList.toggle('active', mode === 'history');
+      if (mode === 'history') {
         formWrap.style.display = 'none'; actionsBar.style.display = 'none';
-        histWrap.classList.add('show'); renderHistory(historySearch.value);
+        histWrap.classList.add('show'); if (sc) sc.style.display = 'none'; renderHistory();
       } else {
         histWrap.classList.remove('show'); formWrap.style.display = 'block';
-        if (templateBuffer) { actionsBar.style.display = 'flex'; buildForm(); }
+        if (sc) sc.style.display = 'block';
+        if (templateBuffer) { actionsBar.style.display = 'flex'; buildForm(); setTimeout(updateStepper, 100); }
       }
     }
-    const _mf = document.getElementById('modeForm'), _mh = document.getElementById('modeHistory');
-    _mf.addEventListener('click', () => setMode('form')); handleKeyClick(_mf, () => setMode('form'));
-    _mh.addEventListener('click', () => setMode('history')); handleKeyClick(_mh, () => setMode('history'));
 
-    // ─────── CLOSE ALL POPUPS ───────
     function closeAllPopups() {
-      document.querySelectorAll('.custom-select-opts.open').forEach(el => { el.classList.remove('open'); el.previousElementSibling?.classList.remove('active'); });
-      document.querySelectorAll('.cal-pop.open').forEach(el => { el.classList.remove('open'); });
+      document.querySelectorAll('.cal-pop.open').forEach(el => el.classList.remove('open'));
       document.querySelectorAll('.date-trigger.active').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.custom-select-opts.open').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('.custom-select-trigger.active').forEach(el => el.classList.remove('active'));
     }
     document.addEventListener('click', closeAllPopups);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAllPopups(); });
 
-    // ─────── CALENDAR ───────
-    const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-
+    // ─── CALENDAR ───
     function renderCal(id) {
-      const st = CAL[id]; const pop = document.getElementById('cp_' + id); if (!pop) return;
+      const st = CAL[id], pop = document.getElementById('cp_' + id);
+      if (!pop || !st) return;
+      const y = st.year, m = st.month, now = new Date();
       if (st.view === 'years') {
-        const base = Math.floor(st.year / 15) * 15;
-        pop.innerHTML = `<div class="cal-nav"><button id="cy_prev_${id}" tabindex="0">${icons.chevLeft}</button><span class="mnth" id="cy_lbl_${id}" tabindex="0">${base}–${base + 14}</span><button id="cy_next_${id}" tabindex="0">${icons.chevRight}</button></div><div class="cal-grid years" id="cg_${id}"></div>`;
-        const grid = document.getElementById('cg_' + id);
-        for (let y = base; y < base + 15; y++) {
-          const d = document.createElement('div'); d.className = 'cd' + (y === st.year ? ' sel' : ''); d.textContent = y; d.setAttribute('tabindex', '0');
-          const a = () => { st.year = y; st.view = 'days'; renderCal(id); }; d.addEventListener('click', e => { e.stopPropagation(); a(); }); handleKeyClick(d, a);
-          grid.appendChild(d);
-        }
-        const prevA = e => { e.stopPropagation(); st.year -= 15; renderCal(id); };
-        const nextA = e => { e.stopPropagation(); st.year += 15; renderCal(id); };
-        const prevBtn = document.getElementById('cy_prev_' + id); const nextBtn = document.getElementById('cy_next_' + id);
-        prevBtn?.addEventListener('click', prevA); handleKeyClick(prevBtn, prevA);
-        nextBtn?.addEventListener('click', nextA); handleKeyClick(nextBtn, nextA);
-        const lblA = e => { e.stopPropagation(); }; document.getElementById('cy_lbl_' + id)?.addEventListener('click', lblA);
-        return;
+        const sy = y - 7;
+        let h = `<div class="cal-nav"><button type="button" class="cpb-y" data-id="${id}" data-dir="-15" tabindex="0">${icons.chevronLeft}</button><span class="mnth" tabindex="0">Year</span><button type="button" class="cpb-y" data-id="${id}" data-dir="15" tabindex="0">${icons.chevronRight}</button></div><div class="cal-grid years">`;
+        for (let i = 0; i < 15; i++)h += `<div class="cd ${sy + i === y ? 'sel' : ''}" data-id="${id}" data-y="${sy + i}" tabindex="0">${sy + i}</div>`;
+        h += '</div>'; pop.innerHTML = h;
+        pop.querySelectorAll('.cpb-y').forEach(b => { const a = e => { e.stopPropagation(); CAL[b.dataset.id].year += parseInt(b.dataset.dir); renderCal(b.dataset.id); }; b.addEventListener('click', a); handleKeyClick(b, a); });
+        pop.querySelectorAll('.cd').forEach(el => { const a = e => { e.stopPropagation(); CAL[el.dataset.id].year = parseInt(el.dataset.y); CAL[el.dataset.id].view = 'days'; renderCal(el.dataset.id); }; el.addEventListener('click', a); handleKeyClick(el, a); });
+      } else {
+        const fd = new Date(y, m, 1).getDay(), dim = new Date(y, m + 1, 0).getDate(), prev = new Date(y, m, 0).getDate();
+        let h = `<div class="cal-nav"><button type="button" class="cpb" data-id="${id}" data-dir="-1" tabindex="0">${icons.chevronLeft}</button><span class="mnth ts" data-id="${id}" tabindex="0">${MONTHS[m]} ${y}</span><button type="button" class="cpb" data-id="${id}" data-dir="1" tabindex="0">${icons.chevronRight}</button></div><div class="cal-grid">${['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(x => `<div class="dn">${x}</div>`).join('')}`;
+        for (let i = 0; i < fd; i++)h += `<div class="cd om">${prev - fd + 1 + i}</div>`;
+        for (let d = 1; d <= dim; d++) { const iT = d === now.getDate() && m === now.getMonth() && y === now.getFullYear(); const iS = st.date && d === st.date.getDate() && m === st.date.getMonth() && y === st.date.getFullYear(); h += `<div class="cd${iT ? ' today' : ''}${iS ? ' sel' : ''}" data-id="${id}" data-d="${d}" tabindex="0">${d}</div>`; }
+        h += '</div>'; pop.innerHTML = h;
+        pop.querySelectorAll('.cpb').forEach(b => { const a = e => { e.stopPropagation(); const s = CAL[b.dataset.id], dir = parseInt(b.dataset.dir); s.month += dir; if (s.month < 0) { s.month = 11; s.year--; } if (s.month > 11) { s.month = 0; s.year++; } renderCal(b.dataset.id); }; b.addEventListener('click', a); handleKeyClick(b, a); });
+        const ts = pop.querySelector('.ts'); const tsA = e => { e.stopPropagation(); CAL[e.target.dataset.id].view = 'years'; renderCal(e.target.dataset.id); }; ts.addEventListener('click', tsA); handleKeyClick(ts, tsA);
+        pop.querySelectorAll('.cd:not(.om)').forEach(el => { const a = e => { e.stopPropagation(); const s = CAL[el.dataset.id]; s.date = new Date(s.year, s.month, parseInt(el.dataset.d)); const dv = document.getElementById('dv_' + el.dataset.id); if (dv) { dv.textContent = fmtDash(s.date); dv.classList.remove('empty'); } const di = document.getElementById('di_' + el.dataset.id); if (di) di.value = fmtDash(s.date); closeAllPopups(); renderCal(el.dataset.id); }; el.addEventListener('click', a); handleKeyClick(el, a); });
       }
-      // Days view
-      const now = new Date();
-      const firstDay = new Date(st.year, st.month, 1).getDay();
-      const daysInMonth = new Date(st.year, st.month + 1, 0).getDate();
-      const prevDays = new Date(st.year, st.month, 0).getDate();
-      pop.innerHTML = `<div class="cal-nav"><button id="cp_prev_${id}" tabindex="0">${icons.chevLeft}</button><span class="mnth" id="cp_lbl_${id}" tabindex="0">${MONTHS[st.month]} ${st.year}</span><button id="cp_next_${id}" tabindex="0">${icons.chevRight}</button></div><div class="cal-grid" id="cg_${id}">${DAYS.map(d => `<div class="dn">${d}</div>`).join('')}</div>`;
-      const grid = document.getElementById('cg_' + id);
-      for (let i = 0; i < firstDay; i++) { const d = document.createElement('div'); d.className = 'cd om'; d.textContent = prevDays - firstDay + 1 + i; grid.appendChild(d); }
-      for (let i = 1; i <= daysInMonth; i++) {
-        const d = document.createElement('div'); d.setAttribute('tabindex', '0');
-        const isToday = i === now.getDate() && st.month === now.getMonth() && st.year === now.getFullYear();
-        const isSel = st.date && i === st.date.getDate() && st.month === st.date.getMonth() && st.year === st.date.getFullYear();
-        d.className = 'cd' + (isToday ? ' today' : '') + (isSel ? ' sel' : ''); d.textContent = i;
-        const a = () => {
-          st.date = new Date(st.year, st.month, i);
-          const dd = String(i).padStart(2, '0'), mm = String(st.month + 1).padStart(2, '0'), yy = st.year;
-          const fmt = `${dd}-${mm}-${yy}`;
-          const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = fmt; dv.classList.remove('empty'); }
-          const manEl = document.getElementById('dm_' + id); if (manEl) manEl.value = fmt;
-          closeAllPopups();
-        };
-        d.addEventListener('click', e => { e.stopPropagation(); a(); }); handleKeyClick(d, a);
-        grid.appendChild(d);
-      }
-      const rem = 42 - firstDay - daysInMonth; for (let i = 1; i <= rem; i++) { const d = document.createElement('div'); d.className = 'cd om'; d.textContent = i; grid.appendChild(d); }
-      const prevA = e => { e.stopPropagation(); st.month--; if (st.month < 0) { st.month = 11; st.year--; } renderCal(id); };
-      const nextA = e => { e.stopPropagation(); st.month++; if (st.month > 11) { st.month = 0; st.year++; } renderCal(id); };
-      const lblA = e => { e.stopPropagation(); st.view = 'years'; renderCal(id); };
-      const prevBtn = document.getElementById('cp_prev_' + id); const nextBtn = document.getElementById('cp_next_' + id); const lbl = document.getElementById('cp_lbl_' + id);
-      prevBtn?.addEventListener('click', prevA); handleKeyClick(prevBtn, prevA);
-      nextBtn?.addEventListener('click', nextA); handleKeyClick(nextBtn, nextA);
-      lbl?.addEventListener('click', lblA); handleKeyClick(lbl, lblA);
     }
-
     function openCal(id) {
       closeAllPopups();
       if (!CAL[id]) CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
       const ref = CAL[id].date || new Date(); CAL[id].year = ref.getFullYear(); CAL[id].month = ref.getMonth(); CAL[id].view = 'days';
       renderCal(id); document.getElementById('cp_' + id)?.classList.add('open'); document.getElementById('dt_' + id)?.classList.add('active');
     }
-
-    function makeDateField(id, label) {
+    function makeDateField(id, label, full = false) {
       if (!CAL[id]) CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
-      const wrap = document.createElement('div'); wrap.className = 'field-col';
-      wrap.innerHTML = `<label>${label}</label>
-  <div style="position:relative;">
-    <div style="display:flex;gap:5px;">
-      <input type="text" id="dm_${id}" class="date-manual" placeholder="DD-MM-YYYY" maxlength="10" tabindex="0">
-      <div class="date-trigger" id="dt_${id}" tabindex="0" title="Open calendar" style="flex:0 0 36px;padding:0;justify-content:center;">
-        <span class="date-icon">${icons.calendar}</span>
-      </div>
+      const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
+      wrap.innerHTML = `<label>${label}</label><div style="position:relative;">
+    <div class="date-trigger" id="dt_${id}" tabindex="0" style="cursor:text;">
+      <input type="text" id="di_${id}" placeholder="DD-MM-YYYY or pick →" style="flex:1;border:none;background:transparent;font-size:13px;color:var(--text-main);outline:none;font-family:'DM Sans',sans-serif;width:100%;cursor:text;" tabindex="-1">
+      <span class="date-icon" id="dico_${id}" style="cursor:pointer;flex-shrink:0;">${icons.calendar}</span>
     </div>
-    <div class="cal-pop" id="cp_${id}"></div>
-  </div>`;
-      // Calendar pick → fills manual input
-      const origA = () => { };
-      const pop = wrap.querySelector('.cal-pop');
-      let wt; pop.addEventListener('wheel', e => { e.preventDefault(); if (wt) return; wt = setTimeout(() => { wt = null; }, 150); const st = CAL[id]; if (st.view === 'years') { st.year += e.deltaY > 0 ? 15 : -15; } else { st.month += e.deltaY > 0 ? 1 : -1; if (st.month > 11) { st.month = 0; st.year++; } else if (st.month < 0) { st.month = 11; st.year--; } } renderCal(id); }, { passive: false });
+    <div class="cal-pop" id="cp_${id}"></div></div>`;
       requestAnimationFrame(() => {
         const dt = document.getElementById('dt_' + id);
-        const manEl = document.getElementById('dm_' + id);
-        const a = e => { e.stopPropagation(); const isOpen = document.getElementById('cp_' + id)?.classList.contains('open'); if (isOpen) closeAllPopups(); else openCal(id); };
-        dt?.addEventListener('click', a); handleKeyClick(dt, a);
-        // Manual input: auto-format as user types
-        manEl?.addEventListener('input', () => {
-          let v = manEl.value.replace(/[^0-9]/g, '');
-          if (v.length > 2) v = v.slice(0, 2) + '-' + v.slice(2);
-          if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
-          if (v.length > 10) v = v.slice(0, 10);
-          manEl.value = v;
-          // Sync to CAL state if full date
-          if (v.length === 10) {
-            const [dd, mm, yyyy] = v.split('-').map(Number);
-            const d = new Date(yyyy, mm - 1, dd);
-            if (!isNaN(d)) { CAL[id].date = d; CAL[id].year = d.getFullYear(); CAL[id].month = d.getMonth(); }
+        const di = document.getElementById('di_' + id);
+        const ico = document.getElementById('dico_' + id);
+        // Typing in the embedded input
+        di.addEventListener('input', () => {
+          const v = di.value.trim();
+          if (/^\d{2}-\d{2}-\d{4}$/.test(v)) {
+            const p = v.split('-'); const d = new Date(+p[2], +p[1] - 1, +p[0]);
+            if (!isNaN(d)) { if (!CAL[id]) CAL[id] = {}; Object.assign(CAL[id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' }); }
           }
         });
+        di.addEventListener('focus', () => { dt.style.borderColor = 'var(--border-focus)'; dt.style.boxShadow = '0 0 0 3px var(--focus-ring)'; });
+        di.addEventListener('blur', () => { dt.style.borderColor = ''; dt.style.boxShadow = ''; });
+        // Calendar icon click opens calendar
+        ico.addEventListener('click', e => { e.stopPropagation(); const isOpen = document.getElementById('cp_' + id)?.classList.contains('open'); if (isOpen) closeAllPopups(); else openCal(id); });
+        // Click on the trigger bar (not icon) focuses the text input
+        dt.addEventListener('click', e => { if (e.target !== ico && !ico.contains(e.target)) di.focus(); });
+        const pop = wrap.querySelector('.cal-pop');
+        let wt; pop.addEventListener('wheel', e => { e.preventDefault(); if (wt) return; wt = setTimeout(() => { wt = null; }, 150); const st = CAL[id]; if (st.view === 'years') { st.year += e.deltaY > 0 ? 15 : -15; } else { st.month += e.deltaY > 0 ? 1 : -1; if (st.month > 11) { st.month = 0; st.year++; } else if (st.month < 0) { st.month = 11; st.year--; } } renderCal(id); }, { passive: false });
       });
       return wrap;
     }
-
-
-    function makeSelect(id, label, options, required = false) {
-      const wrap = document.createElement('div'); wrap.className = 'field-col';
-      wrap.innerHTML = `<label>${label}${required ? '<span class="req">*</span>' : ''}</label><div class="custom-select-wrap"><div class="custom-select-trigger" id="cst_${id}" tabindex="0"><span class="cs-val empty" id="csv_${id}">Select…</span><span class="cs-arr">${icons.chevronDown}</span></div><div class="custom-select-opts" id="cso_${id}">${options.map(o => `<div class="cs-opt" data-val="${o}" tabindex="0">${o}</div>`).join('')}</div><input type="hidden" id="${id}" value=""></div>`;
+    function makeSelect(id, label, options, full = false) {
+      const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
+      wrap.innerHTML = `<label>${label}</label><div class="custom-select-wrap"><div class="custom-select-trigger" id="cst_${id}" tabindex="0"><span class="cs-val empty" id="csv_${id}">Select…</span><span class="cs-arr">${icons.chevronDown}</span></div><div class="custom-select-opts" id="cso_${id}">${options.map(o => `<div class="cs-opt" data-val="${o}" tabindex="0">${o}</div>`).join('')}</div><input type="hidden" id="${id}" value=""></div>`;
       requestAnimationFrame(() => {
         const trig = document.getElementById('cst_' + id), opts = document.getElementById('cso_' + id), valEl = document.getElementById('csv_' + id), hidInp = document.getElementById(id);
         if (!trig) return;
@@ -1557,257 +1542,372 @@
       });
       return wrap;
     }
-
-    function makeInput(id, label, placeholder, defVal = '', full = false, required = false) {
+    function makeInput(id, label, placeholder, defVal = '', full = false) {
       const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
-      const lbl = document.createElement('label');
-      lbl.innerHTML = label + (required ? '<span class="req">*</span>' : '');
+      const lbl = document.createElement('label'); lbl.textContent = label;
       const inp = document.createElement('input'); inp.type = 'text'; inp.id = id; inp.setAttribute('tabindex', '0');
       if (defVal) { inp.value = defVal; inp.classList.add('pre'); inp.addEventListener('focus', () => inp.classList.remove('pre')); }
       else inp.placeholder = placeholder || 'Enter value…';
       wrap.appendChild(lbl); wrap.appendChild(inp); return wrap;
     }
-
-    function makeTextarea(id, label, placeholder, hasPrefill = false, defVal = '', full = true) {
-      const wrap = document.createElement('div'); wrap.className = 'field-col' + (full ? ' full' : '');
-      const ta = document.createElement('textarea'); ta.id = id; ta.setAttribute('tabindex', '0');
-      if (hasPrefill && defVal) { ta.value = defVal; ta.classList.add('pre'); ta.addEventListener('focus', () => ta.classList.remove('pre')); }
-      else { ta.placeholder = placeholder || ''; }
-      wrap.innerHTML = `<label>${label}</label>`;
-      wrap.appendChild(ta); return wrap;
-    }
-
     function mkSec(title) {
       const sec = document.createElement('div'); sec.className = 'form-section';
       const lbl = document.createElement('div'); lbl.className = 'sec-lbl'; lbl.textContent = title;
       sec.appendChild(lbl); return sec;
     }
+    function makePhotoSlot(id, label) {
+      const div = document.createElement('div'); div.className = 'photo-slot'; div.id = 'ps_' + id;
+      div.innerHTML = `<input type="file" accept="image/*" id="pf_${id}"><div class="slot-placeholder">${icons.photo}<span>Upload</span></div><img id="pi_${id}" alt="${label}"><div class="slot-label">${label}</div><button type="button" class="remove-btn" id="prm_${id}">✕</button>`;
+      requestAnimationFrame(() => {
+        document.getElementById('pf_' + id)?.addEventListener('change', e => {
+          const file = e.target.files[0]; if (!file) return;
+          const reader = new FileReader();
+          reader.onload = ev => { PHOTOS[id] = { dataUrl: ev.target.result, filename: file.name }; document.getElementById('pi_' + id).src = ev.target.result; document.getElementById('ps_' + id).classList.add('filled'); updateStepper(); };
+          reader.readAsDataURL(file);
+        });
+        document.getElementById('prm_' + id)?.addEventListener('click', e => {
+          e.stopPropagation(); delete PHOTOS[id];
+          document.getElementById('pi_' + id).src = ''; document.getElementById('pf_' + id).value = ''; document.getElementById('ps_' + id).classList.remove('filled'); updateStepper();
+        });
+      });
+      return div;
+    }
 
-    // ─────── BUILD FORM ───────
+    // ─── BUILD FORM ───
     function buildForm() {
       formWrap.innerHTML = '';
-
-      // ── Vehicle Info ──
-      let sec = mkSec('Vehicle Information');
-      const vGrid = document.createElement('div'); vGrid.className = 'grid-wrap';
-      vGrid.appendChild(makeInput('VIN', 'VIN Number', 'Enter VIN…', '', false, true));
-      vGrid.appendChild(makeSelect('MODEL', 'Vehicle Model', hyundaiModels, true));
-      // Clear validation highlight on input + update stepper
-      requestAnimationFrame(() => {
-        const vinEl = document.getElementById('VIN');
-        if (vinEl) vinEl.addEventListener('input', () => { vinEl.style.borderColor = ''; vinEl.style.boxShadow = ''; });
-        // MODEL clears on select
-        const modelOpts = document.getElementById('cso_MODEL');
-        if (modelOpts) modelOpts.querySelectorAll('.cs-opt').forEach(opt => { opt.addEventListener('click', () => { const t = document.getElementById('cst_MODEL'); if (t) { t.style.borderColor = ''; t.style.boxShadow = ''; } etmUpdateSteps(); }); });
-        // PROB_NAT and DRV_PAT selects trigger stepper
-        ['PROB_NAT', 'DRV_PAT'].forEach(id => {
-          const opts = document.getElementById('cso_' + id);
-          if (opts) opts.querySelectorAll('.cs-opt').forEach(opt => { opt.addEventListener('click', etmUpdateSteps); });
-        });
-      });
-      // Single delegated listener covers all inputs including service history
-      formWrap.addEventListener('input', etmUpdateSteps);
-      vGrid.appendChild(makeInput('KMS', 'Mileage (Kms)', 'Enter mileage…'));
-      vGrid.appendChild(makeInput('ENG_TM', 'Engine / TM Type', 'e.g. 1.5 Turbo GDi…'));
-      vGrid.appendChild(makeInput('ROM_ID', 'ROM ID (ECU / TCU)', 'Enter ROM ID…', 'NA'));
-      vGrid.appendChild(makeInput('DTC', 'DTC', '', 'NA'));
-      vGrid.appendChild(makeInput('DLR_CD', 'Dealer Code', '', 'N3235'));
-      vGrid.appendChild(makeInput('DLR_NM', 'Dealer Name', '', 'KHANNA AUTOMART PVT LTD'));
-      sec.appendChild(vGrid); formWrap.appendChild(sec);
-
-      // ── Complaint & Field Info ──
-      sec = mkSec('Complaint & Field Details');
-      const cGrid = document.createElement('div'); cGrid.className = 'grid-wrap';
-      cGrid.appendChild(makeTextarea('COMPLAINT', 'Field Complaint', 'Describe the field complaint…'));
-      cGrid.appendChild(makeSelect('PROB_NAT', 'Problem Nature', [
-        'Abnormal Noise', 'Vibration', 'Poor Performance', 'Hard Starting / No Start',
-        'Stalling / Cutting Off', 'Overheating', 'Oil Leak', 'Coolant Leak',
-        'Excessive Smoke', 'MIL / Warning Lamp ON'
-      ]));
-      cGrid.appendChild(makeSelect('DRV_PAT', 'Driving Pattern / Condition', [
-        'City Driving – Stop & Go', 'Highway Driving – Steady Speed', 'Mixed City & Highway',
-        'Uphill / Mountain Driving', 'Cold Start – Morning First Start',
-        'Hot Restart – After Engine Warm', 'AC ON – City Driving',
-        'AC OFF – City Driving', 'Heavy Load / Full Passenger',
-        'Low Speed Crawling / Parking'
-      ]));
-      cGrid.appendChild(makeTextarea('DLR_STD', 'Dealer Study Details', 'Standard reference / specification…'));
-      cGrid.appendChild(makeTextarea('DLR_OBS', 'Dealer Observation', 'What was observed during investigation…'));
-      cGrid.appendChild(makeTextarea('DLR_ACT', 'Dealer Action & RO History', 'Actions taken, RO references…'));
-      cGrid.appendChild(makeTextarea('RMRKS', 'Remarks', '', true, 'Please review and do needful.'));
-      cGrid.appendChild(makeTextarea('PHOTO_NOTE', 'Photo Note', '', true, 'NA'));
-      sec.appendChild(cGrid); formWrap.appendChild(sec);
-
-      // ── Service History Table ──
-      buildServiceHistorySection();
-
-      // ── Photos ──
+      buildBatteryDataSection();
       buildPhotosSection();
+      buildInvoiceSection();
+      buildPWASection();
+      buildNDMSSection();
+      buildVehHistorySection();
     }
 
-    // ─────── SERVICE HISTORY TABLE ───────
-    function buildServiceHistorySection() {
-      const sec = mkSec('Service History (Slide 2)');
-      sec.innerHTML += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Paste directly from Excel — click any cell then Ctrl+V to fill multiple rows/columns.</div>`;
+    // SECTION 1: Failure Battery Data Details
+    function buildBatteryDataSection() {
+      const sec = mkSec('Failure Battery Data Details');
+      const g = document.createElement('div'); g.className = 'grid-wrap';
+      g.appendChild(makeSelect('model', 'Model', hyundaiModels));
+      g.appendChild(makeInput('vin_number', 'VIN Number', 'Enter VIN…'));
+      g.appendChild(makeDateField('sale_date', 'Sale Date'));
+      g.appendChild(makeDateField('repair_date', 'Repair Date'));
+      g.appendChild(makeInput('mileage_km', 'Mileage (KM)', 'Enter mileage…'));
+      g.appendChild(makeSelect('battery_spec_ah', 'Battery Spec (AH)', batterySpecOpts));
+      g.appendChild(makeSelect('agm_supplier_name', 'AGM Supplier Name', supplierOpts));
+      g.appendChild(makeDateField('battery_production_date', 'Battery Production Date'));
+      g.appendChild(makeDateField('vehicle_received_date', 'Vehicle Received Date @ Dealer'));
 
-      const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
+      const pdiDiv = document.createElement('div'); pdiDiv.className = 'sub-lbl'; pdiDiv.textContent = 'Dealer PDI Inspection Result'; g.appendChild(pdiDiv);
+      g.appendChild(makeDateField('pdi_inspection_result', 'Inspection Date'));
+      g.appendChild(makeInput('pdi_voltage', 'Voltage (Received Time)', 'e.g. 12.6V…', 'NA'));
+      g.appendChild(makeInput('pdi_cca', 'CCA', 'Enter CCA…', 'NA'));
+      g.appendChild(makeInput('pdi_soc', 'SOC', 'Enter SOC…', 'NA'));
 
-      let rows = '';
-      for (let i = 1; i <= 12; i++) {
-        rows += `<tr>
-      <td class="num">${i}</td>
-      <td><input id="sh${i}N"   placeholder="S.No…"        tabindex="0"></td>
-      <td><input id="sh${i}DC"  placeholder="Dealer Code…"  tabindex="0"></td>
-      <td><input id="sh${i}RO"  placeholder="RO No…"        tabindex="0"></td>
-      <td><input id="sh${i}VIN" placeholder="VIN…"          tabindex="0"></td>
-      <td><input id="sh${i}KM"  placeholder="KMs…"          tabindex="0"></td>
-      <td><input id="sh${i}RS"  placeholder="Reason…"       tabindex="0"></td>
-      <td><input id="sh${i}DT"  placeholder="Date…"         tabindex="0"></td>
-      <td><input id="sh${i}ACT" placeholder="Action…"       tabindex="0"></td>
-      <td><input id="sh${i}STS" placeholder="Status…"       tabindex="0"></td>
-    </tr>`;
-      }
+      const analDiv = document.createElement('div'); analDiv.className = 'sub-lbl'; analDiv.textContent = 'Battery Analyser Result'; g.appendChild(analDiv);
+      g.appendChild(makeInput('analyser_voltage', 'Voltage', 'e.g. 12.4V…'));
+      g.appendChild(makeInput('analyser_cca', 'CCA', 'Enter CCA…'));
+      g.appendChild(makeInput('analyser_soc', 'SOC', 'Enter SOC…'));
+      g.appendChild(makeSelect('analyser_result', 'Result', ['Replace', 'Recharge', 'Found Ok', 'No Problem', 'Battery Dead']));
+      g.appendChild(makeInput('result_slip', 'Result Slip', 'Enter result slip no…'));
 
-      const tbl = document.createElement('div');
-      tbl.innerHTML = `<div class="tbl-wrap"><table class="pwa-table">
+      const daDiv = document.createElement('div'); daDiv.className = 'sub-lbl'; daDiv.textContent = 'Dealer Action'; g.appendChild(daDiv);
+      g.appendChild(makeSelect('dealer_action', 'Recharge / Replaced', dealerActionOpts));
+      g.appendChild(makeSelect('battery_availability', 'Battery Availability @ Dealer End', batteryAvailabilityOpts));
+
+      sec.appendChild(g); formWrap.appendChild(sec);
+      // Hook all inputs in this section to update stepper
+      requestAnimationFrame(() => {
+        formWrap.addEventListener('input', updateStepper);
+        // analyser_result dropdown triggers stepper
+        const arOpts = document.getElementById('cso_analyser_result');
+        if (arOpts) arOpts.querySelectorAll('.cs-opt').forEach(opt => opt.addEventListener('click', () => setTimeout(updateStepper, 50)));
+      });
+    }
+
+    // SECTION 2: Battery Defective Concern — Photographs (PHOTOS sheet)
+    function buildPhotosSection() {
+      const sec = mkSec('Battery Defective Concern — Photographs');
+
+      const l1 = document.createElement('div'); l1.className = 'photo-sub-lbl'; l1.style.marginTop = '2px'; l1.textContent = 'Vehicle Photos'; sec.appendChild(l1);
+      const r1 = document.createElement('div'); r1.className = 'photo-grid';
+      r1.appendChild(makePhotoSlot('photo_1', 'Registration Plate Photo'));
+      r1.appendChild(makePhotoSlot('photo_2', 'Mileage Photo'));
+      r1.appendChild(makePhotoSlot('photo_3', 'VIN Photo'));
+      sec.appendChild(r1);
+
+      const l2 = document.createElement('div'); l2.className = 'photo-sub-lbl'; l2.textContent = 'Battery Details'; sec.appendChild(l2);
+      const r2 = document.createElement('div'); r2.className = 'photo-grid g4';
+      r2.appendChild(makePhotoSlot('photo_4', 'Defective Battery Details'));
+      r2.appendChild(makePhotoSlot('photo_5', 'Defective Battery Manufacturer'));
+      r2.appendChild(makePhotoSlot('photo_6', 'Replaced Battery Details'));
+      r2.appendChild(makePhotoSlot('photo_7', 'Replaced Battery Manufacturer'));
+      sec.appendChild(r2);
+
+      const l3 = document.createElement('div'); l3.className = 'photo-sub-lbl'; l3.textContent = 'Voltage & Battery Photos'; sec.appendChild(l3);
+      const r3 = document.createElement('div'); r3.className = 'photo-grid';
+      r3.appendChild(makePhotoSlot('photo_8', 'Voltage Without Load'));
+      r3.appendChild(makePhotoSlot('photo_9', 'Voltage With Load'));
+      r3.appendChild(makePhotoSlot('photo_10', 'Both Batteries w/ Reg Plate'));
+      sec.appendChild(r3);
+
+      formWrap.appendChild(sec);
+    }
+
+    // SECTION 3: Vendor Rejection Report / Invoice / Estimation (INVOICE sheet)
+    function buildInvoiceSection() {
+      const sec = mkSec('Vendor Rejection Report / Invoice / Estimation');
+
+      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:6px;'; hint.textContent = 'Paste rows directly from Excel — click first cell then Ctrl+V'; sec.appendChild(hint);
+
+      const pl = document.createElement('div'); pl.style.cssText = 'font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;'; pl.textContent = 'Parts'; sec.appendChild(pl);
+
+      let pRows = '';
+      for (let i = 1; i <= 2; i++)pRows += `<tr><td class="num">${i}</td><td><input id="si_no_${i}" placeholder="SI…" tabindex="0"></td><td><input id="part_number_${i}" placeholder="Part No…" tabindex="0"></td><td><input id="part_description_${i}" placeholder="Description…" tabindex="0"></td><td><input id="part_list_price_${i}" placeholder="0" tabindex="0" oninput="calcPartRow(${i})"></td><td><input id="part_qty_${i}" placeholder="0" style="text-align:center" tabindex="0" oninput="calcPartRow(${i})"></td><td class="total-cell"><span id="part_amt_${i}">—</span></td><td class="total-cell"><span id="part_tax_${i}">—</span></td></tr>`;
+      const pTbl = document.createElement('div'); pTbl.className = 'tbl-wrap';
+      pTbl.innerHTML = `<table class="pwa-table"><thead><tr><th style="width:28px">#</th><th>SI No.</th><th style="min-width:90px">Part Number</th><th style="min-width:130px">Description</th><th style="min-width:75px">List Price</th><th style="min-width:45px">Qty</th><th style="min-width:75px">Amt (Ex GST)</th><th style="min-width:85px">Total (w/ 18%)</th></tr></thead><tbody>${pRows}</tbody><tfoot><tr class="total-row"><td colspan="6" style="text-align:right;padding-right:10px;font-size:11px;letter-spacing:.04em;">PARTS TOTAL</td><td class="total-cell"><span id="partAmtTotal">—</span></td><td class="total-cell"><span id="partTaxTotal">—</span></td></tr></tfoot></table>`;
+      sec.appendChild(pTbl);
+
+      const ll = document.createElement('div'); ll.style.cssText = 'font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 5px;'; ll.textContent = 'Labour'; sec.appendChild(ll);
+
+      let lRows = '';
+      for (let i = 1; i <= 2; i++)lRows += `<tr><td class="num">${i}</td><td><input id="si_no_labour_${i}" placeholder="SI…" tabindex="0"></td><td><input id="labour_code_${i}" placeholder="Op Code…" tabindex="0"></td><td><input id="labour_description_${i}" placeholder="Description…" tabindex="0"></td><td><input id="labour_list_price_${i}" placeholder="0" tabindex="0" oninput="calcLabourRow(${i})"></td><td><input id="labour_qty_${i}" placeholder="0" style="text-align:center" tabindex="0" oninput="calcLabourRow(${i})"></td><td class="total-cell"><span id="labour_amt_${i}">—</span></td><td class="total-cell"><span id="labour_tax_${i}">—</span></td></tr>`;
+      const lTbl = document.createElement('div'); lTbl.className = 'tbl-wrap';
+      lTbl.innerHTML = `<table class="pwa-table"><thead><tr><th style="width:28px">#</th><th>SI No.</th><th style="min-width:90px">Labour Code</th><th style="min-width:130px">Description</th><th style="min-width:75px">List Price</th><th style="min-width:45px">Qty</th><th style="min-width:75px">Amt (Ex GST)</th><th style="min-width:85px">Total (w/ 18%)</th></tr></thead><tbody>${lRows}</tbody><tfoot><tr class="total-row"><td colspan="6" style="text-align:right;padding-right:10px;font-size:11px;letter-spacing:.04em;">LABOUR TOTAL</td><td class="total-cell"><span id="labourAmtTotal">—</span></td><td class="total-cell"><span id="labourTaxTotal">—</span></td></tr><tr class="gtotal-row"><td colspan="6" style="text-align:right;padding-right:10px;letter-spacing:.04em;">G. TOTAL (with Tax)</td><td colspan="2" style="padding:0 8px;font-weight:700;font-size:13px;"><span id="gTotal">—</span></td></tr></tfoot></table>`;
+      sec.appendChild(lTbl);
+
+      // 2 photos for this sheet
+      const pl2 = document.createElement('div'); pl2.className = 'photo-sub-lbl'; pl2.textContent = 'Supporting Documents'; sec.appendChild(pl2);
+      const pr = document.createElement('div'); pr.className = 'photo-grid g2';
+      pr.appendChild(makePhotoSlot('invoice_pic3', 'Vendor Rejection Report'));
+      pr.appendChild(makePhotoSlot('invoice_pic4', 'Invoice'));
+      sec.appendChild(pr);
+
+      formWrap.appendChild(sec);
+    }
+
+    // SECTION 4: PWA Request Screen (INVOICE sheet — row 39)
+    function buildPWASection() {
+      const sec = mkSec('PWA Request Screen');
+      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:8px;'; hint.textContent = 'Upload a screenshot of the PWA request screen.'; sec.appendChild(hint);
+      const pr = document.createElement('div'); pr.className = 'photo-grid g1';
+      pr.appendChild(makePhotoSlot('invoice_pwa', 'PWA Request Screen Screenshot'));
+      sec.appendChild(pr);
+      formWrap.appendChild(sec);
+    }
+
+    // SECTION 5: NDMS Invoice & Cost Sharing
+    function buildNDMSSection() {
+      const sec = mkSec('NDMS Invoice & Cost Sharing');
+      const g = document.createElement('div'); g.className = 'grid-wrap';
+      g.appendChild(makeInput('part_total_cost_with_tax', 'Part — Total Cost (with Tax)', 'e.g. 5000…'));
+      g.appendChild(makeInput('labour_total_cost_with_tax', 'Labour — Total Cost (with Tax)', 'e.g. 500…'));
+
+      const ps = document.createElement('div'); ps.className = 'sub-lbl'; ps.textContent = 'Part Sharing % (Total must = 100%)'; g.appendChild(ps);
+      g.appendChild(makeInput('hmil_share_pct_part', 'HMIL Share % (Part)', 'e.g. 80'));
+      g.appendChild(makeInput('dealer_share_pct_part', 'Dealer Share % (Part)', 'e.g. 10'));
+      g.appendChild(makeInput('customer_share_pct_part', 'Customer Share % (Part)', 'e.g. 10'));
+      const partErr = document.createElement('div'); partErr.id = 'pct_err_part'; partErr.className = 'full'; partErr.style.cssText = 'grid-column:1/-1;display:none;font-size:12px;font-weight:600;color:var(--danger-color);background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:7px;padding:8px 12px;margin-top:2px;'; partErr.textContent = '⚠ Part % total exceeds 100%. The three fields must add up to exactly 100%.'; g.appendChild(partErr);
+
+      const ls = document.createElement('div'); ls.className = 'sub-lbl'; ls.textContent = 'Labour Sharing % (Total must = 100%)'; g.appendChild(ls);
+      g.appendChild(makeInput('hmil_share_pct_labour', 'HMIL Share % (Labour)', 'e.g. 80'));
+      g.appendChild(makeInput('dealer_share_pct_labour', 'Dealer Share % (Labour)', 'e.g. 10'));
+      g.appendChild(makeInput('customer_share_pct_labour', 'Customer Share % (Labour)', 'e.g. 10'));
+      const labErr = document.createElement('div'); labErr.id = 'pct_err_labour'; labErr.className = 'full'; labErr.style.cssText = 'grid-column:1/-1;display:none;font-size:12px;font-weight:600;color:var(--danger-color);background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:7px;padding:8px 12px;margin-top:2px;'; labErr.textContent = '⚠ Labour % total exceeds 100%. The three fields must add up to exactly 100%.'; g.appendChild(labErr);
+      sec.appendChild(g);
+
+      // Live sharing calculation table
+      const tblLbl = document.createElement('div'); tblLbl.style.cssText = 'font-size:10.5px;font-weight:600;text-transform:uppercase;color:var(--text-muted);letter-spacing:.05em;margin:14px 0 6px;border-top:1px solid var(--border-light);padding-top:12px;'; tblLbl.textContent = 'Live Cost Sharing Breakdown'; sec.appendChild(tblLbl);
+
+      const tblWrap = document.createElement('div'); tblWrap.className = 'tbl-wrap';
+      tblWrap.innerHTML = `<table class="pwa-table" id="ndmsSharingTable">
     <thead><tr>
-      <th style="width:28px">#</th>
-      <th style="min-width:45px">S.No</th>
-      <th style="min-width:60px">Dealer Code</th>
-      <th style="min-width:90px">R/O No.</th>
-      <th style="min-width:130px">VIN</th>
-      <th style="min-width:70px">Odo (Kms)</th>
-      <th style="min-width:110px">Reason for Service</th>
-      <th style="min-width:90px">Service Date</th>
-      <th style="min-width:110px">Dealer Action Taken</th>
-      <th style="min-width:80px">Current Status</th>
+      <th style="min-width:100px">Category</th>
+      <th style="min-width:100px">Total Amount</th>
+      <th style="min-width:80px">HMIL %</th>
+      <th style="min-width:90px">HMIL Amt</th>
+      <th style="min-width:80px">Dealer %</th>
+      <th style="min-width:90px">Dealer Amt</th>
+      <th style="min-width:80px">Customer %</th>
+      <th style="min-width:100px">Customer Amt</th>
+      <th style="min-width:80px">Check</th>
     </tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
-      sec.appendChild(tbl);
+    <tbody>
+      <tr>
+        <td style="padding:0 8px;font-weight:600;font-size:12px;">Parts</td>
+        <td class="total-cell"><span id="ns_part_total">—</span></td>
+        <td class="total-cell"><span id="ns_hmil_pct_part" style="color:var(--text-muted)">—</span></td>
+        <td class="total-cell" style="background:rgba(0,44,95,.05)"><span id="ns_hmil_amt_part">—</span></td>
+        <td class="total-cell"><span id="ns_dealer_pct_part" style="color:var(--text-muted)">—</span></td>
+        <td class="total-cell"><span id="ns_dealer_amt_part">—</span></td>
+        <td class="total-cell"><span id="ns_cust_pct_part" style="color:var(--text-muted)">—</span></td>
+        <td class="total-cell"><span id="ns_cust_amt_part">—</span></td>
+        <td class="total-cell"><span id="ns_check_part">—</span></td>
+      </tr>
+      <tr>
+        <td style="padding:0 8px;font-weight:600;font-size:12px;">Labour</td>
+        <td class="total-cell"><span id="ns_labour_total">—</span></td>
+        <td class="total-cell"><span id="ns_hmil_pct_labour" style="color:var(--text-muted)">—</span></td>
+        <td class="total-cell" style="background:rgba(0,44,95,.05)"><span id="ns_hmil_amt_labour">—</span></td>
+        <td class="total-cell"><span id="ns_dealer_pct_labour" style="color:var(--text-muted)">—</span></td>
+        <td class="total-cell"><span id="ns_dealer_amt_labour">—</span></td>
+        <td class="total-cell"><span id="ns_cust_pct_labour" style="color:var(--text-muted)">—</span></td>
+        <td class="total-cell"><span id="ns_cust_amt_labour">—</span></td>
+        <td class="total-cell"><span id="ns_check_labour">—</span></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr class="gtotal-row">
+        <td style="padding:8px;font-weight:700;">GRAND TOTAL</td>
+        <td style="padding:0 8px;font-weight:700;"><span id="ns_grand_total">—</span></td>
+        <td colspan="2" style="padding:0 8px;font-weight:700;text-align:center;">HMIL: <span id="ns_hmil_grand">—</span></td>
+        <td colspan="2" style="padding:0 8px;font-weight:700;text-align:center;">Dealer: <span id="ns_dealer_grand">—</span></td>
+        <td colspan="3" style="padding:0 8px;font-weight:700;text-align:center;">Customer: <span id="ns_cust_grand">—</span></td>
+      </tr>
+    </tfoot>
+  </table>`;
+      sec.appendChild(tblWrap);
+
+      const pl = document.createElement('div'); pl.className = 'photo-sub-lbl'; pl.textContent = 'NDMS Invoice Document'; sec.appendChild(pl);
+      const pr = document.createElement('div'); pr.className = 'photo-grid g1';
+      pr.appendChild(makePhotoSlot('ndms_pic1', 'NDMS Invoice'));
+      sec.appendChild(pr);
+
       formWrap.appendChild(sec);
 
-      // Paste handler
+      // Attach live calc listeners after DOM ready
       requestAnimationFrame(() => {
-        for (let i = 1; i <= 12; i++) {
-          shCols.forEach(col => {
-            const el = document.getElementById(`sh${i}${col}`);
-            if (el) el.addEventListener('paste', e => handlePaste(e, 'sh', i, col, 12, shCols));
-          });
-        }
-        // ── Bulk drag-select + keyboard edit ──
-        initTableBulkEdit(sec);
-      });
-    }
-
-    // ─────── BULK TABLE DRAG SELECT + KEYBOARD ───────
-    function initTableBulkEdit(sec) {
-      const table = sec.querySelector('.pwa-table');
-      if (!table) return;
-      let isDragging = false;
-      let dragStart = null;
-      const selectedCells = new Set();
-
-      const getCellCoords = (td) => {
-        const tr = td.parentElement;
-        const rowIdx = tr.rowIndex;
-        const cellIdx = td.cellIndex;
-        return { r: rowIdx, c: cellIdx };
-      };
-
-      const clearSelection = () => {
-        selectedCells.forEach(td => td.classList.remove('cell-selected'));
-        selectedCells.clear();
-      };
-
-      const selectRange = (startTd, endTd) => {
-        clearSelection();
-        const s = getCellCoords(startTd), e = getCellCoords(endTd);
-        const r1 = Math.min(s.r, e.r), r2 = Math.max(s.r, e.r);
-        const c1 = Math.min(s.c, e.c), c2 = Math.max(s.c, e.c);
-        table.querySelectorAll('tbody tr').forEach(tr => {
-          if (tr.rowIndex < r1 || tr.rowIndex > r2) return;
-          Array.from(tr.cells).forEach(td => {
-            if (td.classList.contains('num')) return;
-            if (td.cellIndex >= c1 && td.cellIndex <= c2) {
-              td.classList.add('cell-selected');
-              selectedCells.add(td);
-            }
-          });
+        ['part_total_cost_with_tax', 'labour_total_cost_with_tax',
+          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
+          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'
+        ].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.addEventListener('input', calcNDMS);
         });
-      };
-
-      table.addEventListener('mousedown', e => {
-        const td = e.target.closest('tbody td:not(.num)');
-        if (!td) return;
-        if (e.button !== 0) return;
-        isDragging = true;
-        dragStart = td;
-        clearSelection();
-        td.classList.add('cell-selected');
-        selectedCells.add(td);
-        e.preventDefault();
-      });
-
-      table.addEventListener('mouseover', e => {
-        if (!isDragging || !dragStart) return;
-        const td = e.target.closest('tbody td:not(.num)');
-        if (!td) return;
-        selectRange(dragStart, td);
-      });
-
-      document.addEventListener('mouseup', () => {
-        if (isDragging) { isDragging = false; }
-      });
-
-      table.addEventListener('click', e => {
-        const inp = e.target.closest('input');
-        if (inp && selectedCells.size <= 1) { clearSelection(); }
-      });
-
-      const buildSelectionTSV = () => {
-        const coords = [];
-        selectedCells.forEach(td => { coords.push({ r: td.parentElement.rowIndex, c: td.cellIndex, td }); });
-        if (!coords.length) return '';
-        const r1 = Math.min(...coords.map(x => x.r)), r2 = Math.max(...coords.map(x => x.r));
-        const c1 = Math.min(...coords.map(x => x.c)), c2 = Math.max(...coords.map(x => x.c));
-        const grid = [];
-        for (let r = r1; r <= r2; r++) {
-          const row = [];
-          for (let c = c1; c <= c2; c++) {
-            const match = coords.find(x => x.r === r && x.c === c);
-            row.push(match ? match.td.querySelector('input')?.value || '' : '');
-          }
-          grid.push(row.join('\t'));
-        }
-        return grid.join('\n');
-      };
-
-      document.addEventListener('keydown', e => {
-        if (selectedCells.size === 0) return;
-        const active = document.activeElement;
-        const inTable = table.contains(active);
-        if (!inTable && active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
-
-        if (e.key === 'Delete' || e.key === 'Backspace') {
-          e.preventDefault();
-          selectedCells.forEach(td => { const inp = td.querySelector('input'); if (inp) inp.value = ''; });
-          etmUpdateSteps();
-        }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-          const rows = buildSelectionTSV();
-          navigator.clipboard?.writeText(rows).catch(() => { });
-        }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'x') {
-          const rows = buildSelectionTSV();
-          navigator.clipboard?.writeText(rows).catch(() => { });
-          selectedCells.forEach(td => { const inp = td.querySelector('input'); if (inp) inp.value = ''; });
-          etmUpdateSteps();
-        }
       });
     }
 
-    function handlePaste(e, prefix, rowIdx, colKey, maxRows, cols) {
+    function calcNDMS() {
+      const gv = id => { const el = document.getElementById(id); return parseFloat(el?.value) || 0; };
+      const fmt = v => v > 0 ? Math.round(v).toLocaleString('en-IN') : '—';
+      const fmtPct = v => v > 0 ? v.toFixed(1) + '%' : '—';
+      const setEl = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+      const partTotal = Math.round(gv('part_total_cost_with_tax'));
+      const labTotal = Math.round(gv('labour_total_cost_with_tax'));
+
+      // Part sharing
+      const hPctP = gv('hmil_share_pct_part');
+      const dPctP = gv('dealer_share_pct_part');
+      const cPctP = gv('customer_share_pct_part');
+      const hAmtP = Math.round(partTotal * (hPctP / 100));
+      const dAmtP = Math.round(partTotal * (dPctP / 100));
+      const cAmtP = Math.round(partTotal * (cPctP / 100));
+      const checkP = hPctP + dPctP + cPctP;
+
+      // Labour sharing
+      const hPctL = gv('hmil_share_pct_labour');
+      const dPctL = gv('dealer_share_pct_labour');
+      const cPctL = gv('customer_share_pct_labour');
+      const hAmtL = Math.round(labTotal * (hPctL / 100));
+      const dAmtL = Math.round(labTotal * (dPctL / 100));
+      const cAmtL = Math.round(labTotal * (cPctL / 100));
+      const checkL = hPctL + dPctL + cPctL;
+
+      // ── Percentage over-100 validation ──
+      const partOver = checkP > 100.001;
+      const labOver = checkL > 100.001;
+      const partIds = ['hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part'];
+      const labIds = ['hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'];
+      partIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (partOver) { el.style.borderColor = 'var(--danger-color)'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
+        else { el.style.borderColor = ''; el.style.boxShadow = ''; }
+      });
+      labIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (labOver) { el.style.borderColor = 'var(--danger-color)'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
+        else { el.style.borderColor = ''; el.style.boxShadow = ''; }
+      });
+      // Show/hide inline error messages
+      const partErrEl = document.getElementById('pct_err_part');
+      const labErrEl = document.getElementById('pct_err_labour');
+      if (partErrEl) partErrEl.style.display = partOver ? 'block' : 'none';
+      if (labErrEl) labErrEl.style.display = labOver ? 'block' : 'none';
+
+      // Update table
+      setEl('ns_part_total', fmt(partTotal));
+      setEl('ns_hmil_pct_part', fmtPct(hPctP));
+      setEl('ns_hmil_amt_part', fmt(hAmtP));
+      setEl('ns_dealer_pct_part', fmtPct(dPctP));
+      setEl('ns_dealer_amt_part', fmt(dAmtP));
+      setEl('ns_cust_pct_part', fmtPct(cPctP));
+      setEl('ns_cust_amt_part', fmt(cAmtP));
+
+      setEl('ns_labour_total', fmt(labTotal));
+      setEl('ns_hmil_pct_labour', fmtPct(hPctL));
+      setEl('ns_hmil_amt_labour', fmt(hAmtL));
+      setEl('ns_dealer_pct_labour', fmtPct(dPctL));
+      setEl('ns_dealer_amt_labour', fmt(dAmtL));
+      setEl('ns_cust_pct_labour', fmtPct(cPctL));
+      setEl('ns_cust_amt_labour', fmt(cAmtL));
+
+      // Check column
+      const checkEl_p = document.getElementById('ns_check_part');
+      const checkEl_l = document.getElementById('ns_check_labour');
+      if (checkEl_p) {
+        if (partTotal > 0 && checkP > 0) { checkEl_p.textContent = Math.abs(checkP - 100) < 0.01 ? '✓ 100%' : '⚠ ' + checkP.toFixed(1) + '%'; checkEl_p.style.color = Math.abs(checkP - 100) < 0.01 ? '#22c55e' : '#ef4444'; checkEl_p.style.fontWeight = '700'; }
+        else checkEl_p.textContent = '—';
+      }
+      if (checkEl_l) {
+        if (labTotal > 0 && checkL > 0) { checkEl_l.textContent = Math.abs(checkL - 100) < 0.01 ? '✓ 100%' : '⚠ ' + checkL.toFixed(1) + '%'; checkEl_l.style.color = Math.abs(checkL - 100) < 0.01 ? '#22c55e' : '#ef4444'; checkEl_l.style.fontWeight = '700'; }
+        else checkEl_l.textContent = '—';
+      }
+
+      // Grand totals
+      setEl('ns_grand_total', fmt(partTotal + labTotal));
+      setEl('ns_hmil_grand', fmt(hAmtP + hAmtL));
+      setEl('ns_dealer_grand', fmt(dAmtP + dAmtL));
+      setEl('ns_cust_grand', fmt(cAmtP + cAmtL));
+    }
+
+    // SECTION 6: Vehicle History
+    function buildVehHistorySection() {
+      const sec = mkSec('Vehicle History');
+      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:6px;'; hint.textContent = 'Paste rows directly from Excel — click first cell then Ctrl+V'; sec.appendChild(hint);
+
+      const pasteCols = ['dealer_no', 'ro_no', 'ro_date', 'vin', 'mileage', 'work_type', 'reg_no', 'remarks'];
+      let rows = '';
+      for (let i = 1; i <= 20; i++) {
+        rows += `<tr><td class="num">${i}</td>
+      <td><input id="sh${i}_dealer_no" value="N3235" class="pre" tabindex="0" onfocus="this.classList.remove('pre')"></td>
+      <td><input id="sh${i}_ro_no" placeholder="RO No…" tabindex="0"></td>
+      <td><input id="sh${i}_ro_date" placeholder="DD-MM-YYYY" tabindex="0"></td>
+      <td><input id="sh${i}_vin" placeholder="VIN…" tabindex="0"></td>
+      <td><input id="sh${i}_mileage" placeholder="KMs…" tabindex="0"></td>
+      <td><input id="sh${i}_work_type" placeholder="Work type…" tabindex="0"></td>
+      <td><input id="sh${i}_reg_no" placeholder="Reg No…" tabindex="0"></td>
+      <td><input id="sh${i}_remarks" placeholder="Remarks…" tabindex="0"></td>
+    </tr>`;
+      }
+      const tbl = document.createElement('div'); tbl.className = 'tbl-wrap';
+      tbl.innerHTML = `<table class="pwa-table"><thead><tr><th style="width:28px">#</th><th style="min-width:65px">Dealer No</th><th style="min-width:85px">R/O No</th><th style="min-width:85px">R/O Date</th><th style="min-width:90px">VIN</th><th style="min-width:60px">Mileage</th><th style="min-width:90px">Work Type</th><th style="min-width:75px">Reg. No</th><th style="min-width:90px">Remarks</th></tr></thead><tbody>${rows}</tbody></table>`;
+      sec.appendChild(tbl);
+
+      requestAnimationFrame(() => {
+        for (let i = 1; i <= 20; i++) {
+          pasteCols.forEach(col => {
+            const el = document.getElementById(`sh${i}_${col}`);
+            if (el) el.addEventListener('paste', e => handleShPaste(e, i, col, pasteCols));
+          });
+        }
+      });
+      formWrap.appendChild(sec);
+    }
+
+    function handleShPaste(e, rowIdx, colKey, cols) {
       const text = e.clipboardData.getData('text');
       if (!text.includes('\t') && !text.includes('\n')) return;
       e.preventDefault();
@@ -1817,292 +1917,183 @@
         const cells = row.split('\t');
         cells.forEach((val, ci) => {
           const r = rowIdx + ri, c = colStart + ci;
-          if (r > maxRows || c >= cols.length) return;
-          const el = document.getElementById(`${prefix}${r}${cols[c]}`);
+          if (r > 20 || c >= cols.length) return;
+          const el = document.getElementById(`sh${r}_${cols[c]}`);
           if (el) el.value = val.trim();
         });
       });
     }
 
-    // ─────── PHOTOS ───────
-    function buildPhotosSection() {
-      const sec = mkSec('Photos (2 slots — Slide 1)');
-      const grid = document.createElement('div'); grid.className = 'photo-grid';
+    // ─── CALC ───
+    function calcPartRow(i) {
+      const p = parseFloat(document.getElementById(`part_list_price_${i}`)?.value) || 0;
+      const q = parseFloat(document.getElementById(`part_qty_${i}`)?.value) || 0;
+      const a = p * q, t = Math.round(a * 1.18);
+      const ae = document.getElementById(`part_amt_${i}`), te = document.getElementById(`part_tax_${i}`);
+      if (ae) ae.textContent = (a || p || q) ? Math.round(a).toLocaleString('en-IN') : '—';
+      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN') : '—';
+      updateInvoiceTotals();
+    }
+    function calcLabourRow(i) {
+      const p = parseFloat(document.getElementById(`labour_list_price_${i}`)?.value) || 0;
+      const q = parseFloat(document.getElementById(`labour_qty_${i}`)?.value) || 0;
+      const a = p * q, t = Math.round(a * 1.18);
+      const ae = document.getElementById(`labour_amt_${i}`), te = document.getElementById(`labour_tax_${i}`);
+      if (ae) ae.textContent = (a || p || q) ? Math.round(a).toLocaleString('en-IN') : '—';
+      if (te) te.textContent = (a || p || q) ? t.toLocaleString('en-IN') : '—';
+      updateInvoiceTotals();
+    }
+    function updateInvoiceTotals() {
+      let pa = 0, la = 0;
+      let hasPartInput = false;
+      let hasLabourInput = false;
+      for (let i = 1; i <= 2; i++) {
+        const pVal = document.getElementById(`part_list_price_${i}`)?.value;
+        const qVal = document.getElementById(`part_qty_${i}`)?.value;
+        if (pVal || qVal) {
+          hasPartInput = true;
+        }
+        const lpVal = document.getElementById(`labour_list_price_${i}`)?.value;
+        const lqVal = document.getElementById(`labour_qty_${i}`)?.value;
+        if (lpVal || lqVal) {
+          hasLabourInput = true;
+        }
+        pa += (parseFloat(pVal) || 0) * (parseFloat(qVal) || 0);
+        la += (parseFloat(lpVal) || 0) * (parseFloat(lqVal) || 0);
+      }
+      const pt = Math.round(pa * 1.18), lt = Math.round(la * 1.18), gt = Math.round(pt + lt);
+      const f = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v > 0 ? Math.round(v).toLocaleString('en-IN') : '—'; };
+      f('partAmtTotal', pa); f('partTaxTotal', pt); f('labourAmtTotal', la); f('labourTaxTotal', lt); f('gTotal', gt);
 
-      [
-        { id: 'photo1', rId: 'rId3', label: 'Photo 1' },
-        { id: 'photo2', rId: 'rId4', label: 'Photo 2' }
-      ].forEach(slot => {
-        const div = document.createElement('div'); div.className = 'photo-slot'; div.id = 'ps_' + slot.id;
-        div.innerHTML = `<input type="file" accept="image/*" id="pf_${slot.id}"><div class="slot-placeholder">${icons.photo}<span>Upload Photo</span></div><img id="pi_${slot.id}" alt="${slot.label}"><div class="slot-label">${slot.label}</div><button type="button" class="remove-btn" id="prm_${slot.id}" tabindex="0">✕</button>`;
-        grid.appendChild(div);
-        requestAnimationFrame(() => {
-          document.getElementById('pf_' + slot.id)?.addEventListener('change', e => {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = ev => {
-              PHOTOS[slot.id] = { dataUrl: ev.target.result, filename: file.name, rId: slot.rId };
-              document.getElementById('pi_' + slot.id).src = ev.target.result;
-              document.getElementById('ps_' + slot.id).classList.add('filled');
-              etmUpdateSteps();
-            };
-            reader.readAsDataURL(file);
-          });
-          const rmBtn = document.getElementById('prm_' + slot.id);
-          const rmA = e => { e.stopPropagation(); delete PHOTOS[slot.id]; document.getElementById('pi_' + slot.id).src = ''; document.getElementById('pf_' + slot.id).value = ''; document.getElementById('ps_' + slot.id).classList.remove('filled'); etmUpdateSteps(); };
-          rmBtn?.addEventListener('click', rmA); handleKeyClick(rmBtn, rmA);
-        });
-      });
-      sec.appendChild(grid);
-      formWrap.appendChild(sec);
+      const pCostEl = document.getElementById('part_total_cost_with_tax');
+      if (pCostEl && (pt > 0 || hasPartInput)) {
+        pCostEl.value = pt > 0 ? pt.toString() : '';
+        pCostEl.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      const lCostEl = document.getElementById('labour_total_cost_with_tax');
+      if (lCostEl && (lt > 0 || hasLabourInput)) {
+        lCostEl.value = lt > 0 ? lt.toString() : '';
+        lCostEl.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      calcNDMS();
     }
 
-    // ─────── CLEAR FORM ───────
-    document.getElementById('btnClear').addEventListener('click', async () => {
-      if (!(await customConfirm('Clear all fields?', 'Yes, Clear'))) return;
-      // Clear all text inputs and textareas
-      formWrap.querySelectorAll('input[type=text],textarea').forEach(el => { el.value = ''; el.classList.remove('pre'); el.style.borderColor = ''; el.style.boxShadow = ''; });
-      // Clear hidden inputs (custom selects)
-      formWrap.querySelectorAll('input[type=hidden]').forEach(el => el.value = '');
-      // Reset custom select triggers
-      document.querySelectorAll('.cs-val').forEach(el => { el.textContent = 'Select…'; el.classList.add('empty'); });
-      document.querySelectorAll('.custom-select-trigger').forEach(el => { el.style.borderColor = ''; el.style.boxShadow = ''; });
-      // Reset date manual inputs and CAL state
-      document.querySelectorAll('input[id^="dm_"]').forEach(el => { el.value = ''; });
-      document.querySelectorAll('.dval').forEach(el => { el.textContent = 'Pick date'; el.classList.add('empty'); });
-      Object.keys(CAL).forEach(id => { if (CAL[id]) CAL[id].date = null; });
-      // Reset photos
-      ['photo1', 'photo2'].forEach(id => {
-        delete PHOTOS[id];
-        const img = document.getElementById('pi_' + id); if (img) img.src = '';
-        const inp = document.getElementById('pf_' + id); if (inp) inp.value = '';
-        document.getElementById('ps_' + id)?.classList.remove('filled');
+    // ─── STEPPER ───
+    let stepperScrollTimeout;
+    window.addEventListener('scroll', () => {
+      if (currentMode !== 'form') return;
+      clearTimeout(stepperScrollTimeout);
+      stepperScrollTimeout = setTimeout(updateStepper, 50);
+    }, { passive: true });
+
+    function updateStepper() {
+      const sc = document.getElementById('stepperContainer');
+      if (!sc || currentMode !== 'form') return;
+      const sections = Array.from(document.querySelectorAll('.form-section'));
+      if (sections.length < 4) return;
+
+      // ── Smart completion checks ──
+      // Step 1 done: all battery data section fields filled
+      const s1fields = ['vin_number', 'model', 'pdi_voltage', 'pdi_cca', 'pdi_soc', 'analyser_voltage', 'analyser_cca', 'analyser_soc', 'analyser_result', 'result_slip'];
+      const s1done = s1fields.every(id => {
+        const el = document.getElementById(id);
+        return el && el.value.trim() !== '';
       });
-      // Restore pre-filled defaults
-      const defaults = { DLR_CD: 'N3235', DLR_NM: 'KHANNA AUTOMART PVT LTD', DTC: 'NA', ROM_ID: 'NA' };
-      Object.entries(defaults).forEach(([id, val]) => { const el = document.getElementById(id); if (el) { el.value = val; el.classList.add('pre'); } });
-      // Restore textarea prefills
-      const taDefaults = { RMRKS: 'Please review and do needful.', PHOTO_NOTE: 'NA' };
-      Object.entries(taDefaults).forEach(([id, val]) => { const el = document.getElementById(id); if (el) { el.value = val; el.classList.add('pre'); } });
-      // Reset PROB_NAT and DRV_PAT dropdowns
-      ['PROB_NAT', 'DRV_PAT'].forEach(id => {
-        const hidEl = document.getElementById(id); if (hidEl) hidEl.value = '';
-        const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = 'Select…'; lbl.classList.add('empty'); }
-        const trig = document.getElementById('cst_' + id); if (trig) { trig.style.borderColor = ''; trig.style.boxShadow = ''; }
-      });
-      closeAllPopups();
-      clearStatus();
-      etmUpdateSteps();
-    });
 
-    // ─────── STEPPER ───────
-    function etmUpdateSteps() {
-      const vin = document.getElementById('VIN')?.value?.trim();
-      const model = document.getElementById('MODEL')?.value?.trim();
-      const dlr = document.getElementById('DLR_CD')?.value?.trim() || document.getElementById('DLR_NM')?.value?.trim();
+      // Step 2 done: at least 2 photos uploaded
+      const photoCount = Object.keys(PHOTOS).length;
+      const s2done = photoCount >= 2;
 
-      // Step 1 done: VIN + Model both filled
-      const s1done = !!(vin && model);
-
-      // Step 2 done: dealer filled + at least 1 service history row has any value
-      const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
+      // Step 3 done: at least 1 invoice table row filled (parts or labour)
       let tableHasRow = false;
-      for (let i = 1; i <= 12 && !tableHasRow; i++) {
-        for (const col of shCols) {
-          const el = document.getElementById(`sh${i}${col}`);
-          if (el && el.value.trim()) { tableHasRow = true; break; }
+      outer: for (let i = 1; i <= 2; i++) {
+        for (const fld of ['si_no', 'part_number', 'part_description', 'si_no_labour', 'labour_code', 'labour_description']) {
+          const el = document.getElementById(`${fld}_${i}`);
+          if (el && el.value.trim()) { tableHasRow = true; break outer; }
         }
       }
-      const s2done = !!(dlr && tableHasRow);
+      const s3done = tableHasRow;
 
-      // Step 3 done: at least 1 photo uploaded
-      const s3done = Object.keys(PHOTOS).length > 0;
+      // Step 4 done: s1+s2+s3 all done
+      const s4done = s1done && s2done && s3done;
 
-      // Scroll-based: which section is currently in view?
-      const sections = formWrap.querySelectorAll('.form-section');
-      let activeSecIdx = 0;
-      sections.forEach((sec, i) => {
-        const rect = sec.getBoundingClientRect();
-        if (rect.top <= window.innerHeight * 0.55) activeSecIdx = i;
+      const doneMap = [s1done, s2done, s3done, s4done];
+
+      // Scroll-based active step
+      const vpm = window.innerHeight / 2;
+      const sectionMap = [{ end: 1, step: 1 }, { end: 2, step: 2 }, { end: 3, step: 3 }, { end: 5, step: 4 }];
+      let activeStep = 1;
+      sections.forEach((section, idx) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < vpm && rect.bottom > 0) {
+          for (const map of sectionMap) { if (idx <= map.end) { activeStep = map.step; break; } }
+        }
       });
 
-      const s1active = activeSecIdx >= 0;
-      const s2active = activeSecIdx >= 1 || s2done;
-      const s3active = activeSecIdx >= 2 || s3done;
-
-      const steps = [
-        { done: s1done, active: s1active },
-        { done: s2done, active: s2active },
-        { done: s3done, active: s3active }
-      ];
-
-      steps.forEach((s, i) => {
-        const st = document.getElementById('etm-st' + (i + 1)), sn = document.getElementById('etm-sn' + (i + 1));
-        if (!st || !sn) return;
-        if (s.done) {
+      for (let i = 1; i <= 4; i++) {
+        const st = document.getElementById('agm-st' + i), sn = document.getElementById('agm-sn' + i);
+        if (!st || !sn) continue;
+        if (doneMap[i - 1]) {
           st.className = 'step done';
           sn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
         } else {
-          st.className = 'step' + (s.active ? ' active' : '');
-          sn.textContent = i + 1;
+          st.className = 'step' + (i === activeStep ? ' active' : '');
+          sn.textContent = i;
         }
-      });
-    }
-
-    // Hook scroll for stepper
-    window.addEventListener('scroll', etmUpdateSteps, { passive: true });
-
-    function collectData() {
-      const data = {};
-      // MODEL, PROB_NAT, DRV_PAT come from hidden inputs (custom selects)
-      ['VIN', 'KMS', 'ENG_TM', 'ROM_ID', 'DTC', 'DLR_CD', 'DLR_NM', 'COMPLAINT', 'DLR_STD', 'DLR_OBS', 'DLR_ACT', 'RMRKS', 'PHOTO_NOTE'].forEach(id => {
-        const el = document.getElementById(id); data[id] = el ? el.value.trim() : '';
-      });
-      // MODEL, PROB_NAT, DRV_PAT from select hidden inputs
-      ['MODEL', 'PROB_NAT', 'DRV_PAT'].forEach(id => {
-        const el = document.getElementById(id); data[id] = el ? el.value.trim() : '';
-      });
-      // Date fields (manual inputs with id dm_*)
-      document.querySelectorAll('input[id^="dm_"]').forEach(el => {
-        const key = el.id.replace('dm_', ''); data[el.id] = el.value.trim();
-      });
-      // Service history rows
-      const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
-      for (let i = 1; i <= 12; i++) {
-        shCols.forEach(col => {
-          const el = document.getElementById(`sh${i}${col}`);
-          data[`${col}${i}`] = el ? el.value.trim() : '';
-        });
       }
-      return data;
     }
 
-    // ─────── XML ESCAPE ───────
-    function xmlEsc(s) {
-      return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&apos;');
-    }
-
-    // ─────── INJECT & GENERATE PPTX ───────
-    btnInject.addEventListener('click', async () => {
-      if (!templateBuffer) { showStatus('Template not loaded.', 'error'); return; }
-      btnInject.disabled = true; btnInject.textContent = 'Generating…'; clearStatus();
-      try {
-        const data = collectData();
-
-        // Validate mandatory fields
-        const errors = [];
-        if (!data.VIN) {
-          errors.push('VIN Number');
-          const el = document.getElementById('VIN');
-          if (el) { el.style.borderColor = 'var(--danger-color)'; el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
-        } else {
-          const el = document.getElementById('VIN');
-          if (el) { el.style.borderColor = ''; el.style.boxShadow = ''; }
-        }
-        if (!data.MODEL) {
-          errors.push('Vehicle Model');
-          const trig = document.getElementById('cst_MODEL');
-          if (trig) { trig.style.borderColor = 'var(--danger-color)'; trig.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.15)'; }
-        } else {
-          const trig = document.getElementById('cst_MODEL');
-          if (trig) { trig.style.borderColor = ''; trig.style.boxShadow = ''; }
-        }
-        if (errors.length > 0) {
-          showStatus('⚠ Please fill in required fields: ' + errors.join(', '), 'error');
-          // Scroll to show error near button
-          document.getElementById('status').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          btnInject.disabled = false; btnInject.textContent = 'Generate PPTX'; return;
-        }
-
-        const zip = await JSZip.loadAsync(templateBuffer);
-
-        // ── Replace text placeholders in all slide XMLs ──
-        const replaceFn = xml => {
-          return xml.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
-            const v = data[key];
-            return xmlEsc((v === undefined || v === null || v === '') ? '' : v);
-          });
-        };
-
-        const slideFiles = Object.keys(zip.files).filter(p => p.match(/ppt\/slides\/slide\d+\.xml$/i));
-        for (const sf of slideFiles) {
-          let xml = await zip.files[sf].async('string');
-          if (xml.includes('{{')) xml = replaceFn(xml);
-          // Replace noAutofit with spAutoFit so text boxes expand to fit injected content
-          xml = xml.replace(/<a:noAutofit\/>/g, '<a:spAutoFit/>');
-          zip.file(sf, xml);
-        }
-
-        // ── Inject photos: overwrite existing media bytes — shape stretch/fill preserved ──
-        const photoMap = {
-          photo1: { mediaPath: 'ppt/media/image2.jpeg' },
-          photo2: { mediaPath: 'ppt/media/image3.jpeg' }
-        };
-
-        for (const [slotId, { mediaPath }] of Object.entries(photoMap)) {
-          const photo = PHOTOS[slotId];
-          if (!photo || !photo.dataUrl) continue;
-          // Convert dataUrl to Uint8Array
-          const b64 = photo.dataUrl.split(',')[1];
-          const bin = atob(b64);
-          const arr = new Uint8Array(bin.length);
-          for (let i = 0; i < bin.length; i++)arr[i] = bin.charCodeAt(i);
-          // Detect mime and determine actual extension for Content_Types if needed
-          const mime = photo.dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
-          // Overwrite the existing placeholder image file directly
-          zip.file(mediaPath, arr);
-          // If user uploaded a PNG/webp, also update content_types for that extension
-          if (mime !== 'image/jpeg' && mime !== 'image/jpg') {
-            const ext = mime === 'image/png' ? 'png' : mime === 'image/webp' ? 'webp' : 'jpg';
-            const ctPath = '[Content_Types].xml';
-            let ct = await zip.files[ctPath].async('string');
-            const ctStr = `Extension="${ext}" ContentType="${mime}"`;
-            if (!ct.includes(ctStr)) {
-              ct = ct.replace('</Types>', `<Default ${ctStr}/></Types>`);
-              zip.file(ctPath, ct);
-            }
-          }
-        }
-
-        // ── Generate output ──
-        const outBuf = await zip.generateAsync({
-          type: 'arraybuffer',
-          compression: 'DEFLATE',
-          compressionOptions: { level: 6 }
-        });
-        const blob = new Blob([outBuf], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
-        const vinClean = (data.VIN || 'NOVIN').replace(/[^a-zA-Z0-9]/g, '');
-        const dcClean = (data.DLR_CD || 'N3235').replace(/[^a-zA-Z0-9]/g, '');
-        const fname = `${vinClean}_${dcClean}_ETM.pptx`;
-        saveAs(blob, fname);
-        showStatus('✓ Downloaded: ' + fname, 'success');
-        saveHistory(data);
-      } catch (err) { showStatus('Error: ' + err.message, 'error'); console.error(err); }
-      finally { btnInject.disabled = false; btnInject.textContent = 'Generate PPTX'; }
+    // ─── CLEAR ───
+    document.getElementById('btnClear').addEventListener('click', async () => {
+      if (!(await customConfirm('Clear all form data?', 'Yes, Clear'))) return;
+      // Clear ALL inputs (text, no-type, number) except hidden and file
+      formWrap.querySelectorAll('input:not([type=hidden]):not([type=file])').forEach(el => {
+        if (el.id && el.id.includes('_dealer_no')) { el.value = 'N3235'; el.classList.add('pre'); }
+        else { el.value = ''; el.classList.remove('pre'); }
+      });
+      formWrap.querySelectorAll('input[type=hidden]').forEach(el => el.value = '');
+      // Clear custom dropdowns
+      ['battery_spec_ah', 'agm_supplier_name', 'dealer_action', 'model', 'battery_availability', 'analyser_result'].forEach(id => {
+        const v = document.getElementById(id); if (v) v.value = '';
+        const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = 'Select…'; lbl.classList.add('empty'); }
+      });
+      // Clear date pickers
+      const calIds = ['sale_date', 'repair_date', 'battery_production_date', 'vehicle_received_date', 'pdi_inspection_result'];
+      calIds.forEach(id => {
+        CAL[id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
+        const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = 'Pick date'; dv.classList.add('empty'); }
+        const di = document.getElementById('di_' + id); if (di) di.value = '';
+      });
+      // Clear photos
+      Object.keys(PHOTOS).forEach(k => delete PHOTOS[k]);
+      document.querySelectorAll('.photo-slot').forEach(sl => {
+        sl.classList.remove('filled');
+        const img = sl.querySelector('img'); if (img) img.src = '';
+        const inp = sl.querySelector('input[type=file]'); if (inp) inp.value = '';
+      });
+      // Recalculate all live totals
+      for (let i = 1; i <= 2; i++) { calcPartRow(i); calcLabourRow(i); }
+      calcNDMS();
+      closeAllPopups(); clearStatus();
     });
 
-    // ─────── HISTORY ───────
+    // ─── HISTORY ───
     function saveHistory(entry) {
-      const key = entry.VIN; if (key) HISTORY = HISTORY.filter(h => h.VIN !== key);
-      HISTORY.unshift(entry); if (HISTORY.length > 50) HISTORY = HISTORY.slice(0, 50);
-      try { localStorage.setItem(HIST_KEY, JSON.stringify(HISTORY)); } catch (e) { }
+      const key = entry.vin_number;
+      if (key) HISTORY = HISTORY.filter(h => h.vin_number !== key);
+      HISTORY.unshift(entry);
+      if (HISTORY.length > 50) HISTORY = HISTORY.slice(0, 50);
+      try { localStorage.setItem('agm_hist', JSON.stringify(HISTORY)); } catch (e) { }
       renderHistory(historySearch.value);
     }
-
     async function deleteHistory(idx) {
       HISTORY.splice(idx, 1);
-      try { localStorage.setItem(HIST_KEY, JSON.stringify(HISTORY)); } catch (e) { }
+      try { localStorage.setItem('agm_hist', JSON.stringify(HISTORY)); } catch (e) { }
       renderHistory(historySearch.value);
     }
-
     document.getElementById('btnHistoryClearAll').addEventListener('click', async () => {
       if (!(await customConfirm('Clear all saved entries?', 'Yes, Clear All'))) return;
-      HISTORY = []; try { localStorage.removeItem(HIST_KEY); } catch (e) { } historySearch.value = ''; renderHistory();
+      HISTORY = []; try { localStorage.removeItem('agm_hist'); } catch (e) { } historySearch.value = ''; renderHistory();
     });
     historySearch.addEventListener('input', () => renderHistory(historySearch.value));
 
@@ -2110,110 +2101,635 @@
       if (!HISTORY.length) { histList.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:10px;">No saved entries.</div>'; return; }
       histList.innerHTML = '';
       const q = filter.toLowerCase().trim();
-      let any = false;
       HISTORY.forEach((entry, idx) => {
-        const primary = entry.VIN || 'Unknown';
-        const sub = [entry.MODEL, entry.DLR_CD].filter(Boolean).join(' · ');
+        const primary = entry.vin_number || 'Unknown'; const sub = entry.repair_date || entry.model || '';
         if (q && !`${primary} ${sub}`.toLowerCase().includes(q)) return;
-        any = true;
         const item = document.createElement('div'); item.className = 'hist-item'; item.setAttribute('tabindex', '0');
-        item.innerHTML = `<div class="hi-info"><div class="hi-name">${escHtml(primary)}</div><div class="hi-meta">${escHtml(sub)}</div></div><button type="button" class="hi-del" tabindex="0" title="Delete">${icons.close}</button>`;
+        item.innerHTML = `<div class="hi-info"><div class="hi-name">${escHtml(primary)}</div><div class="hi-meta">${escHtml(sub)}</div></div><button type="button" class="hi-del" tabindex="0">${icons.close}</button>`;
         const delBtn = item.querySelector('.hi-del');
         const delA = async e => { e.stopPropagation(); if (!(await customConfirm('Delete this entry?', 'Delete'))) return; deleteHistory(idx); };
         delBtn.addEventListener('click', delA); handleKeyClick(delBtn, delA);
-        const itemA = () => fillFromHistory(entry);
-        item.addEventListener('click', e => { if (e.target.closest('.hi-del')) return; itemA(); });
-        handleKeyClick(item, itemA);
+        const itemA = () => fillFromHistory(entry); item.addEventListener('click', itemA); handleKeyClick(item, itemA);
         histList.appendChild(item);
       });
-      if (!any) histList.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:10px;">No matching entries.</div>';
+      if (!histList.children.length) histList.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--text-muted);padding:10px;">No matching entries.</div>';
     }
 
     function fillFromHistory(entry) {
       setMode('form');
       setTimeout(() => {
-        // Plain text fields
-        ['VIN', 'KMS', 'ENG_TM', 'ROM_ID', 'DTC', 'DLR_CD', 'DLR_NM', 'COMPLAINT', 'DLR_STD', 'DLR_OBS', 'DLR_ACT', 'RMRKS', 'PHOTO_NOTE'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el && entry[id] !== undefined) { el.value = entry[id]; el.classList.remove('pre'); }
-        });
-        // Restore PROB_NAT and DRV_PAT dropdowns
-        ['PROB_NAT', 'DRV_PAT'].forEach(id => {
+        // Restore all plain input fields
+        Object.keys(entry).forEach(id => { const el = document.getElementById(id); if (el && el.type !== 'hidden') { el.value = entry[id]; if (entry[id]) el.classList.remove('pre'); } });
+        // Restore custom dropdowns
+        ['battery_spec_ah', 'agm_supplier_name', 'dealer_action', 'model', 'battery_availability', 'analyser_result'].forEach(id => {
           if (!entry[id]) return;
-          const hidEl = document.getElementById(id); if (hidEl) hidEl.value = entry[id];
+          const h = document.getElementById(id); if (h) h.value = entry[id];
           const lbl = document.getElementById('csv_' + id); if (lbl) { lbl.textContent = entry[id]; lbl.classList.remove('empty'); }
         });
-        // Restore MODEL select
-        if (entry.MODEL) {
-          const hidEl = document.getElementById('MODEL'); if (hidEl) hidEl.value = entry.MODEL;
-          const lbl = document.getElementById('csv_MODEL'); if (lbl) { lbl.textContent = entry.MODEL; lbl.classList.remove('empty'); }
-        }
-        // Service history
-        const shCols = ['N', 'VIN', 'RO', 'DT', 'KM', 'DC', 'ACT', 'RS', 'STS'];
-        for (let i = 1; i <= 12; i++) {
-          shCols.forEach(col => {
-            const el = document.getElementById(`sh${i}${col}`);
-            if (el && entry[`${col}${i}`] !== undefined) el.value = entry[`${col}${i}`];
-          });
-        }
-        // Restore date fields (manual inputs)
-        Object.keys(entry).filter(k => k.startsWith('dm_')).forEach(k => {
-          const el = document.getElementById(k);
-          if (el && entry[k] !== undefined) {
-            el.value = entry[k];
-            // Sync CAL state
-            const calId = k.replace('dm_', '');
-            if (entry[k] && entry[k].length === 10) {
-              const [dd, mm, yyyy] = entry[k].split('-').map(Number);
-              const d = new Date(yyyy, mm - 1, dd);
-              if (!isNaN(d) && CAL[calId]) { CAL[calId].date = d; CAL[calId].year = d.getFullYear(); CAL[calId].month = d.getMonth(); }
-            }
-          }
+        // Restore date pickers
+        ['sale_date', 'repair_date', 'battery_production_date', 'vehicle_received_date', 'pdi_inspection_result'].forEach(id => {
+          const val = entry[id]; if (!val) return;
+          const p = val.split('-'); const d = new Date(+p[2], +p[1] - 1, +p[0]); if (isNaN(d)) return;
+          if (!CAL[id]) CAL[id] = {};
+          Object.assign(CAL[id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' });
+          const dv = document.getElementById('dv_' + id); if (dv) { dv.textContent = val; dv.classList.remove('empty'); }
+          const di = document.getElementById('di_' + id); if (di) di.value = val;
         });
+        // Restore Invoice rows (plain inputs already handled above, just recalc)
+        for (let i = 1; i <= 2; i++) { calcPartRow(i); calcLabourRow(i); }
+        // Restore NDMS (plain inputs already handled above, just recalc live table)
+        calcNDMS();
+        // Restore Vehicle History dealer_no styling
+        for (let i = 1; i <= 20; i++) {
+          const el = document.getElementById(`sh${i}_dealer_no`);
+          if (el && el.value && el.value !== 'N3235') el.classList.remove('pre');
+        }
         closeAllPopups(); clearStatus();
       }, 100);
     }
 
-    function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-    function showStatus(m, t) { statusEl.textContent = m; statusEl.className = 'status' + (t ? ' ' + t : ''); }
+    // ─── HELPERS ───
+    function showStatus(m, t) { statusEl.textContent = m; statusEl.className = 'status ' + t; }
     function clearStatus() { statusEl.textContent = ''; statusEl.className = 'status'; }
+    function dataUrlToBytes(dataUrl) { const b64 = dataUrl.split(',')[1]; const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++)arr[i] = bin.charCodeAt(i); return arr; }
+    function mimeFromDataUrl(dataUrl) { return dataUrl.split(';')[0].split(':')[1] || 'image/jpeg'; }
+    function extFromMime(mime) { if (mime === 'image/png') return 'png'; if (mime === 'image/gif') return 'gif'; if (mime === 'image/webp') return 'webp'; return 'jpg'; }
 
-    // ─────── THEME + BACKUP/RESTORE ───────
-    window.addEventListener('message', event => {
-      if (event.data?.type === 'theme')
-        document.documentElement.setAttribute('data-theme', event.data.theme);
-      if (event.data?.type === 'backup-request') {
-        const payload = {};
-        try { const v = localStorage.getItem(HIST_KEY); if (v) payload[HIST_KEY] = v; } catch (e) { }
-        event.source.postMessage({ type: 'backup-response', tool: 'etm', data: payload }, '*');
+    // ─── GENERATE XLSX ───
+    document.getElementById('btnInject').addEventListener('click', async () => {
+      if (!templateBuffer) { showStatus('Template not loaded.', 'error'); return; }
+      const btnInject = document.getElementById('btnInject');
+      // Validate % totals before proceeding
+      const gv = id => { const el = document.getElementById(id); return parseFloat(el?.value) || 0; };
+      const checkP = gv('hmil_share_pct_part') + gv('dealer_share_pct_part') + gv('customer_share_pct_part');
+      const checkL = gv('hmil_share_pct_labour') + gv('dealer_share_pct_labour') + gv('customer_share_pct_labour');
+      if (checkP > 100.001) {
+        showStatus('⚠ Part sharing % total is ' + checkP.toFixed(1) + '% — must be exactly 100%. Please fix before generating.', 'error');
+        document.getElementById('hmil_share_pct_part')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
       }
-      if (event.data?.type === 'restore-data' && event.data.tool === 'etm' && event.data.data) {
-        Object.entries(event.data.data).forEach(([k, v]) => { try { localStorage.setItem(k, v); } catch (e) { } });
-        try { HISTORY = JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch (e) { }
-        renderHistory();
+      if (checkL > 100.001) {
+        showStatus('⚠ Labour sharing % total is ' + checkL.toFixed(1) + '% — must be exactly 100%. Please fix before generating.', 'error');
+        document.getElementById('hmil_share_pct_labour')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
       }
+      btnInject.disabled = true; btnInject.textContent = 'Processing…'; clearStatus();
+      try {
+        const get = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+        const getDate = id => { const st = CAL[id]; if (st && st.date) return fmtDash(st.date); const di = document.getElementById("di_" + id); if (di && di.value.trim()) return di.value.trim(); return ""; };
+
+        const data = {};
+        // Battery Data
+        ['model', 'vin_number', 'mileage_km', 'battery_spec_ah', 'agm_supplier_name',
+          'pdi_voltage', 'pdi_cca', 'pdi_soc',
+          'analyser_voltage', 'analyser_cca', 'analyser_soc', 'analyser_result', 'result_slip',
+          'dealer_action', 'battery_availability'].forEach(id => data[id] = get(id));
+        data.sale_date = getDate('sale_date');
+        data.repair_date = getDate('repair_date');
+        data.battery_production_date = getDate('battery_production_date');
+        data.vehicle_received_date = getDate('vehicle_received_date');
+        data.pdi_inspection_result = getDate('pdi_inspection_result');
+
+        // Invoice
+        for (let i = 1; i <= 2; i++) {
+          data[`si_no_${i}`] = get(`si_no_${i}`);
+          data[`part_number_${i}`] = get(`part_number_${i}`);
+          data[`part_description_${i}`] = get(`part_description_${i}`);
+          data[`part_list_price_${i}`] = get(`part_list_price_${i}`);
+          data[`part_qty_${i}`] = get(`part_qty_${i}`);
+          const pp = parseFloat(get(`part_list_price_${i}`)) || 0, pq = parseFloat(get(`part_qty_${i}`)) || 0;
+          data[`part_amount_${i}`] = Math.round(pp * pq).toString();
+
+          data[`si_no_labour_${i}`] = get(`si_no_labour_${i}`);
+          data[`labour_code_${i}`] = get(`labour_code_${i}`);
+          data[`labour_description_${i}`] = get(`labour_description_${i}`);
+          data[`labour_list_price_${i}`] = get(`labour_list_price_${i}`);
+          data[`labour_qty_${i}`] = get(`labour_qty_${i}`);
+          const lp = parseFloat(get(`labour_list_price_${i}`)) || 0, lq = parseFloat(get(`labour_qty_${i}`)) || 0;
+          data[`labour_amount_${i}`] = Math.round(lp * lq).toString();
+        }
+
+        // NDMS — collect user inputs
+        ['part_total_cost_with_tax', 'labour_total_cost_with_tax',
+          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
+          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'].forEach(id => data[id] = get(id));
+
+        // NDMS — pre-calculate sharing amounts; use null so blank inputs produce blank cells
+        {
+          const pTotalRaw = data.part_total_cost_with_tax;
+          const lTotalRaw = data.labour_total_cost_with_tax;
+          const pTotal = Math.round(parseFloat(pTotalRaw)) || 0;
+          const lTotal = Math.round(parseFloat(lTotalRaw)) || 0;
+          const hasP = !!(pTotalRaw && pTotal);
+          const hasL = !!(lTotalRaw && lTotal);
+          const hPctP = parseFloat(data.hmil_share_pct_part) || 0;
+          const dPctP = parseFloat(data.dealer_share_pct_part) || 0;
+          const cPctP = parseFloat(data.customer_share_pct_part) || 0;
+          const hPctL = parseFloat(data.hmil_share_pct_labour) || 0;
+          const dPctL = parseFloat(data.dealer_share_pct_labour) || 0;
+          const cPctL = parseFloat(data.customer_share_pct_labour) || 0;
+          // Part sharing amounts — null if no part total entered
+          data.ndms_hmil_amt_part = hasP ? Math.round((pTotal * hPctP) / 100) : null;
+          data.ndms_dealer_amt_part = hasP ? Math.round((pTotal * dPctP) / 100) : null;
+          data.ndms_cust_amt_part = hasP ? Math.round((pTotal * cPctP) / 100) : null;
+          // Labour sharing amounts — null if no labour total entered
+          data.ndms_hmil_amt_labour = hasL ? Math.round((lTotal * hPctL) / 100) : null;
+          data.ndms_dealer_amt_labour = hasL ? Math.round((lTotal * dPctL) / 100) : null;
+          data.ndms_cust_amt_labour = hasL ? Math.round((lTotal * cPctL) / 100) : null;
+          // Grand totals — null if neither part nor labour entered
+          data.ndms_grand_total = (hasP || hasL) ? Math.round(pTotal + lTotal) : null;
+          data.ndms_grand_hmil_amt = (hasP || hasL) ? Math.round(((pTotal * hPctP) + (lTotal * hPctL)) / 100) : null;
+          data.ndms_grand_dealer_amt = (hasP || hasL) ? Math.round(((pTotal * dPctP) + (lTotal * dPctL)) / 100) : null;
+          data.ndms_grand_cust_amt = (hasP || hasL) ? Math.round(((pTotal * cPctP) + (lTotal * cPctL)) / 100) : null;
+        }
+
+        // Veh History — per row — keys must match replaceVehHistoryXml lookup format sh${i}_*
+        for (let i = 1; i <= 20; i++) {
+          data[`sl_no_${i}`] = String(i);
+          data[`sh${i}_dealer_no`] = get(`sh${i}_dealer_no`) || 'N3235';
+          data[`sh${i}_ro_no`] = get(`sh${i}_ro_no`);
+          data[`sh${i}_ro_date`] = get(`sh${i}_ro_date`);
+          data[`sh${i}_vin`] = get(`sh${i}_vin`);
+          data[`sh${i}_mileage`] = get(`sh${i}_mileage`);
+          data[`sh${i}_work_type`] = get(`sh${i}_work_type`);
+          data[`sh${i}_reg_no`] = get(`sh${i}_reg_no`);
+          data[`sh${i}_remarks`] = get(`sh${i}_remarks`);
+        }
+
+        const zip = await JSZip.loadAsync(templateBuffer);
+        // Remove calcChain to prevent "unreadable content" error — Excel will recalculate fresh
+        zip.remove('xl/calcChain.xml');
+
+        const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+        // Numeric fields - these should inject as numbers, not text
+        const numericFields = new Set([
+          'mileage_km', 'pdi_cca', 'pdi_soc', 'analyser_cca', 'analyser_soc',
+          'part_list_price_1', 'part_list_price_2', 'part_qty_1', 'part_qty_2',
+          'part_amount_1', 'part_amount_2',
+          'labour_list_price_1', 'labour_list_price_2', 'labour_qty_1', 'labour_qty_2',
+          'labour_amount_1', 'labour_amount_2',
+          'part_total_cost_with_tax', 'labour_total_cost_with_tax',
+          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
+          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour',
+          // NDMS calculated amounts (injected directly into formula cells)
+          'ndms_hmil_amt_part', 'ndms_dealer_amt_part', 'ndms_cust_amt_part',
+          'ndms_hmil_amt_labour', 'ndms_dealer_amt_labour', 'ndms_cust_amt_labour',
+          'ndms_grand_total', 'ndms_grand_hmil_amt', 'ndms_grand_dealer_amt', 'ndms_grand_cust_amt'
+        ]);
+
+        // Replace in shared strings (text cells)
+        const replacePlaceholders = xml => {
+          // Replace in <t> tags (shared strings / text cells)
+          xml = xml.replace(/<t([^>]*)>([^<]*\{[^<]*)<\/t>/g, (match, attrs, content) => {
+            const replaced = content.replace(/\{([^}]+)\}/g, (_, key) => {
+              return xmlEsc((data[key] === undefined || data[key] === null) ? '' : data[key]);
+            });
+            return `<t${attrs}>${replaced}</t>`;
+          });
+          // Replace in <v> tags for numeric cells — remove t="s" attr and set raw number
+          xml = xml.replace(/<c([^>]*)\sr="([^"]+)"([^>]*)>\s*<v>\{([^}]+)\}<\/v>/g, (match, pre, ref, post, key) => {
+            const val = data[key];
+            if (val === undefined || val === null || val === '') return `<c${pre} r="${ref}"${post}><v></v>`;
+            const numVal = parseFloat(String(val).replace(/,/g, ''));
+            if (!isNaN(numVal) && numericFields.has(key)) {
+              // Remove t="s" to make it a numeric cell
+              const attrs = (pre + post).replace(/\s*t="s"/g, '');
+              return `<c${attrs} r="${ref}"><v>${numVal}</v>`;
+            }
+            return match;
+          });
+
+          // ── FIX: Handle numeric fields stored as inlineStr or sharedStr in sheet XML ──
+          // After sharedStrings substitution, cells with numeric placeholders may still be t="s"
+          // pointing to a now-replaced text value. Re-scan sheet XML for cells whose shared
+          // string value resolved to a numeric field and convert them to proper number cells.
+          // This is done per-sheet after sharedStrings pass (see sheet loop below).
+          return xml;
+        };
+
+        // Extra pass: scan sheet XML and convert numeric-field cells from text→number
+        const convertNumericCellsInSheet = (shXml, ssXmlAfter) => {
+          const ssMap = {};
+          let si = 0;
+          ssXmlAfter.replace(/<si>[\s\S]*?<\/si>/g, match => {
+            const tMatch = match.match(/<t[^>]*>([^<]*)<\/t>/);
+            ssMap[si] = tMatch ? tMatch[1] : '';
+            si++;
+            return match;
+          });
+          return shXml.replace(/<c\s([^>]*)t="s"([^>]*)>\s*<v>(\d+)<\/v>\s*<\/c>/g, (match, pre, post, idx) => {
+            const resolved = ssMap[parseInt(idx)];
+            // Blank cell when placeholder resolved to empty
+            if (resolved === '' || resolved === undefined || resolved === null) {
+              const attrs = (pre + post).replace(/\s*t="s"/g, '');
+              return `<c ${attrs}></c>`;
+            }
+            const numVal = parseFloat(String(resolved).replace(/,/g, ''));
+            if (!isNaN(numVal) && String(numVal) === String(resolved).trim()) {
+              const attrs = (pre + post).replace(/\s*t="s"/g, '');
+              return `<c ${attrs}><v>${numVal}</v></c>`;
+            }
+            return match;
+          });
+        };
+
+        // Process sharedStrings
+        const ssPath = Object.keys(zip.files).find(p => p.match(/sharedStrings\.xml$/i));
+        let ssXmlAfter = '';
+        if (ssPath) {
+          let ssXml = await zip.files[ssPath].async('string');
+          ssXml = replacePlaceholders(ssXml);
+          ssXmlAfter = ssXml;
+          zip.file(ssPath, ssXml);
+        }
+
+        // Process each sheet
+        const sheetPaths = Object.keys(zip.files).filter(p => p.match(/xl\/worksheets\/sheet\d+\.xml$/i));
+        for (const sp of sheetPaths) {
+          let shXml = await zip.files[sp].async('string');
+          if (sp.match(/sheet5\.xml$/i)) {
+            // Vehicle History sheet — full rebuild via inlineStr
+            shXml = replaceVehHistoryXml(shXml, data);
+          } else if (sp.match(/sheet4\.xml$/i)) {
+            // NDMS sheet — replace placeholders + inject calculated values into formula cells
+            if (shXml.includes('{')) shXml = replacePlaceholders(shXml);
+            if (ssXmlAfter) shXml = convertNumericCellsInSheet(shXml, ssXmlAfter);
+            shXml = replaceNDMSFormulaXml(shXml, data);
+          } else if (sp.match(/sheet3\.xml$/i)) {
+            // Invoice sheet — replace placeholders + inject calculated totals into formula cells
+            if (shXml.includes('{')) shXml = replacePlaceholders(shXml);
+            if (ssXmlAfter) shXml = convertNumericCellsInSheet(shXml, ssXmlAfter);
+            shXml = replaceInvoiceFormulaXml(shXml, data);
+          } else {
+            if (shXml.includes('{')) shXml = replacePlaceholders(shXml);
+            // ── FIX BUG 1: convert shared-string cells that resolved to numbers into proper numeric cells ──
+            if (ssXmlAfter) shXml = convertNumericCellsInSheet(shXml, ssXmlAfter);
+          }
+          zip.file(sp, shXml);
+        }
+
+        // ── PHOTO INJECTION + PLACEHOLDER REMOVAL ──
+        // For uploaded photos: replace media bytes in xl/media/
+        // For missing photos: remove the anchor from drawing XML + its relationship entry
+
+        const photoMap = [
+          // drawing1 — photo_1..10 → rId1..rId10 → image1..10.jpeg
+          { key: 'photo_1', file: 'image1.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId1' },
+          { key: 'photo_2', file: 'image2.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId2' },
+          { key: 'photo_3', file: 'image3.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId3' },
+          { key: 'photo_4', file: 'image4.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId4' },
+          { key: 'photo_5', file: 'image5.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId5' },
+          { key: 'photo_6', file: 'image6.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId6' },
+          { key: 'photo_7', file: 'image7.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId7' },
+          { key: 'photo_8', file: 'image8.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId8' },
+          { key: 'photo_9', file: 'image9.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId9' },
+          { key: 'photo_10', file: 'image10.jpeg', drawing: 'xl/drawings/drawing1.xml', rId: 'rId10' },
+          // drawing2 — invoice pics
+          { key: 'invoice_pic3', file: 'image11.jpeg', drawing: 'xl/drawings/drawing2.xml', rId: 'rId1' },
+          { key: 'invoice_pic4', file: 'image12.jpeg', drawing: 'xl/drawings/drawing2.xml', rId: 'rId2' },
+          { key: 'ndms_pic1', file: 'image14.jpeg', drawing: 'xl/drawings/drawing3.xml', rId: 'rId1' },
+          // drawing3 — PWA screen
+          { key: 'invoice_pwa', file: 'image13.jpeg', drawing: 'xl/drawings/drawing2.xml', rId: 'rId3' },
+        ];
+
+        // Collect which rIds to remove per drawing (those with no uploaded photo)
+        const drawingRemovals = {}; // drawingPath → Set of rIds to remove
+        for (const { key, drawing, rId } of photoMap) {
+          const photo = PHOTOS[key];
+          if (!photo || !photo.dataUrl) {
+            if (!drawingRemovals[drawing]) drawingRemovals[drawing] = new Set();
+            drawingRemovals[drawing].add(rId);
+          }
+        }
+
+        // Inject uploaded photos
+        for (const { key, file } of photoMap) {
+          const photo = PHOTOS[key];
+          if (!photo || !photo.dataUrl) continue;
+          const bytes = dataUrlToBytes(photo.dataUrl);
+          const mime = mimeFromDataUrl(photo.dataUrl);
+          const ext = extFromMime(mime);
+          zip.file(`xl/media/${file}`, bytes);
+          if (ext !== 'jpg') {
+            const ctPath = '[Content_Types].xml';
+            let ct = await zip.files[ctPath].async('string');
+            if (!ct.includes(`Extension="${ext}"`)) {
+              ct = ct.replace('</Types>', `<Default Extension="${ext}" ContentType="${mime}"/></Types>`);
+              zip.file(ctPath, ct);
+            }
+          }
+        }
+
+        // Remove anchors for missing photos from drawing XML + their rels entries
+        for (const [drawingPath, ridsToRemove] of Object.entries(drawingRemovals)) {
+          // --- Drawing XML: strip twoCellAnchor blocks that reference any removed rId ---
+          let dXml = await zip.files[drawingPath].async('string');
+          dXml = dXml.replace(/<xdr:twoCellAnchor[\s\S]*?<\/xdr:twoCellAnchor>/g, anchor => {
+            const ridMatch = anchor.match(/r:embed="([^"]+)"/);
+            if (ridMatch && ridsToRemove.has(ridMatch[1])) return '';
+            return anchor;
+          });
+          zip.file(drawingPath, dXml);
+
+          // --- Drawing rels: strip Relationship entries for removed rIds ---
+          const relsPath = drawingPath.replace('xl/drawings/', 'xl/drawings/_rels/') + '.rels';
+          if (zip.files[relsPath]) {
+            let rXml = await zip.files[relsPath].async('string');
+            for (const rId of ridsToRemove) {
+              rXml = rXml.replace(new RegExp(`<Relationship[^>]*Id="${rId}"[^>]*/>`, 'g'), '');
+            }
+            zip.file(relsPath, rXml);
+          }
+        }
+
+        const outBuf = await zip.generateAsync({ type: 'arraybuffer', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+        const vinClean = (data.vin_number || 'NOVIN').replace(/[^a-zA-Z0-9]/g, '');
+        const dealerClean = (data['sh1_dealer_no'] || 'N3235').replace(/[^a-zA-Z0-9]/g, '');
+        const fname = `${vinClean}_${dealerClean}.xlsx`;
+        saveAs(new Blob([outBuf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), fname);
+        showStatus('Downloaded: ' + fname, 'success');
+
+        // Save history — everything except photos
+        const histEntry = {};
+        // Battery Data
+        ['model', 'vin_number', 'mileage_km', 'battery_spec_ah', 'agm_supplier_name',
+          'sale_date', 'repair_date', 'battery_production_date', 'vehicle_received_date',
+          'pdi_inspection_result', 'pdi_voltage', 'pdi_cca', 'pdi_soc',
+          'analyser_voltage', 'analyser_cca', 'analyser_soc', 'analyser_result', 'result_slip',
+          'dealer_action', 'battery_availability'].forEach(k => histEntry[k] = data[k] || '');
+        // Invoice — Parts & Labour rows
+        for (let i = 1; i <= 2; i++) {
+          ['si_no', 'part_number', 'part_description', 'part_list_price', 'part_qty', 'part_amount'].forEach(f => histEntry[`${f}_${i}`] = data[`${f}_${i}`] || '');
+          ['si_no_labour', 'labour_code', 'labour_description', 'labour_list_price', 'labour_qty', 'labour_amount'].forEach(f => histEntry[`${f}_${i}`] = data[`${f}_${i}`] || '');
+        }
+        // NDMS
+        ['part_total_cost_with_tax', 'labour_total_cost_with_tax',
+          'hmil_share_pct_part', 'dealer_share_pct_part', 'customer_share_pct_part',
+          'hmil_share_pct_labour', 'dealer_share_pct_labour', 'customer_share_pct_labour'].forEach(k => histEntry[k] = data[k] || '');
+        // Vehicle History rows
+        for (let i = 1; i <= 20; i++) {
+          ['dealer_no', 'ro_no', 'ro_date', 'vin', 'mileage', 'work_type', 'reg_no', 'remarks'].forEach(f => histEntry[`sh${i}_${f}`] = data[`sh${i}_${f}`] || '');
+        }
+        saveHistory(histEntry);
+
+      } catch (err) { showStatus('Error: ' + err.message, 'error'); console.error(err); }
+      finally { btnInject.disabled = false; btnInject.textContent = 'Generate XLSX'; }
     });
-    // ─────── PAGE JUMPERS ───────
-    (() => {
-      const pjTop = document.getElementById('pjTop');
-      const pjBot = document.getElementById('pjBot');
+
+    // ─── NDMS SHEET — INJECT VALUES + FIX % CELL FORMAT ───
+    // Excel sheet4 layout (NDMS):
+    //   Row 2: Part   — M2=part_total, N2=hmil_pct, P2=dealer_pct, R2=cust_pct  (% input cells, s="38" = numFmtId=14 date — BUG)
+    //                   O2=formula M2*N2%, Q2=formula M2*P2%, S2=formula M2*R2%
+    //   Row 3: Labour — M3=labour_total, N3..R3 same pattern
+    //   Row 4: Total  — M4=formula, O4=formula, Q4=formula, S4=formula
+    // FIX: % input cells have s="38" (numFmtId=14, date format) → storing 80 displays as a date.
+    //      Switch to s="37" (numFmtId=0, General, same font/fill/border) so 80 displays as "80".
+    //      The Excel formulas =M2*N2% treat N2 as a plain number (80 → 80/100 = 0.8) — correct math.
+    function replaceNDMSFormulaXml(shXml, data) {
+      // % input cells: swap style 38 (date) → 37 (General), then inject plain number
+      const pctCells = new Set(['N2', 'P2', 'R2', 'N3', 'P3', 'R3']);
+      // Formula result cells: replace formula with computed value; blank if no input
+      const formulaCellMap = {
+        'O2': 'ndms_hmil_amt_part', 'Q2': 'ndms_dealer_amt_part', 'S2': 'ndms_cust_amt_part',
+        'O3': 'ndms_hmil_amt_labour', 'Q3': 'ndms_dealer_amt_labour', 'S3': 'ndms_cust_amt_labour',
+        'M4': 'ndms_grand_total',
+        'O4': 'ndms_grand_hmil_amt', 'Q4': 'ndms_grand_dealer_amt', 'S4': 'ndms_grand_cust_amt',
+      };
+      // Inject % input cells with corrected style
+      shXml = shXml.replace(/<c\s+r="([^"]+)"([^>]*)>[\s\S]*?<\/c>/g, (match, ref, attrs) => {
+        if (pctCells.has(ref)) {
+          const rawKey = {
+            N2: 'hmil_share_pct_part', P2: 'dealer_share_pct_part', R2: 'customer_share_pct_part',
+            N3: 'hmil_share_pct_labour', P3: 'dealer_share_pct_labour', R3: 'customer_share_pct_labour'
+          }[ref];
+          const rawVal = data[rawKey];
+          // Fix style: replace s="38" with s="37" (General format, same visual style)
+          const fixedAttrs = attrs.replace(/s="38"/g, 's="37"');
+          if (!rawVal && rawVal !== 0) return `<c r="${ref}"${fixedAttrs}></c>`;
+          const numVal = parseFloat(rawVal);
+          if (isNaN(numVal)) return `<c r="${ref}"${fixedAttrs}></c>`;
+          return `<c r="${ref}"${fixedAttrs}><v>${numVal}</v></c>`;
+        }
+        if (ref in formulaCellMap) {
+          const val = data[formulaCellMap[ref]];
+          const sMatch = attrs.match(/\ss="(\d+)"/);
+          const sAttr = sMatch ? ` s="${sMatch[1]}"` : '';
+          if (val === undefined || val === null || val === '' || val === 0) return `<c r="${ref}"${sAttr}></c>`;
+          const numVal = parseFloat(String(val));
+          if (isNaN(numVal)) return `<c r="${ref}"${sAttr}></c>`;
+          return `<c r="${ref}"${sAttr}><v>${numVal}</v></c>`;
+        }
+        return match;
+      });
+      return shXml;
+    }
+
+    // ─── INVOICE SHEET — FULL DIRECT INJECTION ───
+    // Actual Excel layout (Estimation section, columns Q–W):
+    //   Row 2:  Part headers
+    //   Row 3:  Part row 1   — Q3..V3 data, W3=formula V3*1.18
+    //   Row 4:  Part row 2   — Q4..V4 data, W4=formula V4*1.18
+    //   Row 5:  Parts subtotal  — V5=SUM(V3:V4), W5=SUM(W3:W4)
+    //   Row 6:  Labour headers
+    //   Row 7:  Labour row 1 — Q7..V7 data, W7=formula V7*1.18
+    //   Row 8:  Labour row 2 — Q8..V8 data, W8=formula V8*1.18
+    //   Row 9:  Labour subtotal — V9=SUM(V7:V8), W9=SUM(W7:W8)
+    //   Row 10: Grand total   — W10=SUM(W5+W9)
+    function replaceInvoiceFormulaXml(shXml, data) {
+      const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+      const n = k => parseFloat(data[k] || 0);
+      // Only treat a row as having data if both price and qty are entered
+      const p1HasData = !!(data.part_list_price_1 && data.part_qty_1);
+      const p2HasData = !!(data.part_list_price_2 && data.part_qty_2);
+      const l1HasData = !!(data.labour_list_price_1 && data.labour_qty_1);
+      const l2HasData = !!(data.labour_list_price_2 && data.labour_qty_2);
+
+      const p1amt = p1HasData ? Math.round(n('part_list_price_1') * n('part_qty_1')) : null;
+      const p2amt = p2HasData ? Math.round(n('part_list_price_2') * n('part_qty_2')) : null;
+      const l1amt = l1HasData ? Math.round(n('labour_list_price_1') * n('labour_qty_1')) : null;
+      const l2amt = l2HasData ? Math.round(n('labour_list_price_2') * n('labour_qty_2')) : null;
+
+      const w3 = p1amt !== null ? Math.round(p1amt * 1.18) : null;
+      const w4 = p2amt !== null ? Math.round(p2amt * 1.18) : null;
+      const w7 = l1amt !== null ? Math.round(l1amt * 1.18) : null;
+      const w8 = l2amt !== null ? Math.round(l2amt * 1.18) : null;
+
+      const partsAmtTotal = (p1amt !== null || p2amt !== null) ? Math.round((p1amt || 0) + (p2amt || 0)) : null;
+      const partsTaxTotal = (w3 !== null || w4 !== null) ? Math.round((w3 || 0) + (w4 || 0)) : null;
+      const labourAmtTotal = (l1amt !== null || l2amt !== null) ? Math.round((l1amt || 0) + (l2amt || 0)) : null;
+      const labourTaxTotal = (w7 !== null || w8 !== null) ? Math.round((w7 || 0) + (w8 || 0)) : null;
+      const grandTotal = (partsTaxTotal !== null || labourTaxTotal !== null) ? Math.round((partsTaxTotal || 0) + (labourTaxTotal || 0)) : null;
+
+      // [value, 'str'|'num'] — null value means leave cell blank
+      const cellMap = {
+        // Part row 1
+        'Q3': [data.si_no_1 || null, 'str'],
+        'R3': [data.part_number_1 || null, 'str'],
+        'S3': [data.part_description_1 || null, 'str'],
+        'T3': [data.part_list_price_1 ? n('part_list_price_1') : null, 'num'],
+        'U3': [data.part_qty_1 ? n('part_qty_1') : null, 'num'],
+        'V3': [p1amt, 'num'],
+        'W3': [w3, 'num'],
+        // Part row 2
+        'Q4': [data.si_no_2 || null, 'str'],
+        'R4': [data.part_number_2 || null, 'str'],
+        'S4': [data.part_description_2 || null, 'str'],
+        'T4': [data.part_list_price_2 ? n('part_list_price_2') : null, 'num'],
+        'U4': [data.part_qty_2 ? n('part_qty_2') : null, 'num'],
+        'V4': [p2amt, 'num'],
+        'W4': [w4, 'num'],
+        // Parts subtotal (W/O tax & with tax)
+        'V5': [partsAmtTotal, 'num'],
+        'W5': [partsTaxTotal, 'num'],
+        // Labour row 1
+        'Q7': [data.si_no_labour_1 || null, 'str'],
+        'R7': [data.labour_code_1 || null, 'str'],
+        'S7': [data.labour_description_1 || null, 'str'],
+        'T7': [data.labour_list_price_1 ? n('labour_list_price_1') : null, 'num'],
+        'U7': [data.labour_qty_1 ? n('labour_qty_1') : null, 'num'],
+        'V7': [l1amt, 'num'],
+        'W7': [w7, 'num'],
+        // Labour row 2
+        'Q8': [data.si_no_labour_2 || null, 'str'],
+        'R8': [data.labour_code_2 || null, 'str'],
+        'S8': [data.labour_description_2 || null, 'str'],
+        'T8': [data.labour_list_price_2 ? n('labour_list_price_2') : null, 'num'],
+        'U8': [data.labour_qty_2 ? n('labour_qty_2') : null, 'num'],
+        'V8': [l2amt, 'num'],
+        'W8': [w8, 'num'],
+        // Labour subtotal (W/O tax & with tax)
+        'V9': [labourAmtTotal, 'num'],
+        'W9': [labourTaxTotal, 'num'],
+        // Grand total (parts with tax + labour with tax)
+        'W10': [grandTotal, 'num'],
+      };
+
+      return shXml.replace(/<c\s+r="([^"]+)"([^>]*)>[\s\S]*?<\/c>/g, (match, ref, attrs) => {
+        if (!(ref in cellMap)) return match;
+        const [val, type] = cellMap[ref];
+        const sMatch = attrs.match(/\ss="(\d+)"/);
+        const sAttr = sMatch ? ` s="${sMatch[1]}"` : '';
+        // Blank cell when no data entered
+        if (val === null || val === undefined || val === '') return `<c r="${ref}"${sAttr}></c>`;
+        if (type === 'str') {
+          return `<c r="${ref}"${sAttr} t="inlineStr"><is><t>${xmlEsc(String(val))}</t></is></c>`;
+        } else {
+          return `<c r="${ref}"${sAttr}><v>${+val}</v></c>`;
+        }
+      });
+    }
+
+    // ─── VEH HISTORY — ROBUST FIX ───
+    // ROOT CAUSE 1: Hardcoded sharedString indices (121-128) may not match actual Excel file.
+    // ROOT CAUSE 2: replaceVehHistoryXml only replaces cells with t="s" — but if Excel stored
+    //               placeholder cells differently the regex misses them.
+    // FIX: Dynamically discover column mapping from row 4, then rebuild ALL data rows (4-23)
+    //      by column reference (A,B,C...) regardless of original cell type.
+    function replaceVehHistoryXml(shXml, data) {
+      const xmlEsc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+
+      // Column letter → field name mapping (positional — matches table header order)
+      // Columns in sheet: B=sl_no, C=dealer_no, D=ro_no, E=ro_date, F=vin, G=mileage, H=work_type, I=reg_no, J=remarks
+      // We derive this from the INPUT IDs: sh{i}_dealer_no etc.
+      // Map column letter to data key suffix
+      const colLetterToField = {
+        'B': 'sl_no',
+        'C': 'dealer_no',
+        'D': 'ro_no',
+        'E': 'ro_date',
+        'F': 'vin',
+        'G': 'mileage',
+        'H': 'work_type',
+        'I': 'reg_no',
+        'J': 'remarks'
+      };
+
+      // Helper: get column letter from cell ref (e.g. "C5" → "C", "AA5" → "AA")
+      const getCol = ref => ref.replace(/\d+/, '');
+
+      return shXml.replace(/(<row\b[^>]*r="(\d+)"[^>]*>)([\s\S]*?)(<\/row>)/g, (match, openTag, rowNum, content, closeTag) => {
+        const rn = parseInt(rowNum);
+        // Data rows: row 4 = data row 1 ... row 23 = data row 20
+        if (rn < 4 || rn > 23) return match;
+        const dataIdx = rn - 3; // 1..20
+
+        const rowVals = {
+          sl_no: String(dataIdx),
+          dealer_no: data[`sh${dataIdx}_dealer_no`] || 'N3235',
+          ro_no: data[`sh${dataIdx}_ro_no`] || '',
+          ro_date: data[`sh${dataIdx}_ro_date`] || '',
+          vin: data[`sh${dataIdx}_vin`] || '',
+          mileage: data[`sh${dataIdx}_mileage`] || '',
+          work_type: data[`sh${dataIdx}_work_type`] || '',
+          reg_no: data[`sh${dataIdx}_reg_no`] || '',
+          remarks: data[`sh${dataIdx}_remarks`] || '',
+        };
+
+        // Rebuild ALL cells in this row
+        // Replace existing cells with inlineStr values
+        const newContent = content.replace(/<c\s[^>]*r="([^"]+)"[^>]*>[\s\S]*?<\/c>/g, (cellMatch, ref) => {
+          const col = getCol(ref);
+          const fieldKey = colLetterToField[col];
+          if (!fieldKey) return cellMatch; // unknown column, leave as-is
+
+          const val = xmlEsc(rowVals[fieldKey] || '');
+          // Extract style attribute if present
+          const sMatch = cellMatch.match(/\ss="(\d+)"/);
+          const sAttr = sMatch ? ` s="${sMatch[1]}"` : '';
+          // Write as inlineStr — works regardless of original cell type
+          return `<c r="${ref}"${sAttr} t="inlineStr"><is><t>${val}</t></is></c>`;
+        });
+
+        return openTag + newContent + closeTag;
+      });
+    }
+
+    // ─── PAGE JUMPERS ───
+    (function () {
+      const jumperHTML = `<div class="page-jumper" id="pageJumper">
+    <button class="pj-btn hidden" id="pjTop" title="Go to top" tabindex="0" aria-label="Scroll to top">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+    <button class="pj-btn hidden" id="pjBottom" title="Go to bottom" tabindex="0" aria-label="Scroll to bottom">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+  </div>`;
+      document.body.insertAdjacentHTML('beforeend', jumperHTML);
+
+      const topBtn = document.getElementById('pjTop');
+      const botBtn = document.getElementById('pjBottom');
       let hideTimer = null;
-      const showJumpers = () => {
-        const sh = document.documentElement.scrollHeight, wh = window.innerHeight;
-        const scrollable = sh > wh + 20;
-        if (!scrollable) { pjTop.classList.remove('vis'); pjBot.classList.remove('vis'); return; }
-        const st = window.scrollY;
-        const nearTop = st < 60;
-        const nearBottom = st + wh > sh - 60;
-        pjTop.classList.toggle('vis', !nearTop);
-        pjBot.classList.toggle('vis', !nearBottom);
-      };
-      const scheduleHide = () => {
-        if (hideTimer) clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => { pjTop.classList.remove('vis'); pjBot.classList.remove('vis'); }, 2000);
-      };
-      window.addEventListener('scroll', () => { showJumpers(); scheduleHide(); }, { passive: true });
-      window.addEventListener('load', showJumpers);
+
+      function showJumpers() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const clientHeight = window.innerHeight;
+        const isScrollable = scrollHeight > clientHeight + 50;
+        const nearTop = scrollTop < 120;
+        const nearBottom = scrollTop + clientHeight > scrollHeight - 120;
+        topBtn.classList.toggle('hidden', nearTop || !isScrollable);
+        botBtn.classList.toggle('hidden', nearBottom || !isScrollable);
+      }
+
+      function scheduleHide() {
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+          topBtn.classList.add('hidden');
+          botBtn.classList.add('hidden');
+        }, 2000);
+      }
+
+      function onScroll() {
+        showJumpers();
+        scheduleHide();
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', () => { showJumpers(); }, { passive: true });
+      // Show bottom button immediately on load
+      setTimeout(showJumpers, 300);
+
       function fastScrollTo(targetY) {
         const startY = window.scrollY || document.documentElement.scrollTop;
         const distance = targetY - startY;
@@ -2237,16 +2753,30 @@
         }
         requestAnimationFrame(animate);
       }
-      pjTop.addEventListener('click', () => {
+      topBtn.addEventListener('click', () => {
         const target = Math.max(0, (window.scrollY || document.documentElement.scrollTop) - window.innerHeight * 0.85);
         fastScrollTo(target);
       });
-      pjBot.addEventListener('click', () => {
+      botBtn.addEventListener('click', () => {
         const target = Math.min(document.documentElement.scrollHeight, (window.scrollY || document.documentElement.scrollTop) + window.innerHeight * 0.85);
         fastScrollTo(target);
       });
+      [topBtn, botBtn].forEach(b => b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); } }));
     })();
 
+    // ─── THEME + BACKUP ───
+    window.addEventListener('message', event => {
+      if (event.data?.type === 'theme') document.documentElement.setAttribute('data-theme', event.data.theme);
+      if (event.data?.type === 'backup-request') {
+        const payload = {};
+        try { const v = localStorage.getItem('agm_hist'); if (v) payload['agm_hist'] = v; } catch (e) { }
+        event.source.postMessage({ type: 'backup-response', tool: 'agm', data: payload }, '*');
+      }
+      if (event.data?.type === 'restore-data' && event.data.tool === 'agm' && event.data.data) {
+        Object.entries(event.data.data).forEach(([k, v]) => { try { localStorage.setItem(k, v); } catch (e) { } });
+        try { HISTORY = JSON.parse(localStorage.getItem('agm_hist') || '[]'); } catch (e) { } renderHistory();
+      }
+    });
     window.parent.postMessage({ type: 'requestTheme' }, '*');
   </script>
 </body>
