@@ -1098,8 +1098,47 @@
       box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.1);
     }
 
-    .actions.actions-top {
-      display: none !important;
+    .actions-meta {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .actions-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .cal-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .cal-foot-btn {
+      background: var(--bg-hover);
+      border: 1px solid var(--border-input);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .cal-foot-btn:hover {
+      background: var(--accent-bg);
+      border-color: var(--accent-bg);
+      color: var(--accent-text);
     }
 
     .btn {
@@ -1336,6 +1375,10 @@
       .btn-inject {
         max-width: none;
       }
+
+      .actions-meta {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -1447,25 +1490,6 @@
       <div class="hist-list" id="histList"></div>
     </div>
 
-    <div class="actions actions-top" id="actionsBarTop" style="display:none">
-      <button class="btn btn-inject" id="btnInjectTop" tabindex="0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-        Generate DOCX
-      </button>
-      <button class="btn btn-clear" id="btnClearTop" tabindex="0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="3 6 5 6 21 6" />
-          <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-          <path d="M10 11v6M14 11v6" />
-        </svg>
-        Clear Form
-      </button>
-    </div>
-
     <div class="status" id="status"></div>
     <div id="formWrap"></div>
 
@@ -1478,14 +1502,17 @@
         </svg>
         Clear Form
       </button>
-      <button class="btn btn-inject" id="btnInject" tabindex="0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-        Generate DOCX
-      </button>
+      <div class="actions-right">
+        <span class="actions-meta" id="filledCount"></span>
+        <button class="btn btn-inject" id="btnInject" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Generate DOCX
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1508,13 +1535,19 @@
           modal.classList.remove('show');
           btnOk.removeEventListener('click', onOk);
           btnCancel.removeEventListener('click', onCancel);
+          modal.removeEventListener('click', onOverlay);
+          document.removeEventListener('keydown', onKey);
         };
 
         const onOk = () => { cleanup(); resolve(true); };
         const onCancel = () => { cleanup(); resolve(false); };
+        const onOverlay = (e) => { if (e.target === modal) onCancel(); };
+        const onKey = (e) => { if (e.key === 'Escape') onCancel(); };
 
         btnOk.addEventListener('click', onOk);
         btnCancel.addEventListener('click', onCancel);
+        modal.addEventListener('click', onOverlay);
+        document.addEventListener('keydown', onKey);
 
         modal.classList.add('show');
         btnCancel.focus();
@@ -1559,33 +1592,33 @@
         section: "Letter Details", fields: [
           { id: "date", label: "Date", type: "date", fmt: "dash" },
           { id: "recipient", label: "Recipient (To)", type: "select", options: tyreMakes },
-          { id: "subject", label: "Subject", type: "text", def: "Tyre Buldge Problem While Driving" }
+          { id: "subject", label: "Subject", type: "text", def: "Tyre Bulge Problem While Driving", full: true }
         ]
       },
       {
         section: "Dealer & Customer Details", fields: [
-          { id: "dealerCode", label: "Dealer Code", type: "text" },
-          { id: "dealerName", label: "Dealer Name", type: "text" },
+          { id: "custName", label: "Customer Name", type: "text", placeholder: "Full name of customer" },
+          { id: "custPhone", label: "Contact Number", type: "text", inputmode: "tel", placeholder: "e.g. 9876543210" },
+          { id: "dealerCode", label: "Dealer Code", type: "text", upper: true, placeholder: "e.g. N2205" },
           { id: "saleDate", label: "Sale Date", type: "date", fmt: "slash" },
-          { id: "custName", label: "Customer Name", type: "text" },
-          { id: "custPhone", label: "Contact Number", type: "text" }
+          { id: "dealerName", label: "Dealer Name", type: "text", full: true, placeholder: "Dealership name" }
         ]
       },
       {
         section: "Vehicle Details", fields: [
-          { id: "regNo", label: "Registration No.", type: "text" },
+          { id: "regNo", label: "Registration No.", type: "text", upper: true, placeholder: "e.g. UK08AB1234" },
           { id: "vehMake", label: "Vehicle Make", type: "select", options: hyundaiModels },
-          { id: "chassis", label: "Chassis No.", type: "text" },
-          { id: "mileage", label: "Mileage at Complaint", type: "text" }
+          { id: "chassis", label: "Chassis No.", type: "text", upper: true, placeholder: "17-character VIN / Chassis No." },
+          { id: "mileage", label: "Mileage at Complaint", type: "text", inputmode: "numeric", placeholder: "e.g. 12,500 km" }
         ]
       },
       {
         section: "Tyre Details", fields: [
           { id: "tyreMake", label: "Tyre Make", type: "select", options: tyreMakes },
-          { id: "numItems", label: "Number of Tyres", type: "text" },
-          { id: "tyreSpec", label: "Tyre Specification", type: "text" },
+          { id: "numItems", label: "Number of Tyres", type: "text", inputmode: "numeric", placeholder: "e.g. 1" },
+          { id: "tyreSpec", label: "Tyre Specification", type: "text", placeholder: "e.g. 215/60 R17" },
           { id: "tyrePos", label: "Tyre Position", type: "select", options: tyrePositions },
-          { id: "issue", label: "Issue Reported", type: "text" }
+          { id: "issue", label: "Issue Reported", type: "text", full: true, placeholder: "Describe tyre issue clearly" }
         ]
       },
       {
@@ -1601,32 +1634,32 @@
         section: "Letter Details", fields: [
           { id: "date", label: "Date", type: "date", fmt: "dash" },
           { id: "recipient", label: "Recipient (To)", type: "select", options: battMakes },
-          { id: "subject", label: "Subject", type: "text", def: "Vehicle starting problem issue." }
+          { id: "subject", label: "Subject", type: "text", def: "Vehicle starting problem issue.", full: true }
         ]
       },
       {
         section: "Dealer & Customer Details", fields: [
-          { id: "dealerCode", label: "Dealer Code", type: "text" },
-          { id: "dealerName", label: "Dealer Name", type: "text" },
+          { id: "custName", label: "Customer Name", type: "text", placeholder: "Full name of customer" },
+          { id: "custPhone", label: "Contact Number", type: "text", inputmode: "tel", placeholder: "e.g. 9876543210" },
+          { id: "dealerCode", label: "Dealer Code", type: "text", upper: true, placeholder: "e.g. N2205" },
           { id: "saleDate", label: "Sale Date", type: "date", fmt: "slash" },
-          { id: "custName", label: "Customer Name", type: "text" },
-          { id: "custPhone", label: "Contact Number", type: "text" }
+          { id: "dealerName", label: "Dealer Name", type: "text", full: true, placeholder: "Dealership name" }
         ]
       },
       {
         section: "Vehicle Details", fields: [
-          { id: "regNo", label: "Registration No.", type: "text" },
+          { id: "regNo", label: "Registration No.", type: "text", upper: true, placeholder: "e.g. UK08AB1234" },
           { id: "vehMake", label: "Vehicle Make", type: "select", options: hyundaiModels },
-          { id: "chassis", label: "Chassis No.", type: "text" },
-          { id: "mileage", label: "Mileage at Complaint", type: "text" }
+          { id: "chassis", label: "Chassis No.", type: "text", upper: true, placeholder: "17-character VIN / Chassis No." },
+          { id: "mileage", label: "Mileage at Complaint", type: "text", inputmode: "numeric", placeholder: "e.g. 12,500 km" }
         ]
       },
       {
         section: "Battery Details", fields: [
           { id: "battMake", label: "Battery Make", type: "select", options: battMakes },
-          { id: "battSerial", label: "Battery Serial", type: "text" },
-          { id: "battSpec", label: "Battery Specification", type: "text" },
-          { id: "issue", label: "Issue Reported", type: "text" }
+          { id: "battSerial", label: "Battery Serial", type: "text", upper: true, placeholder: "Serial number on battery" },
+          { id: "battSpec", label: "Battery Specification", type: "text", placeholder: "e.g. 12V 45Ah" },
+          { id: "issue", label: "Issue Reported", type: "text", placeholder: "Describe battery issue clearly" }
         ]
       },
       {
@@ -1650,21 +1683,28 @@
     // DOM elements
     const formWrap = document.getElementById('formWrap');
     const actionsBar = document.getElementById('actionsBar');
-    const actionsBarTop = document.getElementById('actionsBarTop');
     const btnClear = document.getElementById('btnClear');
-    const btnClearTop = document.getElementById('btnClearTop');
     const btnInject = document.getElementById('btnInject');
-    const btnInjectTop = document.getElementById('btnInjectTop');
+    const filledCountEl = document.getElementById('filledCount');
     const statusEl = document.getElementById('status');
     const modeWrap = document.getElementById('modeWrap');
     const histWrap = document.getElementById('histWrap');
     const histList = document.getElementById('histList');
     const historySearch = document.getElementById('historySearch');
+    let formDraft = {};
 
     // Helpers
     const pad = n => String(n).padStart(2, '0');
     const fmtDash = d => pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear();
     const fmtSlash = d => pad(d.getDate()) + ' / ' + pad(d.getMonth() + 1) + ' / ' + d.getFullYear();
+    const parseManualDate = (str) => {
+      const m = String(str || '').trim().match(/^(\d{1,2})\s*[-/]\s*(\d{1,2})\s*[-/]\s*(\d{4})$/);
+      if (!m) return null;
+      const day = +m[1], mon = +m[2], yr = +m[3];
+      const d = new Date(yr, mon - 1, day);
+      if (isNaN(d) || d.getFullYear() !== yr || d.getMonth() !== mon - 1 || d.getDate() !== day) return null;
+      return d;
+    };
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const getGroups = () => currentMode === 'tyre' ? TYRE_FIELDS : BATTERY_FIELDS;
     const allFields = () => getGroups().flatMap(g => g.fields);
@@ -1673,18 +1713,56 @@
       const entry = { mode: currentMode, format: currentFormat };
       allFields().forEach(f => {
         if (f.type === 'date') {
-          const st = CAL[f.id];
-          let val = (st && st.date) ? (f.fmt === 'slash' ? fmtSlash(st.date) : fmtDash(st.date)) : '';
-          if (!val) { const di = document.getElementById('di_' + f.id); if (di && di.value.trim()) val = di.value.trim(); }
+          const di = document.getElementById('di_' + f.id);
+          const raw = di ? di.value.trim() : '';
+          const parsed = parseManualDate(raw);
+          const val = parsed ? (f.fmt === 'slash' ? fmtSlash(parsed) : fmtDash(parsed)) : raw;
           if (val) entry[f.id] = val;
         } else {
           const el = document.getElementById(f.id);
           const val = el?.value?.trim() || '';
-          if (val && val !== '') entry[f.id] = val;
+          if (val) entry[f.id] = val;
         }
       });
       return entry;
     };
+
+    function snapshotCurrentForm() {
+      if (currentMode === 'history') return;
+      allFields().forEach(f => {
+        if (f.type === 'date') {
+          const di = document.getElementById('di_' + f.id);
+          if (di) formDraft[f.id] = di.value.trim();
+        } else {
+          const el = document.getElementById(f.id);
+          if (!el) return;
+          if (f.id === 'subject' && (el.value.trim() === 'Tyre Bulge Problem While Driving' || el.value.trim() === 'Vehicle starting problem issue.')) return;
+          formDraft[f.id] = el.value;
+        }
+      });
+    }
+
+    function restoreDraftToForm() {
+      allFields().forEach(f => {
+        const saved = formDraft[f.id];
+        if (saved === undefined || saved === '') return;
+        if (f.type === 'date') {
+          const di = document.getElementById('di_' + f.id);
+          if (di) di.value = saved;
+          const d = parseManualDate(saved);
+          if (d) {
+            if (!CAL[f.id]) CAL[f.id] = {};
+            Object.assign(CAL[f.id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' });
+          }
+        } else {
+          const el = document.getElementById(f.id);
+          if (el) {
+            el.value = saved;
+            el.classList.remove('pre');
+          }
+        }
+      });
+    }
 
     // Keyboard Interaction Helper
     const handleKeyClick = (el, action) => {
@@ -1737,11 +1815,16 @@
     }
 
     async function setFormat(format) {
+      snapshotCurrentForm();
       currentFormat = format;
       document.getElementById('formatNew').classList.toggle('active', format === 'new');
       document.getElementById('formatOld').classList.toggle('active', format === 'old');
 
-      await loadTemplate(format);
+      try {
+        await loadTemplate(format);
+      } catch (err) {
+        console.warn("Template switch load error", err);
+      }
       if (currentMode !== 'history') {
         setMode(currentMode);
       }
@@ -1749,6 +1832,7 @@
 
     async function init() {
       if (modeWrap) modeWrap.classList.add('show');
+      formWrap.addEventListener('input', updateStepper);
       try {
         await loadTemplate('new');
       } catch (err) {
@@ -1769,16 +1853,15 @@
     }
 
     function setMode(mode) {
+      if (currentMode !== 'history') snapshotCurrentForm();
       currentMode = mode;
       document.getElementById('modeTyre').classList.toggle('active', mode === 'tyre');
       document.getElementById('modeBattery').classList.toggle('active', mode === 'battery');
       document.getElementById('modeHistory').classList.toggle('active', mode === 'history');
-      document.getElementById('modeSaveEntry')?.classList.remove('active');
       const sw = document.getElementById('stepperWrap');
       if (mode === 'history') {
         formWrap.style.display = 'none';
         actionsBar.style.display = 'none';
-        if (actionsBarTop) actionsBarTop.style.display = 'none';
         histWrap.classList.add('show');
         if (sw) sw.style.display = 'none';
         renderHistory();
@@ -1786,10 +1869,10 @@
         histWrap.classList.remove('show');
         formWrap.style.display = 'block';
         actionsBar.style.display = 'flex';
-        if (actionsBarTop) actionsBarTop.style.display = 'flex';
         if (sw) sw.style.display = 'block';
         buildForm();
-        setTimeout(updateStepper, 100);
+        restoreDraftToForm();
+        requestAnimationFrame(updateStepper);
       }
     }
 
@@ -1829,6 +1912,14 @@
           st.className = 'step' + (i === activeStep ? ' active' : '');
           sn.textContent = i;
         }
+      }
+      if (filledCountEl) {
+        const fields = allFields();
+        const filled = fields.filter(f => {
+          const el = f.type === 'date' ? document.getElementById('di_' + f.id) : document.getElementById(f.id);
+          return !!(el && el.value.trim());
+        }).length;
+        filledCountEl.textContent = `${filled} / ${fields.length} filled`;
       }
     }
 
@@ -2018,8 +2109,31 @@
           const iS = st.date && d === st.date.getDate() && m === st.date.getMonth() && y === st.date.getFullYear();
           h += `<div class="cd${iT ? ' today' : ''}${iS ? ' sel' : ''}" data-id="${id}" data-d="${d}" tabindex="0">${d}</div>`;
         }
-        h += '</div>';
+        h += `</div><div class="cal-foot"><button type="button" class="cal-foot-btn cal-today-btn" data-id="${id}">Today</button><button type="button" class="cal-foot-btn cal-clr-btn" data-id="${id}">Clear</button></div>`;
         pop.innerHTML = h;
+
+        const todayBtn = pop.querySelector('.cal-today-btn');
+        if (todayBtn) {
+          todayBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            const s = CAL[id], t = new Date();
+            s.date = t; s.year = t.getFullYear(); s.month = t.getMonth();
+            const f = allFields().find(x => x.id === id);
+            const diEl = document.getElementById('di_' + id);
+            if (diEl) diEl.value = f.fmt === 'slash' ? fmtSlash(t) : fmtDash(t);
+            closeAllPopups(); updateStepper();
+          });
+        }
+        const clrDateBtn = pop.querySelector('.cal-clr-btn');
+        if (clrDateBtn) {
+          clrDateBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            CAL[id].date = null;
+            const diEl = document.getElementById('di_' + id);
+            if (diEl) diEl.value = '';
+            closeAllPopups(); updateStepper();
+          });
+        }
 
         pop.querySelectorAll('.cpb').forEach(b => {
           const action = e => { e.stopPropagation(); const s = CAL[b.dataset.id], dir = parseInt(b.dataset.dir); s.month += dir; if (s.month < 0) { s.month = 11; s.year--; } if (s.month > 11) { s.month = 0; s.year++; } renderCal(b.dataset.id); };
@@ -2078,17 +2192,18 @@
 
         group.fields.forEach(f => {
           const col = document.createElement('div'); col.className = 'field-col';
-          if (f.id === 'subject') col.style.gridColumn = '1 / -1';
+          if (f.full) col.style.gridColumn = '1 / -1';
 
           if (f.type === 'date') {
             if (!CAL[f.id]) CAL[f.id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
+            const datePh = f.fmt === 'slash' ? 'DD / MM / YYYY' : 'DD-MM-YYYY';
 
             col.innerHTML = `
-          <label>${f.label}</label>
+          <label for="di_${f.id}">${f.label}</label>
           <div style="position:relative;">
-            <div class="date-trigger" id="dt_${f.id}" tabindex="0" style="cursor:text;">
-              <input type="text" id="di_${f.id}" placeholder="DD-MM-YYYY or pick →" style="flex:1;border:none;background:transparent;font-size:14px;color:var(--text-main);outline:none;font-family:'Inter',sans-serif;width:100%;cursor:text;" tabindex="-1">
-              <span class="date-icon" id="dico_${f.id}" style="cursor:pointer;flex-shrink:0;">${icons.calendar}</span>
+            <div class="date-trigger" id="dt_${f.id}" style="cursor:text;">
+              <input type="text" id="di_${f.id}" placeholder="${datePh}" autocomplete="off" style="flex:1;height:100%;border:none;border-radius:0;padding:0 8px 0 0;background:transparent;font-size:14px;color:var(--text-main);outline:none;box-shadow:none;font-family:'Inter',sans-serif;width:100%;cursor:text;" tabindex="0">
+              <span class="date-icon" id="dico_${f.id}" tabindex="0" role="button" aria-label="Pick ${f.label}" style="cursor:pointer;flex-shrink:0;">${icons.calendar}</span>
             </div>
             <div class="cal-pop" id="cp_${f.id}"></div>
           </div>`;
@@ -2112,20 +2227,30 @@
               const dt = document.getElementById('dt_' + f.id);
               const di = document.getElementById('di_' + f.id);
               const ico = document.getElementById('dico_' + f.id);
-              // Manual typing
+              // Manual typing (supports both DD-MM-YYYY and DD/MM/YYYY)
               di.addEventListener('input', () => {
-                const v = di.value.trim();
-                if (/^\d{2}-\d{2}-\d{4}$/.test(v)) {
-                  const p = v.split('-'); const d = new Date(+p[2], +p[1] - 1, +p[0]);
-                  if (!isNaN(d)) { if (!CAL[f.id]) CAL[f.id] = {}; Object.assign(CAL[f.id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' }); }
+                const d = parseManualDate(di.value);
+                if (!CAL[f.id]) CAL[f.id] = { date: null, open: false, year: new Date().getFullYear(), month: new Date().getMonth(), view: 'days' };
+                if (d) {
+                  Object.assign(CAL[f.id], { date: d, year: d.getFullYear(), month: d.getMonth(), view: 'days' });
+                } else {
+                  CAL[f.id].date = null;
                 }
                 updateStepper();
               });
+              di.addEventListener('blur', () => {
+                dt.style.borderColor = ''; dt.style.boxShadow = '';
+                const d = parseManualDate(di.value);
+                if (d) di.value = f.fmt === 'slash' ? fmtSlash(d) : fmtDash(d);
+              });
               di.addEventListener('focus', () => { dt.style.borderColor = 'var(--border-focus)'; dt.style.boxShadow = '0 0 0 3px var(--focus-ring)'; });
-              di.addEventListener('blur', () => { dt.style.borderColor = ''; dt.style.boxShadow = ''; });
-              // Calendar icon opens picker
-              ico.addEventListener('click', e => { e.stopPropagation(); const isOpen = document.getElementById('cp_' + f.id)?.classList.contains('open'); if (isOpen) closeAllPopups(); else openCal(f.id); });
-              // Click on trigger bar (not icon) focuses text input
+              const toggleCal = e => {
+                e.stopPropagation();
+                const isOpen = document.getElementById('cp_' + f.id)?.classList.contains('open');
+                if (isOpen) closeAllPopups(); else openCal(f.id);
+              };
+              ico.addEventListener('click', toggleCal);
+              handleKeyClick(ico, toggleCal);
               dt.addEventListener('click', e => { if (e.target !== ico && !ico.contains(e.target)) di.focus(); });
             });
           } else if (f.type === 'select') {
@@ -2252,7 +2377,13 @@
               optEls.forEach(opt => {
                 const optAction = e => {
                   e.stopPropagation();
-                  inp.value = opt.getAttribute('data-val');
+                  const chosen = opt.getAttribute('data-val');
+                  inp.value = chosen;
+                  if (f.id === 'recipient') {
+                    const targetId = currentMode === 'tyre' ? 'tyreMake' : 'battMake';
+                    const makeInp = document.getElementById(targetId);
+                    if (makeInp && !makeInp.value.trim()) makeInp.value = chosen;
+                  }
                   closeAllPopups();
                   updateStepper();
                 };
@@ -2263,8 +2394,10 @@
           } else {
             const label = document.createElement('label'); label.htmlFor = f.id; label.textContent = f.label;
             const input = document.createElement('input'); input.type = 'text'; input.id = f.id; input.setAttribute('tabindex', '0');
+            if (f.inputmode) input.setAttribute('inputmode', f.inputmode);
+            if (f.upper) input.addEventListener('blur', () => { input.value = input.value.trim().toUpperCase(); });
             if (f.def) { input.value = f.def; input.classList.add('pre'); input.addEventListener('focus', () => input.classList.remove('pre')); }
-            else input.placeholder = 'Enter value\u2026';
+            else input.placeholder = f.placeholder || 'Enter value\u2026';
 
             col.appendChild(label); col.appendChild(input); grid.appendChild(col);
           }
@@ -2272,15 +2405,11 @@
         sec.appendChild(grid);
         formWrap.appendChild(sec);
       });
-      // Hook inputs to updateStepper
-      requestAnimationFrame(() => {
-        formWrap.addEventListener('input', updateStepper);
-        formWrap.querySelectorAll('.cs-opt').forEach(opt => opt.addEventListener('click', () => setTimeout(updateStepper, 50)));
-      });
     }
 
     async function handleClearForm() {
       if (!(await customConfirm('Are you sure you want to clear the form?'))) return;
+      formDraft = {};
 
       allFields().forEach(f => {
         if (f.type === 'date') {
@@ -2303,18 +2432,14 @@
       updateStepper();
     }
     btnClear.addEventListener('click', handleClearForm);
-    if (btnClearTop) btnClearTop.addEventListener('click', handleClearForm);
 
     // ─────────────────────────────────────────────────────────────────
     // DOCXTEMPLATER LOGIC 
     // ─────────────────────────────────────────────────────────────────
     const setInjectButtonsState = (busy) => {
       const iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>`;
-      [btnInject, btnInjectTop].forEach(b => {
-        if (!b) return;
-        b.disabled = busy;
-        b.innerHTML = busy ? 'Processing\u2026' : `${iconSvg} Generate DOCX`;
-      });
+      btnInject.disabled = busy;
+      btnInject.innerHTML = busy ? 'Processing\u2026' : `${iconSvg} Generate DOCX`;
     };
 
     async function handleGenerateDocx() {
@@ -2380,7 +2505,6 @@
       }
     }
     btnInject.addEventListener('click', handleGenerateDocx);
-    if (btnInjectTop) btnInjectTop.addEventListener('click', handleGenerateDocx);
 
     // ─────────────────────────────────────────────────────────────────
     // HISTORY & SEARCH LOGIC
@@ -2456,23 +2580,21 @@
     }
 
     async function fillFromHistory(entry) {
+      formDraft = {};
       if (entry.format) await setFormat(entry.format);
       setMode(entry.mode || 'tyre');
 
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         dateFields().forEach(f => {
           const val = entry[f.id];
           if (!val) return;
-          let d;
-          if (f.fmt === 'slash') { const p = val.split(' / '); d = new Date(+p[2], +p[1] - 1, +p[0]); }
-          else { const p = val.split('-'); d = new Date(+p[2], +p[1] - 1, +p[0]); }
-          if (isNaN(d)) return;
-          if (!CAL[f.id]) CAL[f.id] = {};
-          Object.assign(CAL[f.id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' });
           const di = document.getElementById('di_' + f.id);
-          if (di) { di.value = val; }
-          const dv = document.getElementById('dv_' + f.id);
-          if (dv) { dv.textContent = val; dv.classList.remove('empty'); }
+          if (di) di.value = val;
+          const d = parseManualDate(val);
+          if (d) {
+            if (!CAL[f.id]) CAL[f.id] = {};
+            Object.assign(CAL[f.id], { date: d, year: d.getFullYear(), month: d.getMonth(), open: false, view: 'days' });
+          }
         });
         allFields().filter(f => f.type === 'text' || f.type === 'select').forEach(f => {
           const inp = document.getElementById(f.id);
@@ -2484,7 +2606,7 @@
         closeAllPopups();
         clearStatus();
         updateStepper();
-      }, 100);
+      });
     }
 
     function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
