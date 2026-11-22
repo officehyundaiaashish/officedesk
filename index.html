@@ -2011,14 +2011,12 @@ self.addEventListener('notificationclick', e => {
       <div class="sb-div"></div>
       <div class="sb-sec">
         <div class="sb-lbl">Warranty Tools</div>
-        <button class="nav-item" data-view="alcazar">
+        <button class="nav-item" data-view="letterheads">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
             <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-          </svg>Alcazar Form
-          <span class="nav-badge">PPT</span>
+          </svg>Letter Heads
+          <span class="nav-badge">DOCX</span>
         </button>
         <button class="nav-item" data-view="keycode">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2026,13 +2024,6 @@ self.addEventListener('notificationclick', e => {
             <path d="M7 11V7a5 5 0 0110 0v4" />
           </svg>Key Code Form
           <span class="nav-badge">XLS</span>
-        </button>
-        <button class="nav-item" data-view="letterheads">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-          </svg>Letter Heads
-          <span class="nav-badge">DOCX</span>
         </button>
         <button class="nav-item" data-view="pwareg">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2062,6 +2053,15 @@ self.addEventListener('notificationclick', e => {
           </svg>AGM Form
           <span class="nav-badge">XLSX</span>
         </button>
+        <button class="nav-item" data-view="alcazar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>Alcazar Form
+          <span class="nav-badge">PPT</span>
+        </button>
       </div>
       <div class="sb-ver">OfficeDesk &nbsp;·&nbsp; Aashish Giri H</div>
     </aside>
@@ -2084,18 +2084,16 @@ self.addEventListener('notificationclick', e => {
         </div>
 
         <div class="tools-grid">
-          <div class="tool-card live" onclick="switchView('alcazar')">
+          <div class="tool-card live" onclick="switchView('letterheads')">
             <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
               </svg>
             </div>
             <div>
-              <div class="tool-name">Alcazar Form</div>
-              <span class="tag tag-live" style="margin-top:5px">PPT</span>
+              <div class="tool-name">Letter Heads</div>
+              <span class="tag tag-live" style="margin-top:5px">DOCX</span>
             </div>
           </div>
 
@@ -2109,19 +2107,6 @@ self.addEventListener('notificationclick', e => {
             <div>
               <div class="tool-name">Key Code Form</div>
               <span class="tag tag-live" style="margin-top:5px">XLS</span>
-            </div>
-          </div>
-
-          <div class="tool-card live" onclick="switchView('letterheads')">
-            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
-            </div>
-            <div>
-              <div class="tool-name">Letter Heads</div>
-              <span class="tag tag-live" style="margin-top:5px">DOCX</span>
             </div>
           </div>
 
@@ -2168,6 +2153,21 @@ self.addEventListener('notificationclick', e => {
             <div>
               <div class="tool-name">AGM Form</div>
               <span class="tag tag-live" style="margin-top:5px">XLSX</span>
+            </div>
+          </div>
+
+          <div class="tool-card live" onclick="switchView('alcazar')">
+            <div class="tool-icon" style="background:var(--accent-s);color:var(--accent)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+            </div>
+            <div>
+              <div class="tool-name">Alcazar Form</div>
+              <span class="tag tag-live" style="margin-top:5px">PPT</span>
             </div>
           </div>
 
@@ -2447,17 +2447,15 @@ self.addEventListener('notificationclick', e => {
         <span class="drawer-item-badge">Cloud</span>
       </button>
 
-      <button class="drawer-item" data-view="alcazar" onclick="drawerNav('alcazar')">
+      <button class="drawer-item" data-view="letterheads" onclick="drawerNav('letterheads')">
         <div class="drawer-item-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
             <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
         </div>
-        <div class="drawer-item-label">Alcazar</div>
-        <span class="drawer-item-badge">PPT</span>
+        <div class="drawer-item-label">Letter Heads</div>
+        <span class="drawer-item-badge">DOCX</span>
       </button>
 
       <button class="drawer-item" data-view="keycode" onclick="drawerNav('keycode')">
@@ -2469,17 +2467,6 @@ self.addEventListener('notificationclick', e => {
         </div>
         <div class="drawer-item-label">Key Code</div>
         <span class="drawer-item-badge">XLS</span>
-      </button>
-
-      <button class="drawer-item" data-view="letterheads" onclick="drawerNav('letterheads')">
-        <div class="drawer-item-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-          </svg>
-        </div>
-        <div class="drawer-item-label">Letter Heads</div>
-        <span class="drawer-item-badge">DOCX</span>
       </button>
 
       <button class="drawer-item" data-view="pwareg" onclick="drawerNav('pwareg')">
@@ -2521,6 +2508,19 @@ self.addEventListener('notificationclick', e => {
         <div class="drawer-item-label">AGM Form</div>
         <span class="drawer-item-badge">XLSX</span>
       </button>
+
+      <button class="drawer-item" data-view="alcazar" onclick="drawerNav('alcazar')">
+        <div class="drawer-item-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+        </div>
+        <div class="drawer-item-label">Alcazar</div>
+        <span class="drawer-item-badge">PPT</span>
+      </button>
     </div>
 
     <div class="drawer-close-row">
@@ -2545,14 +2545,12 @@ self.addEventListener('notificationclick', e => {
       </svg>
       Home
     </button>
-    <button class="bnav-item" data-view="alcazar">
+    <button class="bnav-item" data-view="letterheads">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
         <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
       </svg>
-      Alcazar
+      Letter Heads
     </button>
     <button class="bnav-item" data-view="keycode">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2561,12 +2559,14 @@ self.addEventListener('notificationclick', e => {
       </svg>
       Key Code
     </button>
-    <button class="bnav-item" data-view="letterheads">
+    <button class="bnav-item" data-view="pwareg">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
         <polyline points="14 2 14 8 20 8" />
+        <line x1="8" y1="13" x2="16" y2="13" />
+        <line x1="8" y1="17" x2="13" y2="17" />
       </svg>
-      Letter Heads
+      PWA Regular
     </button>
     <button class="bnav-more" id="bnavMore" onclick="toggleDrawer()">
       <div class="more-arrow" id="moreArrow">
